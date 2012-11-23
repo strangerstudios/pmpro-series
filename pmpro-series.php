@@ -91,33 +91,3 @@ function create_post_type_pmpro_series()
 	);
 }
 add_action("init", "create_post_type_pmpro_series");
-
-/*
-'capability_type' => 'pmpro_series',
-'capabilities' => array(
-		'publish_posts' => 'publish_pmpro_series',
-		'edit_posts' => 'edit_pmpro_series',
-		'edit_others_posts' => 'edit_others_pmpro_series',
-		'delete_posts' => 'delete_pmpro_series',
-		'delete_others_posts' => 'delete_others_pmpro_series',
-		'read_private_posts' => 'read_private_pmpro_series',
-		'edit_post' => 'edit_pmpro_series',
-		'delete_post' => 'delete_pmpro_series',
-		'read_post' => 'read_pmpro_series',
-),
-*/
-
-/*
-//add series page to admin
-function pmpro_series_add_pages()
-{
-	add_submenu_page('pmpro-membershiplevels', 'Series', 'Series', 'manage_options', 'pmpro-series', 'pmpro_series_adminpage');
-}
-add_action('admin_menu', 'pmpro_series_add_pages', 20);
-
-//affiliates page (add new)
-function pmpro_series_adminpage()
-{
-	require_once(dirname(__FILE__) . "/adminpages/series.php");
-}
-*/
