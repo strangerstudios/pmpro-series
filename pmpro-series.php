@@ -29,7 +29,95 @@ Author URI: http://www.strangerstudios.com
 	Checking for access:
 	* Is a membership level required?
 	* If so, does the user have one of those levels?
-	* Is the user's level "assigned" to that series?
-	* If so, does the user have access to that content yet.
+	* Is the user's level "assigned" to a series?
+	* If so, does the user have access to that content yet? (count days)
 	* If not, then the user will have access. (e.g. Pro members get access to everything right away.)
+	
+	Checking to send emails:
+	* For all members with series levels.
+	* What day of the membership is it?
+	* For all series.
+	* Get content.
+	* Send content for this day.
+	* Email update.
+	
+	Data Structure
+	* Series is a CPT
+	* Use wp_pmpro_memberships_pages to link to membership levels
+	* wp_pmpro_series_content (series_id, post_id, day) stored in post meta
+*/
+
+/*
+	Includes
+*/
+require_once(dirname(__FILE__) . "/classes/class.pmproseries.php");
+
+/*
+	PMPro Series CPT
+*/
+function create_post_type_pmpro_series()
+{
+	register_post_type('pmpro_series',
+				array(
+						'labels' => array(
+                                'name' => __( 'Series' ),
+                                'singular_name' => __( 'Series' ),
+                                'slug' => 'series',
+                                'add_new' => __( 'New Series' ),
+                                'add_new_item' => __( 'New Series' ),
+                                'edit' => __( 'Edit Series' ),
+                                'edit_item' => __( 'Edit Series' ),
+                                'new_item' => __( 'Add New' ),
+                                'view' => __( 'View This Series' ),
+                                'view_item' => __( 'View This Series' ),
+                                'search_items' => __( 'Search Series' ),
+                                'not_found' => __( 'No Series Found' ),
+                                'not_found_in_trash' => __( 'No Series Found In Trash' )
+                        ),
+					'public' => true,					
+					'show_ui' => true,
+					'show_in_menu' => true,
+					'publicly_queryable' => true,
+					'hierarchical' => true,
+					'supports' => array('title','editor','thumbnail','custom-fields','author'),
+					'can_export' => true,
+					'show_in_nav_menus' => true,
+					'rewrite' => array(
+							'slug' => 'series',
+							'with_front' => false
+							),
+					'has_archive' => 'series'
+				)
+	);
+}
+add_action("init", "create_post_type_pmpro_series");
+
+/*
+'capability_type' => 'pmpro_series',
+'capabilities' => array(
+		'publish_posts' => 'publish_pmpro_series',
+		'edit_posts' => 'edit_pmpro_series',
+		'edit_others_posts' => 'edit_others_pmpro_series',
+		'delete_posts' => 'delete_pmpro_series',
+		'delete_others_posts' => 'delete_others_pmpro_series',
+		'read_private_posts' => 'read_private_pmpro_series',
+		'edit_post' => 'edit_pmpro_series',
+		'delete_post' => 'delete_pmpro_series',
+		'read_post' => 'read_pmpro_series',
+),
+*/
+
+/*
+//add series page to admin
+function pmpro_series_add_pages()
+{
+	add_submenu_page('pmpro-membershiplevels', 'Series', 'Series', 'manage_options', 'pmpro-series', 'pmpro_series_adminpage');
+}
+add_action('admin_menu', 'pmpro_series_add_pages', 20);
+
+//affiliates page (add new)
+function pmpro_series_adminpage()
+{
+	require_once(dirname(__FILE__) . "/adminpages/series.php");
+}
 */
