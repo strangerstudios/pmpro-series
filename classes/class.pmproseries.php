@@ -168,7 +168,7 @@ class PMProSeries
                         ),
 				'public' => true,					
 				'show_ui' => true,
-				'show_in_menu' => true,
+				'show_in_menu' => true,				
 				'publicly_queryable' => true,
 				'hierarchical' => true,
 				'supports' => array('title','editor','thumbnail','custom-fields','author'),
@@ -191,6 +191,8 @@ class PMProSeries
 		//add meta boxes
 		if (is_admin())
 		{
+			wp_enqueue_style('pmpros-select2', plugins_url('css/select2.css', dirname(__FILE__)), '', '3.1', 'screen');
+			wp_enqueue_script('pmpros-select2', plugins_url('js/select2.js', dirname(__FILE__)), array( 'jquery' ), '3.1' );
 			add_action('admin_menu', array("PMProSeries", "defineMetaBoxes"));
 		}
 	}	
@@ -249,6 +251,8 @@ class PMProSeries
 	//this code updates the posts and draws the list/form
 	function getPostListForMetaBox()
 	{
+		global $wpdb;
+		
 		//boot out people without permissions
 		if(!current_user_can("edit_posts"))
 			return false;
@@ -314,7 +318,30 @@ class PMProSeries
 			<tr>
 				<td>
 					Post:
+				</td>
+				<td>					
+					<?php /*
 					<input id="pmpros_post" name="pmpros_post" type="text" value="" />
+					*/ ?>
+					<select id="pmpros_post" name="pmpros_post">
+						<option value=""></option>
+					<?php
+						$pmpros_post_types = apply_filters("pmpros_post_types", array("post", "page"));
+						$allposts = $wpdb->get_results("SELECT ID, post_title, post_status FROM $wpdb->posts WHERE post_status IN('publish', 'draft') AND post_type IN ('" . implode("','", $pmpros_post_types) . "') AND post_title <> '' ORDER BY post_title");
+						foreach($allposts as $p)
+						{
+						?>
+						<option value="<?php echo $p->ID;?>"><?php echo esc_textarea($p->post_title);?> (#<?php echo $p->ID;?><?php if($p->post_status == "draft") echo "-DRAFT";?>)</option>
+						<?php
+						}
+					?>
+					</select>
+					<style>
+						.select2-container {width: 250px;}
+					</style>
+					<script>
+						jQuery('#pmpros_post').select2();
+					</script>
 				</td>
 				<td>
 					Delay:
