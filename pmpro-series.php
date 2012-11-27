@@ -97,7 +97,7 @@ add_filter("the_content", "pmpros_the_content");
 /*
 	Make sure people can't view content they don't have access to.
 */
-//returns true if a user has access to a page
+//returns true if a user has access to a page, including logic for series/delays
 function pmpros_hasAccess($user_id, $post_id)
 {
 	//is this post in a series?
@@ -114,17 +114,23 @@ function pmpros_hasAccess($user_id, $post_id)
 	foreach($post_series as $series_id)
 	{
 		//does the user have access to any of the series pages?
-		if(pmpro_has_membership_access($series_id, $user_id))
+		$results = pmpro_has_membership_access($series_id, $user_id, true);	//passing true there to get the levels which have access to this page
+		if($results[0])	//first item in array is if the user has access
 		{
 			//has the user been around long enough for any of the delays?
 			$series_posts = get_post_meta($series_id, "_series_posts", true);
 			foreach($series_posts as $sp)
 			{
+				//this post we are checking is in this series
 				if($sp->id == $post_id)
 				{
-					if(pmpro_getMemberDays($user_id) >= $sp->delay)
-					{						
-						return true;
+					//check specifically for the levels with access to this series
+					foreach($results[1] as $level_id)
+					{
+						if(pmpro_getMemberDays($user_id, $level_id) >= $sp->delay)
+						{						
+							return true;	//user has access to this series and has been around longer than this post's delay
+						}
 					}
 				}
 			}
@@ -147,12 +153,69 @@ function pmpros_pmpro_has_membership_access_filter($hasaccess, $mypost, $myuser,
 		if(pmpros_hasAccess($myuser->ID, $mypost->ID))
 			$hasaccess = true;
 		else
+		{
 			$hasaccess = false;		
+		}
 	}
 	
 	return $hasaccess;
 }
 add_filter("pmpro_has_membership_access_filter", "pmpros_pmpro_has_membership_access_filter", 10, 4);
+
+/*
+	Filter the message for users without access.
+*/
+function pmpros_pmpro_text_filter($text)
+{
+	global $wpdb, $current_user, $post;
+	
+	if(!empty($current_user) && !empty($post))
+	{
+		if(!pmpros_hasAccess($current_user->ID, $post->ID))
+		{						
+			//Update text. The either have to wait or sign up.
+			$post_series = get_post_meta($post->ID, "_post_series", true);
+			
+			$inseries = false;
+			foreach($post_series as $ps)
+			{
+				if(pmpro_has_membership_access($ps))
+				{
+					$inseries = $ps;
+					break;
+				}
+			}
+						
+			if($inseries)
+			{
+				//user has one of the series levels, find out which one and tell him how many days left
+				$series = new PMProSeries($inseries);
+				$day = $series->getDelayForPost($post->ID);
+				$text = "This content is part of the <a href='" . get_permalink($inseries) . "'>" . get_the_title($inseries) . "</a> series. You will gain access on day " . $day . " of your membership.";
+			}
+			else
+			{
+				//user has to sign up for one of the series
+				if(count($post_series) == 1)
+				{
+					$text = "This content is part of the <a href='" . get_permalink($post_series[0]) . "'>" . get_the_title($post_series[0]) . "</a> series.";
+				}
+				else
+				{
+					$text = "This content is part of the following series: ";
+					$series = array();
+					foreach($post_series as $series_id)
+						$series[] = "<a href='" . get_permalink($series_id) . "'>" . get_the_title($series_id) . "</a>";
+					$text .= implode(", ", $series) . ".";
+				}
+			}
+		}
+	}
+	
+	return $text;
+}
+add_filter("pmpro_non_member_text_filter", "pmpros_pmpro_text_filter");
+add_filter("pmpro_not_logged_in_text_filter", "pmpros_pmpro_text_filter");
 
 /*
 	Couple functions from PMPro in case we don't have them yet.
@@ -176,10 +239,10 @@ if(!function_exists("pmpro_getMemberStartdate"))
 			global $wpdb;
 			
 			if(!empty($level_id))
-				$sqlQuery = "SELECT UNIX_TIMESTAMP(startdate) FROM $wpdb->pmpro_memberships_users WHERE status = 'active' AND membership_id IN(" . $wpdb->escape($level) . ") AND user_id = '" . $current_user->ID . "' ORDER BY id LIMIT 1";		
+				$sqlQuery = "SELECT UNIX_TIMESTAMP(startdate) FROM $wpdb->pmpro_memberships_users WHERE status = 'active' AND membership_id IN(" . $wpdb->escape($level_id) . ") AND user_id = '" . $user_id . "' ORDER BY id LIMIT 1";		
 			else
 				$sqlQuery = "SELECT UNIX_TIMESTAMP(startdate) FROM $wpdb->pmpro_memberships_users WHERE status = 'active' AND user_id = '" . $user_id . "' ORDER BY id LIMIT 1";		
-					
+						
 			$startdate = $wpdb->get_var($sqlQuery);
 			
 			$pmpro_startdates[$user_id][$level_id] = $startdate;
@@ -210,3 +273,44 @@ if(!function_exists("pmpro_getMemberStartdate"))
 		return $pmpro_member_days[$user_id][$level_id];
 	}
 }
+
+add_action( 'admin_head', 'series_post_type_icon' );
+ 
+function series_post_type_icon() {
+    ?>
+    <style>
+        /* Admin Menu - 16px */
+        #menu-posts-pmpro_series .wp-menu-image {
+            background: url(<?php echo plugins_url('images/icon-series16-sprite.png', __FILE__); ?>) no-repeat 6px 6px !important;
+        }
+        #menu-posts-pmpro_series:hover .wp-menu-image, #menu-posts-pmpro_series.wp-has-current-submenu .wp-menu-image {
+            background-position: 6px -26px !important;
+        }
+        /* Post Screen - 32px */
+        .icon32-posts-pmpro_series {
+            background: url(<?php echo plugins_url('images/icon-series32.png', __FILE__); ?>) no-repeat left top !important;
+        }
+        @media
+        only screen and (-webkit-min-device-pixel-ratio: 1.5),
+        only screen and (   min--moz-device-pixel-ratio: 1.5),
+        only screen and (     -o-min-device-pixel-ratio: 3/2),
+        only screen and (        min-device-pixel-ratio: 1.5),
+        only screen and (                min-resolution: 1.5dppx) {
+             
+            /* Admin Menu - 16px @2x */
+            #menu-posts-pmpro_series .wp-menu-image {
+                background-image: url(<?php echo plugins_url('images/icon-series16-sprite_2x.png', __FILE__); ?>) !important;
+                -webkit-background-size: 16px 48px;
+                -moz-background-size: 16px 48px;
+                background-size: 16px 48px;
+            }
+            /* Post Screen - 32px @2x */
+            .icon32-posts-pmpro_series {
+                background-image:url(<?php echo plugins_url('images/icon-series32_2x.png', __FILE__); ?>) !important;
+                -webkit-background-size: 32px 32px;
+                -moz-background-size: 32px 32px;
+                background-size: 32px 32px;
+            }         
+        }
+    </style>
+<?php } 

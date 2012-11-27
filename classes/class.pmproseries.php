@@ -122,13 +122,23 @@ class PMProSeries
 		if(empty($this->posts))
 			return false;
 			
-		foreach($this->posts as $post)
+		foreach($this->posts as $key => $post)
 		{
 			if($post->id == $post_id)
-				return true;
+				return $key;
 		}
 		
 		return false;
+	}
+	
+	function getDelayForPost($post_id)
+	{
+		$key = $this->hasPost($post_id);
+		
+		if($key === false)
+			return false;
+		else
+			return $this->posts[$key]->delay;		
 	}
 	
 	//used to sort posts by delay
@@ -152,8 +162,8 @@ class PMProSeries
 		register_post_type('pmpro_series',
 				array(
 						'labels' => array(
-                                'name' => __( 'Series' ),
-                                'singular_name' => __( 'Series' ),
+                                'name' => __( 'Series' ),								
+								'singular_name' => __( 'Series' ),
                                 'slug' => 'series',
                                 'add_new' => __( 'New Series' ),
                                 'add_new_item' => __( 'New Series' ),
@@ -167,6 +177,7 @@ class PMProSeries
                                 'not_found_in_trash' => __( 'No Series Found In Trash' )
                         ),
 				'public' => true,					
+				/*'menu_icon' => plugins_url('images/icon-series16-sprite.png', dirname(__FILE__)),*/
 				'show_ui' => true,
 				'show_in_menu' => true,				
 				'publicly_queryable' => true,
