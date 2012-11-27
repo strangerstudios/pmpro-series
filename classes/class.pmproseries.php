@@ -402,7 +402,7 @@ class PMProSeries
 			
 			function pmpros_editPost(post_id, delay)
 			{
-				jQuery('#pmpros_post').val(post_id);
+				jQuery('#pmpros_post').val(post_id).trigger("change");
 				jQuery('#pmpros_delay').val(delay);
 				location.href = "#pmpros_edit_post";
 			}
