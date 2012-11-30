@@ -3,7 +3,7 @@
 Plugin Name: PMPro Series
 Plugin URI: http://www.paidmembershipspro.com/pmpro-series/
 Description: Offer serialized (drip feed) content to your PMPro members.
-Version: .1
+Version: .2
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -52,6 +52,24 @@ Author URI: http://www.strangerstudios.com
 */
 require_once(dirname(__FILE__) . "/classes/class.pmproseries.php");
 
+
+/*
+	Load CSS, JS files
+*/
+function pmprors_scripts()
+{
+	if(!is_admin())
+	{
+		/*if(!defined("PMPRO_VERSION"))
+		{*/
+			//load some styles that we need from PMPro
+			wp_enqueue_style("pmprors_pmpro", plugins_url('css/pmpro_series.css',__FILE__ ));
+		/*}*/
+	}
+}
+add_action("init", "pmprors_scripts");
+
+
 /*
 	PMPro Series CPT
 */
@@ -84,9 +102,10 @@ function pmpros_the_content($content)
 {
 	global $post;
 	
-	if($post->post_type == "pmpro_series")
+	if($post->post_type == "pmpro_series" && pmpro_has_membership_access())
 	{
 		$series = new PMProSeries($post->ID);	
+		$content .= "<p>You are on day " . intval(pmpro_getMemberDays()) . " of your membership.</p>";
 		$content .= $series->getPostList();						
 	}
 	

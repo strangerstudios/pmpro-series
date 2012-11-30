@@ -25,7 +25,7 @@ class PMProSeries
 	//add a post to this series
 	function addPost($post_id, $delay)
 	{
-		if(empty($post_id) || empty($delay))
+		if(empty($post_id) || !isset($delay))
 		{
 			$this->error = "Please enter a value for post and delay.";
 			return false;
@@ -40,7 +40,7 @@ class PMProSeries
 		}
 		
 		$this->getPosts();
-		
+				
 		//remove any old post with this id
 		if($this->hasPost($post_id))
 			$this->removePost($post_id);
@@ -121,7 +121,24 @@ class PMProSeries
 		
 		if(empty($this->posts))
 			return false;
-			
+				
+		foreach($this->posts as $key => $post)
+		{
+			if($post->id == $post_id)
+				return true;
+		}
+		
+		return false;
+	}
+	
+	//get key of post with id = $post_id
+	function getPostKey($post_id)
+	{
+		$this->getPosts();
+		
+		if(empty($this->posts))
+			return false;
+				
 		foreach($this->posts as $key => $post)
 		{
 			if($post->id == $post_id)
@@ -133,7 +150,7 @@ class PMProSeries
 	
 	function getDelayForPost($post_id)
 	{
-		$key = $this->hasPost($post_id);
+		$key = $this->getPostKey($post_id);
 		
 		if($key === false)
 			return false;
@@ -231,17 +248,27 @@ class PMProSeries
 	//this function returns a UL with the current posts
 	function getPostList($echo = false)
 	{
+		global $current_user;
 		$this->getPosts();
 		if(!empty($this->posts))
 		{
 			ob_start();
 			?>		
-			<ul>
+			<ul id="pmpro_series-<?php echo $this->id; ?>" class="pmpro_series_list">
 			<?php			
 				foreach($this->posts as $sp)
 				{
 				?>
-				<li><a href="<?php echo get_permalink($sp->id);?>"><?php echo get_the_title($sp->id);?></a> (Day <?php echo $sp->delay;?>)</li>
+				<li>					
+					<?php if(pmpro_getMemberDays() >= $sp->delay) { ?>
+						<span class="pmpro_series_item-title"><a href="<?php echo get_permalink($sp->id);?>"><?php echo get_the_title($sp->id);?></a></span>
+						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink($sp->id);?>">Available Now</a></span>
+					<?php } else { ?>
+						<span class="pmpro_series_item-title"><?php echo get_the_title($sp->id);?></span>
+						<span class="pmpro_series_item-unavailable">available on day <?php echo $sp->delay;?></span>
+					<?php } ?>
+					<div class="clear"></div>
+				</li>
 				<?php
 				}		
 			?>
@@ -269,11 +296,11 @@ class PMProSeries
 			return false;
 		
 		if(isset($_REQUEST['pmpros_post']))
-			$pmpros_post = $_REQUEST['pmpros_post'];
-		if(isset($_REQUEST['pmpros_delay']));
-			$delay = $_REQUEST['pmpros_delay'];
+			$pmpros_post = intval($_REQUEST['pmpros_post']);
+		if(isset($_REQUEST['pmpros_delay']))
+			$delay = intval($_REQUEST['pmpros_delay']);
 		if(isset($_REQUEST['pmpros_remove']))
-			$remove = $_REQUEST['pmpros_remove'];
+			$remove = intval($_REQUEST['pmpros_remove']);
 			
 		//adding a post
 		if(!empty($pmpros_post))			
@@ -292,7 +319,14 @@ class PMProSeries
 			<div class="message error"><p><?php echo $this->error;?></p></div>
 		<?php } ?>
 		
-		<table id="pmpros_table">
+		<table id="pmpros_table" class="wp-list-table widefat fixed">
+		<thead>
+			<th>Order</th>
+			<th width="50%">Title</th>
+			<th>Delay (# of days)</th>
+			<th></th>
+			<th></th>
+		</thead>
 		<tbody>
 		<?php		
 		$count = 1;
@@ -310,9 +344,11 @@ class PMProSeries
 				<tr>
 					<td><?php echo $count?>.</td>
 					<td><?php echo get_the_title($post->id)?></td>
-					<td><?php echo $post->delay?> day<?php if($post->delay != 1) echo "s";?></td>
+					<td><?php echo $post->delay?></td>
 					<td>
-						<a href="javascript:pmpros_editPost('<?php echo $post->id;?>', '<?php echo $post->delay;?>'); void(0);">Edit</a> |
+						<a href="javascript:pmpros_editPost('<?php echo $post->id;?>', '<?php echo $post->delay;?>'); void(0);">Edit</a>
+					</td>
+					<td>
 						<a href="javascript:pmpros_removePost('<?php echo $post->id;?>'); void(0);">Remove</a>
 					</td>
 				</tr>
@@ -324,46 +360,45 @@ class PMProSeries
 		</tbody>
 		</table>
 		
-		<h4>Add/Edit Posts</h4>
-		<table id="pmpros_edit_post">
-			<tr>
-				<td>
-					Post:
-				</td>
-				<td>					
-					<?php /*
-					<input id="pmpros_post" name="pmpros_post" type="text" value="" />
-					*/ ?>
-					<select id="pmpros_post" name="pmpros_post">
-						<option value=""></option>
-					<?php
-						$pmpros_post_types = apply_filters("pmpros_post_types", array("post", "page"));
-						$allposts = $wpdb->get_results("SELECT ID, post_title, post_status FROM $wpdb->posts WHERE post_status IN('publish', 'draft') AND post_type IN ('" . implode("','", $pmpros_post_types) . "') AND post_title <> '' ORDER BY post_title");
-						foreach($allposts as $p)
-						{
-						?>
-						<option value="<?php echo $p->ID;?>"><?php echo esc_textarea($p->post_title);?> (#<?php echo $p->ID;?><?php if($p->post_status == "draft") echo "-DRAFT";?>)</option>
+		<div id="postcustomstuff">
+			<p><strong>Add/Edit Posts:</strong></p>
+			<table id="newmeta">
+				<thead>
+					<tr>
+						<th>Post/Page</th>
+						<th>Delay (# of days)</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+						<select id="pmpros_post" name="pmpros_post">
+							<option value=""></option>
 						<?php
-						}
-					?>
-					</select>
-					<style>
-						.select2-container {width: 250px;}
-					</style>
-					<script>
-						jQuery('#pmpros_post').select2();
-					</script>
-				</td>
-				<td>
-					Delay:
-					<input id="pmpros_delay" name="pmpros_delay" type="text" value="" />
-				</td>
-				<td>
-					<a class="button" id="pmpros_save">Save</a>
-				</td>
-			</tr>
-		</table>
-
+							$pmpros_post_types = apply_filters("pmpros_post_types", array("post", "page"));
+							$allposts = $wpdb->get_results("SELECT ID, post_title, post_status FROM $wpdb->posts WHERE post_status IN('publish', 'draft') AND post_type IN ('" . implode("','", $pmpros_post_types) . "') AND post_title <> '' ORDER BY post_title");
+							foreach($allposts as $p)
+							{
+							?>
+							<option value="<?php echo $p->ID;?>"><?php echo esc_textarea($p->post_title);?> (#<?php echo $p->ID;?><?php if($p->post_status == "draft") echo "-DRAFT";?>)</option>
+							<?php
+							}
+						?>
+						</select>
+						<style>
+							.select2-container {width: 100%;}
+						</style>
+						<script>
+							jQuery('#pmpros_post').select2();
+						</script>
+						</td>
+						<td><input id="pmpros_delay" name="pmpros_delay" type="text" value="" size="7" /></td>
+						<td><a class="button" id="pmpros_save">Add to Series</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 		<script>						
 			jQuery(document).ready(function() {
 				jQuery('#pmpros_save').click(function() {
@@ -404,6 +439,7 @@ class PMProSeries
 			{
 				jQuery('#pmpros_post').val(post_id).trigger("change");
 				jQuery('#pmpros_delay').val(delay);
+				jQuery('#pmpros_save').html('Save');
 				location.href = "#pmpros_edit_post";
 			}
 			
