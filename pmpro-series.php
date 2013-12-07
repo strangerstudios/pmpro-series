@@ -3,7 +3,7 @@
 Plugin Name: PMPro Series
 Plugin URI: http://www.paidmembershipspro.com/pmpro-series/
 Description: Offer serialized (drip feed) content to your PMPro members.
-Version: .2
+Version: .2.1
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -138,17 +138,20 @@ function pmpros_hasAccess($user_id, $post_id)
 		{
 			//has the user been around long enough for any of the delays?
 			$series_posts = get_post_meta($series_id, "_series_posts", true);
-			foreach($series_posts as $sp)
+			if(!empty($series_posts))
 			{
-				//this post we are checking is in this series
-				if($sp->id == $post_id)
+				foreach($series_posts as $sp)
 				{
-					//check specifically for the levels with access to this series
-					foreach($results[1] as $level_id)
+					//this post we are checking is in this series
+					if($sp->id == $post_id)
 					{
-						if(pmpro_getMemberDays($user_id, $level_id) >= $sp->delay)
-						{						
-							return true;	//user has access to this series and has been around longer than this post's delay
+						//check specifically for the levels with access to this series
+						foreach($results[1] as $level_id)
+						{
+							if(pmpro_getMemberDays($user_id, $level_id) >= $sp->delay)
+							{						
+								return true;	//user has access to this series and has been around longer than this post's delay
+							}
 						}
 					}
 				}
