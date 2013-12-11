@@ -24,6 +24,9 @@ This plugin currently requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-series/issues
 
 == Changelog ==
+= .2.2 =
+* Added pmpro_series_get_post_list filter.
+
 = .2.1 =
 * Fixed a warning message (Thanks, moneysharp on the WP.org forums.)
 
