@@ -281,6 +281,9 @@ class PMProSeries
 			<?php
 			$temp_content = ob_get_contents();
 			ob_end_clean();
+		
+			//filter
+			$temp_content = apply_filters("pmpro_series_get_post_list", $temp_content, $this);
 			
 			if($echo)
 				echo $temp_content;

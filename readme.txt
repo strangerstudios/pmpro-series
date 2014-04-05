@@ -29,6 +29,7 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 
 = .2.2 =
 * Flushing rewrite rules on activation and deactivation so /series/ URLs work without having to update permalink settings.
+* Added pmpro_series_get_post_list filter.
 
 = .2.1 =
 * Fixed a warning message (Thanks, moneysharp on the WP.org forums.)
