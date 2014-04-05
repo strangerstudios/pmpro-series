@@ -176,6 +176,11 @@ class PMProSeries
 	*/
 	function createCPT()
 	{
+		//don't want to do this when deactivating
+		global $pmpros_deactivating;
+		if(!empty($pmpros_deactivating))
+			return false;
+		
 		register_post_type('pmpro_series',
 				array(
 						'labels' => array(

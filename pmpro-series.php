@@ -3,7 +3,7 @@
 Plugin Name: PMPro Series
 Plugin URI: http://www.paidmembershipspro.com/pmpro-series/
 Description: Offer serialized (drip feed) content to your PMPro members.
-Version: .2.1
+Version: .2.2
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -23,7 +23,6 @@ Author URI: http://www.strangerstudios.com
 	2. User gets access to any "0 days after" series content.
 	3. Each day a script checks if a user should gain access to any new content, if so:
 	- User is given access to the content.
-	- A link to the content is added to the Membership Account page.
 	- An email is sent to the user letting them know that content is available.	
 	
 	Checking for access:
@@ -33,7 +32,7 @@ Author URI: http://www.strangerstudios.com
 	* If so, does the user have access to that content yet? (count days)
 	* If not, then the user will have access. (e.g. Pro members get access to everything right away.)
 	
-	Checking to send emails:
+	Checking to send emails: (planned feature)
 	* For all members with series levels.
 	* What day of the membership is it?
 	* For all series.
@@ -263,9 +262,9 @@ if(!function_exists("pmpro_getMemberStartdate"))
 			if(!empty($level_id))
 				$sqlQuery = "SELECT UNIX_TIMESTAMP(startdate) FROM $wpdb->pmpro_memberships_users WHERE status = 'active' AND membership_id IN(" . $wpdb->escape($level_id) . ") AND user_id = '" . $user_id . "' ORDER BY id LIMIT 1";		
 			else
-				$sqlQuery = "SELECT UNIX_TIMESTAMP(startdate) FROM $wpdb->pmpro_memberships_users WHERE status = 'active' AND user_id = '" . $user_id . "' ORDER BY id LIMIT 1";		
-						
-			$startdate = $wpdb->get_var($sqlQuery);
+				$sqlQuery = "SELECT UNIX_TIMESTAMP(startdate) FROM $wpdb->pmpro_memberships_users WHERE status = 'active' AND user_id = '" . $user_id . "' ORDER BY id LIMIT 1";
+				
+			$startdate = apply_filters("pmpro_member_startdate", $wpdb->get_var($sqlQuery), $user_id, $level_id);
 			
 			$pmpro_startdates[$user_id][$level_id] = $startdate;
 		}
@@ -336,3 +335,20 @@ function series_post_type_icon() {
         }
     </style>
 <?php } 
+
+/*
+	We need to flush rewrite rules on activation/etc for the CPTs.
+*/
+function pmpros_activation() 
+{	
+	PMProSeries::createCPT();
+	flush_rewrite_rules();
+}
+register_activation_hook( __FILE__, 'pmpros_activation' );
+function pmpros_deactivation() 
+{	
+	global $pmpros_deactivating;
+	$pmpros_deactivating = true;
+    flush_rewrite_rules();
+}
+register_deactivation_hook( __FILE__, 'pmpros_deactivation' );

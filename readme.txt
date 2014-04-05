@@ -1,9 +1,9 @@
 === PMPro Series ===
 Contributors: strangerstudios
 Tags: series, drip feed, serial, delayed, limited, memberships
-Requires at least: 3.0
-Tested up to: 3.4.2
-Stable tag: .2.1
+Requires at least: 3.4
+Tested up to: 3.8.1
+Stable tag: .2.3
 
 Create "Series" which are groups of posts/pages where content is revealed to members over time. This is the "drip feed content" module for Paid Memberships Pro.
 
@@ -24,6 +24,12 @@ This plugin currently requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-series/issues
 
 == Changelog ==
+= .2.3 =
+* Added pmpro_member_startdate filter to pmpro_getMemberStartdate function.
+
+= .2.2 =
+* Flushing rewrite rules on activation and deactivation so /series/ URLs work without having to update permalink settings.
+
 = .2.1 =
 * Fixed a warning message (Thanks, moneysharp on the WP.org forums.)
 
