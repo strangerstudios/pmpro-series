@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: series, drip feed, serial, delayed, limited, memberships
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: .2.1
+Stable tag: .3
 
 Create "Series" which are groups of posts/pages where content is revealed to members over time. This is the "drip feed content" module for Paid Memberships Pro.
 
@@ -24,6 +24,11 @@ This plugin currently requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-series/issues
 
 == Changelog ==
+
+= .3 =
+* Added account page links
+* Added emails when new content is available
+
 = .2.2 =
 * Added pmpro_series_get_post_list filter.
 
