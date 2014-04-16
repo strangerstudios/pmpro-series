@@ -3,7 +3,7 @@
 Plugin Name: PMPro Series
 Plugin URI: http://www.paidmembershipspro.com/pmpro-series/
 Description: Offer serialized (drip feed) content to your PMPro members.
-Version: .2.3
+Version: .2.4-ts
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -162,6 +162,31 @@ function pmpros_hasAccess($user_id, $post_id)
 	return false;
 }
 
+add_action('admin_init', 'pmpros_adminInit');
+
+function pmpros_adminInit()
+{
+    register_setting('pmpro_series', 'pmpro_series', 'pmpros_optionsValidate');
+    add_settings_section('pmpro_series_main', 'Main Settings', 'pmpros_sectionText', 'pmpro_series');
+    add_settings_field('pmpros_future_posts_visible', 'Visibility', 'visible', 'pmpro_series', 'pmpro_series_main');
+}
+
+function pmpros_fpv_bool()
+{
+    $options = get_option('pmpro_series');
+    echo "<input id='pmpros_future_posts_visible' name='pmpro_series[visible]' type='checkbox' value='1' class='code' " . checked( 1, get_option( 'eg_setting_name' ), false ) . " /> Display upcoming (future) Posts/Pages";
+}
+// Test whether to show future series posts (i.e. not yet available)
+function pmpros_showFuturePosts()
+{
+    /* TODO: Get the option status for displaying future posts in list */
+    $options = get_option('pmpro_series');
+    $isVisible = ($options[visible] == '1' ? true : false);
+
+    return $isVisible;
+
+}
+
 /*
 	Filter pmpro_has_membership_access based on series access.
 */
@@ -284,10 +309,20 @@ if(!function_exists("pmpro_getMemberStartdate"))
 		if(empty($pmpro_member_days[$user_id][$level_id]))
 		{		
 			$startdate = pmpro_getMemberStartdate($user_id, $level_id);
-				
+		/**
+		    Removed to support TZ transitions and whole days
+
 			$now = time();
 			$days = ($now - $startdate)/3600/24;
-		
+		**/
+
+            /* Will take Daylight savings changes into account and ensure only integer value days returned */
+            $dStart = new DateTime( date('Y-m-d', $startdate) );
+            $dEnd = new DateTime( date('Y-m-d') ); // Today's date
+            $dDiff = $dStart->diff($dEnd);
+            $dDiff->format('%d');
+            $days = $dDiff->days;
+
 			$pmpro_member_days[$user_id][$level_id] = $days;
 		}
 		

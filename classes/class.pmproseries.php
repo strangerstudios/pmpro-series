@@ -196,7 +196,9 @@ class PMProSeries
                                 'view_item' => __( 'View This Series' ),
                                 'search_items' => __( 'Search Series' ),
                                 'not_found' => __( 'No Series Found' ),
-                                'not_found_in_trash' => __( 'No Series Found In Trash' )
+                                'not_found_in_trash' => __( 'No Series Found In Trash' ),
+//                                'settings' => __( 'Settings' ),
+  //                              'settings_item' => __( 'Settings' )
                         ),
 				'public' => true,					
 				/*'menu_icon' => plugins_url('images/icon-series16-sprite.png', dirname(__FILE__)),*/
@@ -235,8 +237,12 @@ class PMProSeries
 		add_meta_box('pmpro_page_meta', 'Require Membership', 'pmpro_page_meta', 'pmpro_series', 'side');	
 		
 		//series meta box
-		add_meta_box('pmpro_series_meta', 'Posts in this Series', array("PMProSeries", "seriesMetaBox"), 'pmpro_series', 'normal');	
-	}
+		add_meta_box('pmpro_series_meta', 'Posts in this Series', array("PMProSeries", "seriesMetaBox"), 'pmpro_series', 'normal');
+
+        // series options page
+        add_submenu_page('PMProSeries', 'Series Options', 'Options', 'manage_options', 'pmpro_series', 'pmpros_OptionsPage');
+
+    }
 	
 	//this is the actual series meta box
 	function seriesMetaBox()
@@ -249,7 +255,24 @@ class PMProSeries
 		</div>				
 		<?php		
 	}
-	
+
+    // Display the series options page
+    function pmpros_OptionsPage()
+    {
+        ?>
+        <div clas="wrap">
+            <h2>Paid Membership Pro Series Plugin</h2>
+            Options related to configuring Paid Memberships Pro Series pages.
+            <form action="" method="post">
+                <?php settings_fields('pmpro_series'); ?>
+                <?php do_settings_sections('pmpro_series'); ?>
+
+                <input name-="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" />
+            </form>
+        </div>
+        <?php
+    }
+
 	//this function returns a UL with the current posts
 	function getPostList($echo = false)
 	{
@@ -268,7 +291,7 @@ class PMProSeries
 					<?php if(pmpro_getMemberDays() >= $sp->delay) { ?>
 						<span class="pmpro_series_item-title"><a href="<?php echo get_permalink($sp->id);?>"><?php echo get_the_title($sp->id);?></a></span>
 						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink($sp->id);?>">Available Now</a></span>
-					<?php } else { ?>
+					<?php } elseif ((pmpro_getMemberDays() < $sp->delay) && pmpros_showFuturePosts() ) { ?>
 						<span class="pmpro_series_item-title"><?php echo get_the_title($sp->id);?></span>
 						<span class="pmpro_series_item-unavailable">available on day <?php echo $sp->delay;?></span>
 					<?php } ?>
