@@ -228,6 +228,7 @@ class PMProSeries
 		{
 			wp_enqueue_style('pmpros-select2', plugins_url('css/select2.css', dirname(__FILE__)), '', '3.1', 'screen');
 			wp_enqueue_script('pmpros-select2', plugins_url('js/select2.js', dirname(__FILE__)), array( 'jquery' ), '3.1' );
+
 			add_action('admin_menu', array("PMProSeries", "defineMetaBoxes"));
 		}
 	}	
@@ -238,9 +239,6 @@ class PMProSeries
 		
 		//series meta box
 		add_meta_box('pmpro_series_meta', 'Posts in this Series', array("PMProSeries", "seriesMetaBox"), 'pmpro_series', 'normal');
-
-        // series options page
-        add_submenu_page('PMProSeries', 'Series Options', 'Options', 'manage_options', 'pmpro_series', 'pmpros_OptionsPage');
 
     }
 	

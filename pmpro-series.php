@@ -50,6 +50,7 @@ Author URI: http://www.strangerstudios.com
 	Includes
 */
 require_once(dirname(__FILE__) . "/classes/class.pmproseries.php");
+require_once(dirname(__FILE__) . "/pmpro-series-settings.php");
 
 
 /*
@@ -162,29 +163,15 @@ function pmpros_hasAccess($user_id, $post_id)
 	return false;
 }
 
-add_action('admin_init', 'pmpros_adminInit');
 
-function pmpros_adminInit()
-{
-    register_setting('pmpro_series', 'pmpro_series', 'pmpros_optionsValidate');
-    add_settings_section('pmpro_series_main', 'Main Settings', 'pmpros_sectionText', 'pmpro_series');
-    add_settings_field('pmpros_future_posts_visible', 'Visibility', 'visible', 'pmpro_series', 'pmpro_series_main');
-}
-
-function pmpros_fpv_bool()
-{
-    $options = get_option('pmpro_series');
-    echo "<input id='pmpros_future_posts_visible' name='pmpro_series[visible]' type='checkbox' value='1' class='code' " . checked( 1, get_option( 'eg_setting_name' ), false ) . " /> Display upcoming (future) Posts/Pages";
-}
 // Test whether to show future series posts (i.e. not yet available)
 function pmpros_showFuturePosts()
 {
     /* TODO: Get the option status for displaying future posts in list */
-    $options = get_option('pmpro_series');
-    $isVisible = ($options[visible] == '1' ? true : false);
+    $options = get_option('pmpros_options');
+    $isVisible = ($options[showFutureEntries] == '1' ? true : false);
 
     return $isVisible;
-
 }
 
 /*
