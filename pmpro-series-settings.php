@@ -54,6 +54,7 @@ class PMProSeriesSettings
             Options for configuring Paid Memberships Pro sequential post or page series (drip content).
             <form action="options-general.php?page=pmpros-series-admin" method="post">
                 <?php
+                    settings_error();
                     settings_fields( 'pmpros_options' );
                     do_settings_sections( 'pmpro-series-admin' );
                     submit_button();
