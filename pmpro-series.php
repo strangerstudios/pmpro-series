@@ -65,7 +65,9 @@ function pmprors_scripts()
 			//load some styles that we need from PMPro
 			wp_enqueue_style("pmprors_pmpro", plugins_url('css/pmpro_series.css',__FILE__ ));
 		/*}*/
-	}
+	} else {
+        $pmpros_settings_page = new PMProSeriesSettings;
+    }
 }
 add_action("init", "pmprors_scripts");
 
