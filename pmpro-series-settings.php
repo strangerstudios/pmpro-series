@@ -22,6 +22,11 @@ class PMProSeriesSettings
         add_action( 'admin_menu', array($this, 'pmpros_addSettingsPage'));
     }
 
+    private function pmp_debug($msg)
+    {
+        error_log('pmpro-series: ' . $msg);
+    }
+
     /**
      * Add options page
      */
@@ -42,17 +47,19 @@ class PMProSeriesSettings
     public function create_admin_page()
     {
         $this->options = get_option( 'pmpros_options' );
+
         ?>
         <div clas="wrap">
             <h2>PMPro Series - Settings</h2>
             Options for configuring Paid Memberships Pro sequential post or page series (drip content).
-            <form action="" method="post">
+            <form action="options-general.php?page=pmpros-series-admin" method="post">
                 <?php
-                    settings_fields( 'pmpro_series' );
-                    do_settings_sections( 'pmpros-series-admin' );
+                    settings_fields( 'pmpros_options' );
+                    do_settings_sections( 'pmpro-series-admin' );
                     submit_button();
                 ?>
             </form>
+           <?php $this->pmp_debug('Checked Is: ' . var_dump(get_option('pmpros_options') ));  ?>
         </div>
         <?php
     }
@@ -63,37 +70,54 @@ class PMProSeriesSettings
     public function pmpros_initSettings()
     {
         register_setting(
-            'pmpros_option_group', // Option Group
+            'pmpros_settings_group', // Option Group
             'pmpros_options', // Option Name
-            array($this, 'validate') // setting value validation callback
+            array($this, 'pmpros_validate') // Validation callback
         );
+
+        $this->pmp_debug('Registered pmpros_options');
+        $this->pmp_debug('Value: ' . var_dump( (array) get_option('pmpros_options')));
 
         add_settings_section(
             'pmpros_visibility_settings_id', // ID
-            'Visibility', // Title
+            'Upcoming Posts in Series', // Title
             array( $this, 'print_section_info'), // Callback
-            'pmpros-series-admin' // Page
+            'pmpro-series-admin' // Page
         );
+
+        $this->pmp_debug('Added settings section');
 
         add_settings_field(
-            'showFutureEntries',
+            'showFuturePosts',
             'Visible',
             array( $this, 'futureEntries_callback' ), // Callback
-            'pmpros-series-admin', // Page
+            'pmpro-series-admin', // Page
             'pmpros_visibility_settings_id' // Section
         );
+
+        $this->pmp_debug('Added settings form entry');
     }
 
-    public function validate( $input )
+    public function pmpros_validate( $input )
     {
-        $new_input = array();
+        $output = get_option('pmpros_options');
 
-        if (isset( $input['showFutureEntries']))
+        $this->pmp_debug('pmpros_validate() executing');
+        $this->pmp_debug( 'Set to: ' . var_dump($input));
+
+        $output = array();
+
+        if (isset( $input['showFuturePosts']))
         {
-            $new_input['showFutureEntries'] = $input['showFutureEntries'] == "1" ? 1 : 0;
+            // $this->options = $input;
+            $output['showFuturePosts'] = $input['showFuturePosts'];
+
+            $this->pmp_debug('showFuturePosts option is: ' . $output['showFuturePosts']);
+        } else {
+            $this->pmp_debug('No Options set???');
         }
 
-        return $new_input;
+        return $output;
     }
 
     /**
@@ -109,7 +133,9 @@ class PMProSeriesSettings
      */
     public function futureEntries_callback()
     {
-        echo "<input id='showFutureEntries' name='pmpros_options[showFutureEntries]' type='checkbox' value='1' class='code' " . checked( 1, get_option( 'pmpros_options' ), false ) . " /> Upcoming posts/pages in series will be visible";
+        $this->options = (array) get_option('pmpros_options');
+
+        echo '<input id="showFuturePosts" name="pmpros_options[showFuturePosts]" type="checkbox" value="1" ' . checked( $this->options['showFuturePosts'], 1 ) . ' /> Upcoming posts/pages in series will be visible';
     }
 }
 

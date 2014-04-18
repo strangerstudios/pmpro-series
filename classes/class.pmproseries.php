@@ -254,23 +254,6 @@ class PMProSeries
 		<?php		
 	}
 
-    // Display the series options page
-    function pmpros_OptionsPage()
-    {
-        ?>
-        <div clas="wrap">
-            <h2>Paid Membership Pro Series Plugin</h2>
-            Options related to configuring Paid Memberships Pro Series pages.
-            <form action="" method="post">
-                <?php settings_fields('pmpro_series'); ?>
-                <?php do_settings_sections('pmpro_series'); ?>
-
-                <input name-="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" />
-            </form>
-        </div>
-        <?php
-    }
-
 	//this function returns a UL with the current posts
 	function getPostList($echo = false)
 	{
