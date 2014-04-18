@@ -140,6 +140,8 @@ class PMProSeriesSettings
 }
 
 
-
+/*
 if ( is_admin() )
     $pmpros_series_settings_page = new PMProSeriesSettings;
+
+*/
