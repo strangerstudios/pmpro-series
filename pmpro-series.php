@@ -50,7 +50,7 @@ Author URI: http://www.strangerstudios.com
 	Includes
 */
 require_once(dirname(__FILE__) . "/classes/class.pmproseries.php");
-require_once(dirname(__FILE__) . "/pmpro-series-settings.php");
+require_once(dirname(__FILE__) . "/classes/class.pmpros-settings.php");
 
 
 /*
@@ -66,7 +66,8 @@ function pmprors_scripts()
 			wp_enqueue_style("pmprors_pmpro", plugins_url('css/pmpro_series.css',__FILE__ ));
 		/*}*/
 	} else {
-        $pmpros_settings_page = new PMProSeriesSettings;
+
+        $pmpros_settings_page = new PMPros_Settings;
     }
 }
 add_action("init", "pmprors_scripts");
