@@ -6,20 +6,39 @@
  * Time: 1:33 PM
  */
 
+define('SORT_ASC', 100);
+define('SORT_DESC', 200);
+
 class PMProSeriesSettings
 {
     /**
      * Hold values to be used in the field callbacks for settings
      */
-    private $options;
+    protected $option_name = 'pmpros_settings';
+    protected $options = array(
+        'showFuturePosts' => 1,
+        'sortOrder' => SORT_ASC,
+    );
 
     /**
      * Start (construct) settings page
      */
     public function __construct()
     {
-        add_action( 'admin_init', array($this, 'pmpros_initSettings'));
+        add_action( 'admin_init', array($this, 'admin_init'));
         add_action( 'admin_menu', array($this, 'pmpros_addSettingsPage'));
+    }
+
+    public function activate()
+    {
+        $settings = new PMProSeriesSettings();
+        update_option($settings->option_name, $settings->options);
+    }
+
+    public function deactivate()
+    {
+        $settings = new PMProSeriesSettings();
+        delete_option($settings->option_name);
     }
 
     private function pmp_debug($msg)
@@ -46,21 +65,21 @@ class PMProSeriesSettings
      */
     public function create_admin_page()
     {
-        $this->options = get_option( 'pmpros_options' );
+        $this->options = get_option($this->option_name);
 
         ?>
         <div clas="wrap">
             <h2>PMPro Series - Settings</h2>
             Options for configuring Paid Memberships Pro sequential post or page series (drip content).
-            <form action="options-general.php?page=pmpros-series-admin" method="post">
+            <form action="<?php admin_url( 'admin-post.php' ); ?>" method="post">
                 <?php
-                    settings_error();
-                    settings_fields( 'pmpros_options' );
+                    settings_errors();
+                    settings_fields( $this->option_name );
                     do_settings_sections( 'pmpro-series-admin' );
                     submit_button();
                 ?>
             </form>
-           <?php $this->pmp_debug('Checked Is: ' . var_dump(get_option('pmpros_options') ));  ?>
+           <div><?php $this->pmp_debug('Variable contents are: ' . var_dump(get_option($this->option_name) ));  ?></div>
         </div>
         <?php
     }
@@ -68,57 +87,108 @@ class PMProSeriesSettings
     /**
      * Register and add settings
      */
-    public function pmpros_initSettings()
+    public function admin_init()
     {
-        register_setting(
-            'pmpros_settings_group', // Option Group
-            'pmpros_options', // Option Name
-            array($this, 'pmpros_validate') // Validation callback
+        if (is_null($this->options))
+            $this->options = get_option( $this->option_name );
+
+        $default_values = array(
+            'showFuturePosts' => 1,
+            'sortOrder' => SORT_DESC
         );
 
-        $this->pmp_debug('Registered pmpros_options');
-        $this->pmp_debug('Value: ' . var_dump( (array) get_option('pmpros_options')));
+        $data = shortcode_atts($default_values, $this->options);
+
+        register_setting(
+            'pmpros_settings_group', // Option Group
+            $this->option_name, // Option Name
+            array($this, 'validate') // Validation callback
+        );
+
+        $this->pmp_debug('Registered new option');
+        $this->pmp_debug('Value: ' . var_dump( (array) get_option($this->option_name)));
 
         add_settings_section(
-            'pmpros_visibility_settings_id', // ID
-            'Upcoming Posts in Series', // Title
-            array( $this, 'print_section_info'), // Callback
+            'pmpros_post_settings_id', // ID
+            'Post Series Settings', // Title
+            array( &$this, 'print_section_info'), // Callback
             'pmpro-series-admin' // Page
         );
 
         $this->pmp_debug('Added settings section');
 
         add_settings_field(
-            'showFuturePosts',
-            'Visible',
-            array( $this, 'futureEntries_callback' ), // Callback
+            $this->options['showFuturePosts'],
+            'Display Future Posts',
+            array( $this, 'renderInput' ), // Callback
             'pmpro-series-admin', // Page
-            'pmpros_visibility_settings_id' // Section
+            'pmpros_post_settings_id', // Section
+            array(
+                'label_for' => 'showFuturePosts',
+                'type' => 'checkbox',
+                'descr' => 'Display upcoming (future) Posts in series (checked)',
+                'name' => 'showFuturePosts',
+                'value' => esc_attr($data['showFuturePosts']),
+                'option_name' => $this->option_name
+            )
+        );
+
+        add_settings_field(
+            $this->options['sortOrder'],
+            'Sort Order',
+            array( $this, 'renderSelect'),
+            'pmpro-series-admin',
+            'pmpros_post_settings_id',
+            array(
+                'label_for' => 'sortOrder',
+                'name' => 'sortOrder',
+                'type' => 'select',
+                'value' => esc_attr($data['sortOrder']),
+                'options' => array(
+                    100 => 'Ascending',
+                    200 => 'Descending'
+                ),
+                'option_name' => $this->option_name,
+            )
         );
 
         $this->pmp_debug('Added settings form entry');
     }
 
-    public function pmpros_validate( $input )
+    public function validate( $input )
     {
-        $output = get_option('pmpros_options');
+        $default_values = array(
+            'showFuturePosts' => 1,
+            'sortOrder' => SORT_DESC,
+        );
 
-        $this->pmp_debug('pmpros_validate() executing');
-        $this->pmp_debug( 'Set to: ' . var_dump($input));
+        if (! is_array($input))
+            return $default_values;
 
-        $output = array();
 
-        if (isset( $input['showFuturePosts']))
+        $this->pmp_debug('validate() executing');
+
+        $valid = array();
+
+        foreach ($default_values as $key => $value)
         {
-            // $this->options = $input;
-            $output['showFuturePosts'] = $input['showFuturePosts'];
+            if (empty($input[ $key ]))
+            {
+                $valid[ $key ] = $value;
 
-            $this->pmp_debug('showFuturePosts option is: ' . $output['showFuturePosts']);
-        } else {
-            $this->pmp_debug('No Options set???');
+            } else {
+                if ( ( $input[$key] !== SORT_DESC ) || ($input[$key] !== SORT_ASC) )
+                    add_settings_error(
+                        $this->option_name,
+                        'invalid-sort-value',
+                        'Sort order must be "Ascending" or "Descending".'
+                    );
+                else
+                    $valid[ $key ] = $input[ $key ];
+            }
         }
 
-        return $output;
+        return $valid;
     }
 
     /**
@@ -126,23 +196,54 @@ class PMProSeriesSettings
      */
     public function print_section_info()
     {
-        print 'Use this setting to show or hide upcoming Posts/Pages in the series. This setting will apply to all series';
+        // print 'Use this setting to show or hide upcoming Posts/Pages in the series. This setting will apply to all series';
+        print '';
     }
 
+    public function renderSelect( $args )
+    {
+        printf(
+            '<select name="%1$s[%2$s]" id=%3$s>',
+            $args['option_name'],
+            $args['name'],
+            $args['label_for']
+        );
+
+        foreach( $args['options'] as $val => $title )
+        {
+            printf(
+                '<option value="%1$s" %2$s>%3$s</option>',
+                $val,
+                selected( $val, $args['value'], FALSE),
+                $title
+            );
+        }
+
+        print '</select>';
+    }
     /**
      * Print the settings value for the showFutureEntries settings
      */
-    public function futureEntries_callback()
+    public function renderInput( $args )
     {
-        $this->options = (array) get_option('pmpros_options');
+        if ( $args['type'] == 'checkbox') {
+            printf(
+                '<input type="%1$s" id="%2" name="%3[%1]" value="%4%" %5 /> %6',
+                $args['type'],
+                $args['label_for'],
+                $args['option_name'],
+                $args['value'],
+                checked( $args['name'], 1),
+                $args['descr']
+            );
+        } else {
 
-        echo '<input id="showFuturePosts" name="pmpros_options[showFuturePosts]" type="checkbox" value="1" ' . checked( $this->options['showFuturePosts'], 1 ) . ' /> Upcoming posts/pages in series will be visible';
+            printf(
+                '<input type="%1" id="%2" name="%3[%1]" />',
+                $args['type'],
+                $args['label_for'],
+                $args['option_name']
+            );
+        }
     }
 }
-
-
-/*
-if ( is_admin() )
-    $pmpros_series_settings_page = new PMProSeriesSettings;
-
-*/
