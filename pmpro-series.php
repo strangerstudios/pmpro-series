@@ -65,10 +65,11 @@ function pmprors_scripts()
 			//load some styles that we need from PMPro
 			wp_enqueue_style("pmprors_pmpro", plugins_url('css/pmpro_series.css',__FILE__ ));
 		/*}*/
-	} else {
+	}
 
+    if (is_admin())
         $pmpros_settings_page = new PMPros_Settings;
-    }
+
 }
 add_action("init", "pmprors_scripts");
 
@@ -166,16 +167,6 @@ function pmpros_hasAccess($user_id, $post_id)
 	return false;
 }
 
-
-// Test whether to show future series posts (i.e. not yet available)
-function pmpros_showFuturePosts()
-{
-    /* TODO: Get the option status for displaying future posts in list */
-    $options = get_option('pmpros_options');
-    $isVisible = ($options[showFutureEntries] == '1' ? true : false);
-
-    return $isVisible;
-}
 
 /*
 	Filter pmpro_has_membership_access based on series access.
@@ -312,6 +303,8 @@ if(!function_exists("pmpro_getMemberStartdate"))
             $dDiff = $dStart->diff($dEnd);
             $dDiff->format('%d');
             $days = $dDiff->days;
+
+            error_log('Member days = ' . $days);
 
 			$pmpro_member_days[$user_id][$level_id] = $days;
 		}

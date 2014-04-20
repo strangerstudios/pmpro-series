@@ -14,7 +14,11 @@ if ( !class_exists( 'PMPros_Settings' ) ):
 class PMPros_Settings {
 
     private $settings_api;
+    private $series = array();
 
+    /**
+     * Class constructor (creates the
+     */
     public function __construct()
     {
         $this->settings_api = new WeDevs_Settings_API;
@@ -23,6 +27,9 @@ class PMPros_Settings {
         add_action( 'admin_menu', array( $this, 'admin_menu' ) );
     }
 
+    /**
+     * Init for PMPro Series settings page
+     */
     public function admin_init()
     {
         $this->settings_api->set_sections( $this->get_settings_sections() );
@@ -32,65 +39,126 @@ class PMPros_Settings {
 
     }
 
+    /**
+     * Add the settings entry for the PMPro Series to the default "Settings" admin menu
+     * Only visible to users with 'manage_options' privileges
+     */
     public function admin_menu()
     {
-        add_options_page( 'PMPro Series', 'Series Settings', 'manage_options', 'pmpros_settings', array( $this, 'plugin_page' ));
+        add_options_page( 'PMPro Series', 'PMPro Series', 'manage_options', 'pmpro_series', array( $this, 'plugin_page' ));
     }
 
+    /**
+     * Load metadata related to the series (used to populate Settings tabs)
+     */
+    public function load_series_data()
+    {
+        $args = array(
+            'post_type' => 'pmpro_series',
+            'orderby' => 'title',
+            'posts_per_page' => -1,
+            'caller_get_posts' => 1
+        );
+
+        $tmpPosts = null;
+        $tmpPosts = get_posts($args);
+
+        foreach ( $tmpPosts as $post) : setup_postdata($post);
+
+            $this->series[] = array(
+                'ID' => $post->ID,
+                'title' => $post->post_title,
+                'name' => $post->post_name
+            );
+
+        endforeach;
+
+        wp_reset_postdata();
+    }
+
+    /**
+     *
+     * Create sections for the PMPro Series settings page
+     *
+     * @return array -- Array of sections (tabs) for the settings page
+     */
     public function get_settings_sections()
     {
+        /* If the list is empty, grab the list of pmpro_series CPT entries */
+        if (empty($this->series[0]))
+            $this->load_series_data();
+
         $sections = array();
 
-        // TODO: List all Series & generate a TAB for each of them
-        // Use the series slug as its ID
-
-        $sections[] = array(
-            'id' => 'february-2014-nourish-lesson-list', // Series slug
-            'title' => __( 'February 2014 - Nourish Lesson List', '' ) // Series Title
-        );
+        // Append a new section for each of the defined & published series
+        foreach ($this->series as $post)
+        {
+            $sections[] = array(
+                'id' => $post['name'], // Series slug
+                'title' => __( $post['title'], 'pmpro_series' ) // Series Title
+            );
+        }
 
         return $sections;
     }
 
+    /**
+     *
+     * Define settings fields for each of the sections on the settings page
+     *
+     * @return array -- Array of fields for each of the defined sections / series
+     */
     public function get_settings_fields()
     {
+        if (empty($this->series[0]))
+            $this->load_series_data();
+
         $settings_fields = array();
 
-        // TODO: Make dynamic, based on the defined series.
-        $settings_fields[] = array(
-            'february-2014-nourish-lesson-list' => array(
-                array(
-                    'name' => 'hide',
-                    'label' => __( 'Hide', 'pmpro_series' ),
-                    'desc' => __( 'Hide future posts', 'pmpro_series' ),
-                    'type' => 'checkbox',
-                ),
-                array(
-                    'name' => 'sort',
-                    'label' => __( 'Sort Order', 'pmpro_series' ),
-                    'desc' => __( 'The sort order for this series', 'pmpro_series' ),
-                    'type' => 'select',
-                    'options' => array(
-                        SORT_ASC => 'Ascending',
-                        SORT_DESC => 'Descending',
+        foreach ($this->series as $post)
+        {
+            $settings_fields[$post['name']] = array(
+                    array(
+                        'name' => 'hidden',
+                        'label' => __( 'Hide', 'pmpro_series' ),
+                        'desc' => __( 'Hide future posts', 'pmpro_series' ),
+                        'type' => 'checkbox',
+                    ),
+                    array(
+                        'name' => 'sortOrder',
+                        'label' => __( 'Sort Order', 'pmpro_series' ),
+                        'desc' => __( 'The sort order for this series', 'pmpro_series' ),
+                        'type' => 'select',
+                        'options' => array(
+                            SORT_ASC => 'Ascending',
+                            SORT_DESC => 'Descending',
+                        )
                     )
-                )
-            )
-        );
+                );
+        }
+
+        // echo '<div>' . var_dump($settings_fields) . '</div>';
 
         return $settings_fields;
     }
 
+    /**
+     * Create the page for the PMPro Series settings
+     */
     public function plugin_page()
     {
         echo '<div class="wrap">';
-
         $this->settings_api->show_navigation();
         $this->settings_api->show_forms();
 
         echo '</div>';
     }
 
+    /**
+     * Creates the page list & titles
+     *
+     * @return array -- Array of option pages (i.e. data in the tabs for the settings/options)
+     */
     public function get_pages()
     {
         $pages = get_pages();

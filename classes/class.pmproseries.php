@@ -197,8 +197,6 @@ class PMProSeries
                                 'search_items' => __( 'Search Series' ),
                                 'not_found' => __( 'No Series Found' ),
                                 'not_found_in_trash' => __( 'No Series Found In Trash' ),
-//                                'settings' => __( 'Settings' ),
-  //                              'settings_item' => __( 'Settings' )
                         ),
 				'public' => true,					
 				/*'menu_icon' => plugins_url('images/icon-series16-sprite.png', dirname(__FILE__)),*/
@@ -272,10 +270,12 @@ class PMProSeries
 					<?php if(pmpro_getMemberDays() >= $sp->delay) { ?>
 						<span class="pmpro_series_item-title"><a href="<?php echo get_permalink($sp->id);?>"><?php echo get_the_title($sp->id);?></a></span>
 						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink($sp->id);?>">Available Now</a></span>
-					<?php } elseif ((pmpro_getMemberDays() < $sp->delay) && pmpros_showFuturePosts() ) { ?>
+                    <?php } ?>
+<!-- 					<?php // } elseif ( ( pmpro_getMemberDays() < $sp->delay ) && ( $this->hideUpcomingPosts($this->id) == false ) ) { ?>
 						<span class="pmpro_series_item-title"><?php echo get_the_title($sp->id);?></span>
 						<span class="pmpro_series_item-unavailable">available on day <?php echo $sp->delay;?></span>
-					<?php } ?>
+-->
+					<?php // } ?>
 					<div class="clear"></div>
 				</li>
 				<?php
@@ -297,7 +297,38 @@ class PMProSeries
 		
 		return false;
 	}
-	
+
+    // Test whether to show future series posts (i.e. not yet available)
+    public function hideUpcomingPosts( $series_id )
+    {
+        $args = array(
+            'post_type' => 'pmpro_series',
+            'orderby' => 'title',
+            'posts_per_page' => -1,
+            'caller_get_posts' => 1
+        );
+
+        $tmpPosts = null;
+        $tmpPosts = get_posts($args);
+
+        foreach ( $tmpPosts as $post) : setup_postdata($post);
+
+            if ( $series_id === $post->ID )
+                $options = get_option( $post->post_name );
+
+        endforeach;
+
+        wp_reset_postdata();
+
+        error_log( 'Options: ' . var_dump( $options ));
+
+        /* TODO: Get the option status for displaying future posts in list */
+
+        $isHidden = ($options['hidden'] == '1' ? true : false );
+
+        return $isHidden;
+    }
+
 	//this code updates the posts and draws the list/form
 	function getPostListForMetaBox()
 	{
