@@ -270,12 +270,10 @@ class PMProSeries
 					<?php if(pmpro_getMemberDays() >= $sp->delay) { ?>
 						<span class="pmpro_series_item-title"><a href="<?php echo get_permalink($sp->id);?>"><?php echo get_the_title($sp->id);?></a></span>
 						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink($sp->id);?>">Available Now</a></span>
-                    <?php } ?>
-<!-- 					<?php // } elseif ( ( pmpro_getMemberDays() < $sp->delay ) && ( $this->hideUpcomingPosts($this->id) == false ) ) { ?>
+ 					<?php } elseif ( ( pmpro_getMemberDays() < $sp->delay )) { // && ( $this->hideUpcomingPosts($this->id) == false ) ) { ?>
 						<span class="pmpro_series_item-title"><?php echo get_the_title($sp->id);?></span>
 						<span class="pmpro_series_item-unavailable">available on day <?php echo $sp->delay;?></span>
--->
-					<?php // } ?>
+					<?php } ?>
 					<div class="clear"></div>
 				</li>
 				<?php
