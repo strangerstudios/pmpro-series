@@ -3,7 +3,7 @@
 Plugin Name: PMPro Series
 Plugin URI: http://www.paidmembershipspro.com/pmpro-series/
 Description: Offer serialized (drip feed) content to your PMPro members.
-Version: .2.4-ts
+Version: .2.4
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */

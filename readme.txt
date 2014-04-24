@@ -24,6 +24,9 @@ This plugin currently requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-series/issues
 
 == Changelog ==
+= .2.4 =
+* Added settings-api class and implemented per-series settings for hidden future posts & sort order on display.
+
 = .2.3 =
 * Added pmpro_member_startdate filter to pmpro_getMemberStartdate function.
 
