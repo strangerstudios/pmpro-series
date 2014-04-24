@@ -304,8 +304,6 @@ if(!function_exists("pmpro_getMemberStartdate"))
             $dDiff->format('%d');
             $days = $dDiff->days;
 
-            error_log('Member days = ' . $days);
-
 			$pmpro_member_days[$user_id][$level_id] = $days;
 		}
 		
