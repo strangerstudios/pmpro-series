@@ -40,10 +40,9 @@ class PMProSeries
 
         foreach ( $tmpPosts as $post) : setup_postdata($post);
 
-            if ( $series_id === $post->ID ) {
+            if ( $series_id === $post->ID )
                 $this->options = get_option( $post->post_name );
-                error_log('Fetched options for ' . $post->post_name);
-            }
+
         endforeach;
 
         wp_reset_postdata();
