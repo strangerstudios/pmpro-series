@@ -25,7 +25,7 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 
 == Changelog ==
 = .2.4 =
-* Added settings-api class and implemented per-series settings for hidden future posts & sort order on display.
+* Added settings-api class and implemented per-series settings to allow hiding future posts & sort order for display.
 
 = .2.3 =
 * Added pmpro_member_startdate filter to pmpro_getMemberStartdate function.
