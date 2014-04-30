@@ -190,7 +190,12 @@ class PMProSeries
 	{
 		if ($a->delay == $b->delay)
 			return 0;
-		return ($a->delay < $b->delay) ? -1 : 1;
+        // Descending sort order
+        elseif ($this->options->sortOrder == SORT_DESC)
+            return ($a->delay > $b->delay) ? -1 : 1;
+		// Ascending sort order for the data (default sort order)
+        else
+            return ($a->delay < $b->delay) ? -1 : 1;
 	}
 	
 	//send an email RE new access to post_id to email of user_id

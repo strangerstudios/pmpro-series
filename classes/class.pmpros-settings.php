@@ -134,7 +134,13 @@ class PMPros_Settings {
                             SORT_ASC => 'Ascending',
                             SORT_DESC => 'Descending',
                         )
-                    )
+                    ), /* TODO: Uncomment to support custom rewrite rules for the series URL
+                    array(
+                        'name' => 'series-prefix',
+                        'label' => __('Series Prefix', 'pmpro_series'),
+                        'desc' => __('The prefix to use for this series (i.e. "/prefix/series_name)"', 'pmpro_series'),
+                        'type' => 'text',
+                    ) */
                 );
         }
 
