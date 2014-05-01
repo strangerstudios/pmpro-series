@@ -190,7 +190,12 @@ class PMProSeries
 	{
 		if ($a->delay == $b->delay)
 			return 0;
-		return ($a->delay < $b->delay) ? -1 : 1;
+        // Descending sort order
+        elseif ($this->options->sortOrder == SORT_DESC)
+            return ($a->delay > $b->delay) ? -1 : 1;
+		// Ascending sort order for the data (default sort order)
+        else
+            return ($a->delay < $b->delay) ? -1 : 1;
 	}
 
     function sortDescending($a, $b)
