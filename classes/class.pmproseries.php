@@ -192,7 +192,13 @@ class PMProSeries
 			return 0;
 		return ($a->delay < $b->delay) ? -1 : 1;
 	}
-	
+
+    function sortDescending($a, $b)
+    {
+        if ($a->delay == $b->delay)
+            return 0;
+        return ($a->delay > $b->delay) ? -1 : 1;
+    }
 	//send an email RE new access to post_id to email of user_id
 	function sendEmail($post_id, $user_id)
 	{
@@ -287,15 +293,8 @@ class PMProSeries
 		if(!empty($this->posts))
 		{
             // Order the posts in accordance with the 'sortOrder' option
-            switch ($this->options['sortOrder'])
-            {
-                case SORT_ASC:
-                    array_multisort($this->posts, SORT_ASC, $this->posts);
-                    break;
-                case SORT_DESC:
-                    array_multisort($this->posts, SORT_DESC, $this->posts);
-                    break;
-            }
+            if ($this->options['sortOrder'] == SORT_DESC)
+                    usort($this->posts, array("PMProSeries", "sortDescending"));
 
             // TODO: Have upcoming posts be listed before or after the currently active posts (own section?) - based on sort setting
 
