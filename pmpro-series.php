@@ -108,8 +108,11 @@ function pmpros_the_content($content)
 	
 	if($post->post_type == "pmpro_series" && pmpro_has_membership_access())
 	{
-		$series = new PMProSeries($post->ID);	
-		$content .= "<p>You are on day " . intval(pmpro_getMemberDays()) . " of your membership.</p>";
+		$series = new PMProSeries($post->ID);
+        $series->getSeriesOptions( $post->ID );
+
+        if ( $series->getOptions()['dayCount'] == 'on')
+            $content .= "<p>You are on day " . intval(pmpro_getMemberDays()) . " of your membership.</p>";
 		$content .= $series->getPostList();						
 	}
 	
@@ -152,6 +155,7 @@ function pmpros_hasAccess($user_id, $post_id)
 						//check specifically for the levels with access to this series
 						foreach($results[1] as $level_id)
 						{
+                            if ($this->options )
 							if(pmpro_getMemberDays($user_id, $level_id) >= $sp->delay)
 							{						
 								return true;	//user has access to this series and has been around longer than this post's delay

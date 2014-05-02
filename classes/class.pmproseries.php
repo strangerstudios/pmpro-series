@@ -11,7 +11,12 @@ class PMProSeries
 		else
 			return true;
 	}
-	
+
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
 	//populate series data by post id passed
 	function getSeriesByID($id)
 	{
@@ -71,7 +76,9 @@ class PMProSeries
 		//remove any old post with this id
 		if($this->hasPost($post_id))
 			$this->removePost($post_id);
-			
+
+        // Calculate delay
+
 		//add post
 		$temp = new stdClass();
 		$temp->id = $post_id;
@@ -188,15 +195,49 @@ class PMProSeries
 	//used to sort posts by delay
 	function sortByDelay($a, $b)
 	{
-		if ($a->delay == $b->delay)
-			return 0;
+        // Check whether we're operating w/Dates rather than days.
+        if ($this->options['delayType'] == 'byDate')
+        {
+            $aIsDate = $this->isValidDate($a->delay);
+            $bIsDate = $this->isValidDate($b->delay);
+
+            if ($aIsDate === $bIsDate) {
+                $aDelay = $this->convertToDays($a->delay);
+                $bDelay = $this->convertToDays($b->delay);
+                error_log("Both are dates. a: " . $aDelay . " b: " . $bDelay);
+            } elseif (($aIsDate) && (! $bIsDate )) {
+                $aDelay = $this->convertToDays($a->delay);
+                error_log("Only a->delay is a date (" . $aDelay . ") days");
+                $bDelay = $b->delay;
+            } elseif (((! $aIsDate) && ($bIsDate ))) {
+                $bDelay = $this->convertToDays($b->delay);
+                error_log("Only b->delay is a date (" . $bDelay . ") days");
+                $aDelay = $a->delay;
+            }
+        } else {
+            error_log("Neither are dates");
+            $aDelay = $a->delay;
+            $bDelay = $b->delay;
+        }
+
+        // Now sort the data
+        if ($aDelay == $bDelay)
+            return 0;
         // Descending sort order
-        elseif ($this->options->sortOrder == SORT_DESC)
-            return ($a->delay > $b->delay) ? -1 : 1;
-		// Ascending sort order for the data (default sort order)
-        else
-            return ($a->delay < $b->delay) ? -1 : 1;
+        return ($aDelay < $bDelay) ? -1 : 1;
+
 	}
+
+    public function convertToDays( $date )
+    {
+        $startDate = pmpro_getMemberStartdate();
+        $dStart = new DateTime( date( 'Y-m-d', $startDate ) );
+        $dEnd = new DateTime( date( 'Y-m-d', strtotime($date) ) ); // Today's date
+        $dDiff = $dStart->diff($dEnd);
+        $dDiff->format('%d');
+
+        return $dDiff->days;
+    }
 
     function sortDescending($a, $b)
     {
@@ -204,6 +245,7 @@ class PMProSeries
             return 0;
         return ($a->delay > $b->delay) ? -1 : 1;
     }
+
 	//send an email RE new access to post_id to email of user_id
 	function sendEmail($post_id, $user_id)
 	{
@@ -222,19 +264,19 @@ class PMProSeries
 		register_post_type('pmpro_series',
 				array(
 						'labels' => array(
-                                'name' => __( 'Series' ),								
-								'singular_name' => __( 'Series' ),
+                                'name' => __( 'Sequences' ),
+								'singular_name' => __( 'Sequence' ),
                                 'slug' => 'series',
-                                'add_new' => __( 'New Series' ),
-                                'add_new_item' => __( 'New Series' ),
-                                'edit' => __( 'Edit Series' ),
-                                'edit_item' => __( 'Edit Series' ),
+                                'add_new' => __( 'New Sequence' ),
+                                'add_new_item' => __( 'New Sequence' ),
+                                'edit' => __( 'Edit Sequence' ),
+                                'edit_item' => __( 'Edit Sequence' ),
                                 'new_item' => __( 'Add New' ),
-                                'view' => __( 'View This Series' ),
-                                'view_item' => __( 'View This Series' ),
-                                'search_items' => __( 'Search Series' ),
-                                'not_found' => __( 'No Series Found' ),
-                                'not_found_in_trash' => __( 'No Series Found In Trash' ),
+                                'view' => __( 'View Sequence' ),
+                                'view_item' => __( 'View This Sequence' ),
+                                'search_items' => __( 'Search Sequences' ),
+                                'not_found' => __( 'No Sequence Found' ),
+                                'not_found_in_trash' => __( 'No Sequence Found In Trash' ),
                         ),
 				'public' => true,					
 				/*'menu_icon' => plugins_url('images/icon-series16-sprite.png', dirname(__FILE__)),*/
@@ -246,10 +288,10 @@ class PMProSeries
 				'can_export' => true,
 				'show_in_nav_menus' => true,
 				'rewrite' => array(
-						'slug' => 'series',
+						'slug' => 'sequence',
 						'with_front' => false
 						),
-				'has_archive' => 'series'
+				'has_archive' => 'sequences'
 			)
 		);
 	}
@@ -311,12 +353,16 @@ class PMProSeries
 				{
 				?>
 
-					<?php if(pmpro_getMemberDays() >= $sp->delay) { ?>
+					<?php
+                        $memberFor = pmpro_getMemberDays();
+
+                        if ($this->isPastDelay( $memberFor, $sp->delay )) {
+                    ?>
                     <li>
 						<span class="pmpro_series_item-title"><a href="<?php echo get_permalink($sp->id);?>"><?php echo get_the_title($sp->id);?></a></span>
 						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink($sp->id);?>">Available Now</a></span>
                     </li>
- 					<?php } elseif ( ( pmpro_getMemberDays() < $sp->delay ) && ( ! $this->hideUpcomingPosts() ) ) { ?>
+ 					<?php } elseif ( ($this->isPastDelay( $memberFor, $sp->delay )) && ( ! $this->hideUpcomingPosts() ) ) { ?>
                     <li>
 						<span class="pmpro_series_item-title"><?php echo get_the_title($sp->id);?></span>
 						<span class="pmpro_series_item-unavailable">available on day <?php echo $sp->delay;?></span>
@@ -349,6 +395,22 @@ class PMProSeries
         return ($this->options['hidden'] == 'on' ? true : false );
     }
 
+    public function isValidDate( $data )
+    {
+        if ( count( preg_split( "/-/", $data ) ) == 3 )
+            return true;
+
+        return false;
+    }
+
+    public function isPastDelay( $memberFor, $delay )
+    {
+        if ($this->isValidDate($delay))
+            return strtotime( $delay . ' 00:00:00.0' ) <= time(); // a date specified as the $delay
+        else
+            return ( $memberFor <= $delay ) ? true : false;
+    }
+
     //this code updates the posts and draws the list/form
 	function getPostListForMetaBox()
 	{
@@ -360,8 +422,13 @@ class PMProSeries
 		
 		if(isset($_REQUEST['pmpros_post']))
 			$pmpros_post = intval($_REQUEST['pmpros_post']);
-		if(isset($_REQUEST['pmpros_delay']))
-			$delay = intval($_REQUEST['pmpros_delay']);
+		if(isset($_REQUEST['pmpros_delay'])) {
+            if ( $this->isValidDate( $_REQUEST['pmpros_delay'] ) )
+                $delay = $_REQUEST['pmpros_delay'];
+            else
+                $delay = intval($_REQUEST['pmpros_delay']);
+        }
+
 		if(isset($_REQUEST['pmpros_remove']))
 			$remove = intval($_REQUEST['pmpros_remove']);
 			
@@ -386,7 +453,11 @@ class PMProSeries
 		<thead>
 			<th>Order</th>
 			<th width="50%">Title</th>
-			<th>Delay (# of days)</th>
+			<?php if ($this->options['delayType'] == 'byDayCount'): ?>
+                <th>Delay (# of days)</th>
+            <?php else: ?>
+                <th>Date</th>
+            <?php endif; ?>
 			<th></th>
 			<th></th>
 		</thead>
@@ -407,7 +478,7 @@ class PMProSeries
 				<tr>
 					<td><?php echo $count?>.</td>
 					<td><?php echo get_the_title($post->id)?></td>
-					<td><?php echo $post->delay?></td>
+					<td><?php echo $post->delay ?></td>
 					<td>
 						<a href="javascript:pmpros_editPost('<?php echo $post->id;?>', '<?php echo $post->delay;?>'); void(0);">Edit</a>
 					</td>
@@ -429,7 +500,11 @@ class PMProSeries
 				<thead>
 					<tr>
 						<th>Post/Page</th>
-						<th>Delay (# of days)</th>
+                        <?php if ($this->options['delayType'] == 'byDayCount'): ?>
+                            <th>Delay (# of days)</th>
+                        <?php else: ?>
+                            <th>Date ('yyyy-mm-dd')</th>
+                        <?php endif; ?>
 						<th></th>
 					</tr>
 				</thead>

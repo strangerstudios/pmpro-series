@@ -46,7 +46,7 @@ class PMPros_Settings {
      */
     public function admin_menu()
     {
-        add_options_page( 'PMPro Series', 'PMPro Series', 'manage_options', 'pmpro_series', array( $this, 'plugin_page' ));
+        add_options_page( 'PMPro Sequences', 'PMPro Sequences', 'manage_options', 'pmpro_series', array( $this, 'plugin_page' ));
     }
 
     /**
@@ -126,6 +126,12 @@ class PMPros_Settings {
                         'type' => 'checkbox',
                     ),
                     array(
+                        'name' => 'dayCount',
+                        'label' => __( 'Show Day Count', 'pmpro_series' ),
+                        'desc' => __( 'Show the "You are on day NNN of your membership" text', 'pmpro_series' ),
+                        'type' => 'checkbox',
+                    ),
+                    array(
                         'name' => 'sortOrder',
                         'label' => __( 'Sort Order', 'pmpro_series' ),
                         'desc' => __( 'The sort order for this series', 'pmpro_series' ),
@@ -134,7 +140,17 @@ class PMPros_Settings {
                             SORT_ASC => 'Ascending',
                             SORT_DESC => 'Descending',
                         )
-                    ), /* TODO: Uncomment to support custom rewrite rules for the series URL
+                    ),
+                    array(
+                        'name' => 'delayType',
+                        'label' => __( 'Delay Type', 'pmpro_series' ),
+                        'desc' => __( 'The type of value used to specify the delay', 'pmpro_series' ),
+                        'type' => 'select',
+                        'options' => array(
+                            'byDayCount' => '# of Days',
+                            'byDate' => 'Date (YYYY-MM-DD)'
+                        ),
+                    ),/* TODO: Uncomment to support custom rewrite rules for the series URL
                     array(
                         'name' => 'series-prefix',
                         'label' => __('Series Prefix', 'pmpro_series'),
