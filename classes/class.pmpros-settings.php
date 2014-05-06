@@ -147,7 +147,7 @@ class PMPros_Settings {
                         'desc' => __( 'The type of value used to specify the delay', 'pmpro_series' ),
                         'type' => 'select',
                         'options' => array(
-                            'byDayCount' => '# of Days',
+                            'byDays' => '# of Days',
                             'byDate' => 'Date (YYYY-MM-DD)'
                         ),
                     ),/* TODO: Uncomment to support custom rewrite rules for the series URL
