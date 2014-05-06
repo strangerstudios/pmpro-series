@@ -6,6 +6,7 @@ class PMProSeries
 	//constructor
 	function PMProSeries($id = NULL)
 	{
+        $this->dbgOut('Instantiated class & fetching series: ' . $id);
 		if(!empty($id))
 			return $this->getSeriesByID($id);
 		else
@@ -52,6 +53,8 @@ class PMProSeries
 
         wp_reset_postdata();
 
+        $this->dbgOut('Retrieved options for the series');
+
     }
 
     //add a post to this series
@@ -62,7 +65,9 @@ class PMProSeries
 			$this->error = "Please enter a value for post and delay.";
 			return false;
 		}
-		
+
+        $this->dbgOut('Post ID: ' . $post_id . ' and delay: ' . $delay);
+
 		$post = get_post($post_id);
 			
 		if(empty($post->ID))
@@ -132,7 +137,9 @@ class PMProSeries
 			unset($post_series[$key]);
 			update_post_meta($post_id, "_post_series", $post_series);
 		}
-		
+
+        // usort($this->posts, array("PMProSeries", "sortByDelay"));
+
 		return true;
 	}
 	
@@ -189,61 +196,142 @@ class PMProSeries
 		if($key === false)
 			return false;
 		else
-			return $this->posts[$key]->delay;		
+            return $this->normalizeDelay( $this->posts[$key]->delay );
 	}
-	
-	//used to sort posts by delay
-	function sortByDelay($a, $b)
-	{
-        // Check whether we're operating w/Dates rather than days.
-        if ($this->options['delayType'] == 'byDate')
-        {
-            $aIsDate = $this->isValidDate($a->delay);
-            $bIsDate = $this->isValidDate($b->delay);
 
-            if ($aIsDate === $bIsDate) {
+    function normalizeDelays($a, $b)
+    {
+
+//        $aIsDate = $this->isValidDate($a->delay);
+//        $bIsDate = $this->isValidDate($b->delay);
+
+        // Check whether we're operating w/Dates rather than days.
+//        if ($this->options['delayType'] == 'byDate')
+//        {
+//            if (($aIsDate) && ($bIsDate)) {
                 $aDelay = $this->convertToDays($a->delay);
                 $bDelay = $this->convertToDays($b->delay);
-                error_log("Both are dates. a: " . $aDelay . " b: " . $bDelay);
-            } elseif (($aIsDate) && (! $bIsDate )) {
-                $aDelay = $this->convertToDays($a->delay);
-                error_log("Only a->delay is a date (" . $aDelay . ") days");
-                $bDelay = $b->delay;
-            } elseif (((! $aIsDate) && ($bIsDate ))) {
-                $bDelay = $this->convertToDays($b->delay);
-                error_log("Only b->delay is a date (" . $bDelay . ") days");
-                $aDelay = $a->delay;
-            }
-        } else {
-            error_log("Neither are dates");
-            $aDelay = $a->delay;
-            $bDelay = $b->delay;
+                //$this->dbgOut("Both are dates. a: " . $aDelay . " b: " . $bDelay);
+//            } elseif (($aIsDate) && (! $bIsDate )) {
+//                $aDelay = $this->convertToDays($a->delay);
+                //$this->dbgOut("Only a->delay is a date (" . $a->delay . ") translates to " . $aDelay . " days" );
+//                $bDelay = $b->delay;
+//            } elseif (((! $aIsDate) && ($bIsDate ))) {
+//                $bDelay = $this->convertToDays($b->delay);
+                //$this->dbgOut("Only b->delay is a date (" . $bDelay . ") days");
+//                $aDelay = $a->delay;
+//            } elseif ((!$aIsDate) && (!$bIsDate)) {
+//                $aDelay = $a->delay;
+//                $bDelay = $b->delay;
+                //$this->dbgOut("Both are day counts since start. a: " . $aDelay . " b: " . $bDelay);
+//            }
+//        } elseif ($this->options['delayType'] == 'byDays')
+//        {
+//            if ((! $aIsDate) && (! $bIsDate)) {
+//                $aDelay = $a->delay;
+//                $bDelay = $b->delay;
+                //$this->dbgOut("Both are day counts since start. a: " . $aDelay . " b: " . $bDelay);
+//            } elseif (($aIsDate) && (! $bIsDate )) {
+//                $aDelay = $this->convertToDays($a->delay);
+                //$this->dbgOut("Only a->delay is a date (" . $a->delay . ") translates to " . $aDelay . " days" );
+//                $bDelay = $b->delay;
+//            } elseif (((! $aIsDate) && ($bIsDate))) {
+//                $bDelay = $this->convertToDays($b->delay);
+                //$this->dbgOut("Only b->delay is a date (" . $b->delay . ") translates to " . $bDelay . " days" );
+//                $aDelay = $a->delay;
+//            } elseif (($aIsDate) && ($bIsDate)) {
+//                $aDelay = $this->convertToDays($a->delay);
+//                $bDelay = $this->convertToDays($b->delay);
+                // $this->dbgOut("a->delay is a date (" . $a->delay . ") translates to " . $aDelay . " days" );
+                //$this->dbgOut("b->delay is a date (" . $b->delay . ") translates to " . $bDelay . " days" );
+//            }
+//        }
+
+        return array($aDelay, $bDelay);
+    }
+
+    public function normalizeDelay( $delay )
+    {
+        $this->dbgOut('In normalizeDelay() for delay:' . $delay);
+
+        if ( $this->isValidDate($delay) )
+            return $this->convertToDays($delay);
+
+        return $delay;
+    }
+
+    function sortByDelay($a, $b)
+    {
+        switch ($this->options['sortOrder'])
+        {
+            case SORT_ASC:
+                $this->dbgOut('Sorted in Ascending order');
+                return $this->sortAscending($a, $b);
+                break;
+            case SORT_DESC:
+                $this->dbgOut('Sorted in Descending order');
+                return $this->sortDescending($a, $b);
+                break;
         }
+    }
+
+    public function dbgOut($msg)
+    {
+        $tmpFile = './debug_log.txt';
+        $fh = fopen($tmpFile, 'a');
+        fwrite($fh, $msg . "\r\n");
+        fclose($fh);
+    }
+	//used to sort posts by delay
+	public function sortAscending($a, $b)
+	{
+        list($aDelay, $bDelay) = $this->normalizeDelays($a, $b);
 
         // Now sort the data
         if ($aDelay == $bDelay)
             return 0;
-        // Descending sort order
-        return ($aDelay < $bDelay) ? -1 : 1;
+        // Ascending sort order
+        return ($aDelay > $bDelay) ? -1 : 1;
 
 	}
 
-    public function convertToDays( $date )
+    public function sortDescending($a, $b)
     {
-        $startDate = pmpro_getMemberStartdate();
-        $dStart = new DateTime( date( 'Y-m-d', $startDate ) );
-        $dEnd = new DateTime( date( 'Y-m-d', strtotime($date) ) ); // Today's date
-        $dDiff = $dStart->diff($dEnd);
-        $dDiff->format('%d');
+        list($aDelay, $bDelay) = $this->normalizeDelays($a, $b);
 
-        return $dDiff->days;
+        if ($aDelay == $bDelay)
+            return 0;
+        // Descending Sort Order
+        return ($aDelay < $bDelay) ? 1 : -1;
     }
 
-    function sortDescending($a, $b)
+
+    public function convertToDays( $date )
     {
-        if ($a->delay == $b->delay)
-            return 0;
-        return ($a->delay > $b->delay) ? -1 : 1;
+        if ( $this->isValidDate( $date ) )
+        {
+            $startDate = pmpro_getMemberStartdate();
+            $dStart = new DateTime( date( 'Y-m-d', $startDate ) );
+            $dEnd = new DateTime( date( 'Y-m-d', strtotime($date) ) ); // Today's date
+            $dDiff = $dStart->diff($dEnd);
+            $dDiff->format('%d');
+
+            $days = $dDiff->days;
+            $this->dbgOut('C2Days - Member start date: ' . date('Y-m-d', $startDate) . ' and end date: ' . $date .  ' for delay day count: ' . $days);
+        } else {
+            $days = $date;
+            $this->dbgOut('C2Days - Days of delay from start: ' . $date);
+        }
+
+        return $days;
+    }
+
+    public function convertToDate( $days )
+    {
+        $startDate = pmpro_getMemberStartdate();
+        $endDate = date( 'Y-m-d', strtotime( $startDate . " +" . $days . ' days' ));
+        $this->dbgOut('C2Date - Member start date: ' . date('Y-m-d', $startDate) . ' and end date: ' . $endDate .  ' for delay day count: ' . $days);
+        return $endDate;
     }
 
 	//send an email RE new access to post_id to email of user_id
@@ -406,9 +494,9 @@ class PMProSeries
     public function isPastDelay( $memberFor, $delay )
     {
         if ($this->isValidDate($delay))
-            return strtotime( $delay . ' 00:00:00.0' ) <= time(); // a date specified as the $delay
-        else
-            return ( $memberFor <= $delay ) ? true : false;
+            return ( time() >= strtotime( $delay . ' 00:00:00.0' )) ? true : false; // a date specified as the $delay
+
+        return ( $memberFor >= $delay ) ? true : false;
     }
 
     //this code updates the posts and draws the list/form
@@ -453,7 +541,7 @@ class PMProSeries
 		<thead>
 			<th>Order</th>
 			<th width="50%">Title</th>
-			<?php if ($this->options['delayType'] == 'byDayCount'): ?>
+			<?php if ($this->options['delayType'] == 'byDays'): ?>
                 <th>Delay (# of days)</th>
             <?php else: ?>
                 <th>Date</th>
@@ -500,7 +588,7 @@ class PMProSeries
 				<thead>
 					<tr>
 						<th>Post/Page</th>
-                        <?php if ($this->options['delayType'] == 'byDayCount'): ?>
+                        <?php if ($this->options['delayType'] == 'byDays'): ?>
                             <th>Delay (# of days)</th>
                         <?php else: ?>
                             <th>Date ('yyyy-mm-dd')</th>
@@ -515,7 +603,7 @@ class PMProSeries
 							<option value=""></option>
 						<?php
 							$pmpros_post_types = apply_filters("pmpros_post_types", array("post", "page"));
-							$allposts = $wpdb->get_results("SELECT ID, post_title, post_status FROM $wpdb->posts WHERE post_status IN('publish', 'draft') AND post_type IN ('" . implode("','", $pmpros_post_types) . "') AND post_title <> '' ORDER BY post_title");
+							$allposts = $wpdb->get_results("SELECT ID, post_title, post_status FROM $wpdb->posts WHERE post_status IN('publish', 'draft', 'future', 'pending', 'private') AND post_type IN ('" . implode("','", $pmpros_post_types) . "') AND post_title <> '' ORDER BY post_title");
 							foreach($allposts as $p)
 							{
 							?>
