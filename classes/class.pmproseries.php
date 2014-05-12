@@ -1,41 +1,80 @@
 <?php
 class PMProSeries
 {
+    private $options;
+
 	//constructor
 	function PMProSeries($id = NULL)
 	{
+        $this->dbgOut('Instantiated class & fetching series: ' . $id);
 		if(!empty($id))
 			return $this->getSeriesByID($id);
 		else
 			return true;
 	}
-	
+
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
 	//populate series data by post id passed
 	function getSeriesByID($id)
 	{
 		$this->post = get_post($id);
-		if(!empty($this->post->ID))
+		if(!empty($this->post->ID)) {
 			$this->id = $id;
-		else
+            $this->getSeriesOptions( $this->id );
+        } else
 			$this->id = false;
 			
 		return $this->id;
 	}
-	
-	//add a post to this series
+
+    // Options for the series
+    public function getSeriesOptions( $series_id )
+    {
+        $args = array(
+            'post_type' => 'pmpro_series',
+            'orderby' => 'title',
+            'posts_per_page' => -1,
+            'caller_get_posts' => 1
+        );
+
+        $tmpPosts = null;
+        $tmpPosts = get_posts($args);
+
+        foreach ( $tmpPosts as $post) : setup_postdata($post);
+
+            if ( $series_id === $post->ID )
+                $this->options = get_option( $post->post_name );
+
+        endforeach;
+
+        wp_reset_postdata();
+
+        $this->dbgOut('Retrieved options for sequence ' . $series_id);
+
+    }
+
+    //add a post to this series
 	function addPost($post_id, $delay)
 	{
 		if(empty($post_id) || !isset($delay))
 		{
 			$this->error = "Please enter a value for post and delay.";
+            $this->dbgOut('No Post ID or delay specified');
 			return false;
 		}
-		
+
+        $this->dbgOut('Post ID: ' . $post_id . ' and delay: ' . $delay);
+
 		$post = get_post($post_id);
 			
 		if(empty($post->ID))
 		{
 			$this->error = "A post with that id does not exist.";
+            $this->dbgOut('No Post with ' . $post_id . ' found');
 			return false;
 		}
 		
@@ -44,7 +83,9 @@ class PMProSeries
 		//remove any old post with this id
 		if($this->hasPost($post_id))
 			$this->removePost($post_id);
-			
+
+        // Calculate delay
+
 		//add post
 		$temp = new stdClass();
 		$temp->id = $post_id;
@@ -52,18 +93,25 @@ class PMProSeries
 		$this->posts[] = $temp;
 		
 		//sort
+        $this->dbgOut('Sorting the Sequence by delay');
 		usort($this->posts, array("PMProSeries", "sortByDelay"));
-		
+
 		//save
 		update_post_meta($this->id, "_series_posts", $this->posts);
-		
+
+        $this->dbgOut('Post Meta updated and saved');
+
 		//add series to post
 		$post_series = get_post_meta($post_id, "_post_series", true);
-		if(!is_array($post_series))
+		if(!is_array($post_series)) {
+            $this->dbgOut('No (yet) an array of posts. Adding the single new post');
 			$post_series = array($this->id);
-		else
+        }
+        else
+        {
 			$post_series[] = $this->id;
-			
+            $this->dbgOut('Appended post (ID: ' . $this->id . ') to Sequence');
+        }
 		//save
 		update_post_meta($post_id, "_post_series", $post_series);
 	}
@@ -98,7 +146,9 @@ class PMProSeries
 			unset($post_series[$key]);
 			update_post_meta($post_id, "_post_series", $post_series);
 		}
-		
+
+        // usort($this->posts, array("PMProSeries", "sortByDelay"));
+
 		return true;
 	}
 	
@@ -155,17 +205,105 @@ class PMProSeries
 		if($key === false)
 			return false;
 		else
-			return $this->posts[$key]->delay;		
+        {
+            $delay = $this->normalizeDelay( $this->posts[$key]->delay );
+            $this->dbgOut('Delay for post with id = ' . $post_id . ' is ' .$delay);
+            return $delay;
+        }
 	}
-	
+
+    // Returns a "days to delay" value for the posts $a & $b
+    function normalizeDelays($a, $b)
+    {
+        return array($this->convertToDays($a->delay), $this->convertToDays($b->delay));
+    }
+
+    public function normalizeDelay( $delay )
+    {
+        $this->dbgOut('In normalizeDelay() for delay:' . $delay);
+
+        if ( $this->isValidDate($delay) ) {
+            $this->dbgOut('Delay specified as a valid date: ' . $delay);
+            return $this->convertToDays($delay);
+        }
+        $this->dbgOut('Delay specified as # of days since membership start: ' . $delay);
+        return $delay;
+    }
+
+    function sortByDelay($a, $b)
+    {
+        switch ($this->options['sortOrder'])
+        {
+            case SORT_ASC:
+                $this->dbgOut('Sorted in Ascending order');
+                return $this->sortAscending($a, $b);
+                break;
+            case SORT_DESC:
+                $this->dbgOut('Sorted in Descending order');
+                return $this->sortDescending($a, $b);
+                break;
+        }
+    }
+
+    public function dbgOut($msg)
+    {
+        $tmpFile = './debug_log.txt';
+        $fh = fopen($tmpFile, 'a');
+        fwrite($fh, $msg . "\r\n");
+        fclose($fh);
+    }
 	//used to sort posts by delay
-	function sortByDelay($a, $b)
+	public function sortAscending($a, $b)
 	{
-		if ($a->delay == $b->delay)
-			return 0;
-		return ($a->delay < $b->delay) ? -1 : 1;
+        list($aDelay, $bDelay) = $this->normalizeDelays($a, $b);
+
+        // Now sort the data
+        if ($aDelay == $bDelay)
+            return 0;
+        // Ascending sort order
+        return ($aDelay > $bDelay) ? -1 : 1;
+
 	}
-	
+
+    public function sortDescending($a, $b)
+    {
+        list($aDelay, $bDelay) = $this->normalizeDelays($a, $b);
+
+        if ($aDelay == $bDelay)
+            return 0;
+        // Descending Sort Order
+        return ($aDelay < $bDelay) ? 1 : -1;
+    }
+
+
+    public function convertToDays( $date )
+    {
+        if ( $this->isValidDate( $date ) )
+        {
+            $startDate = pmpro_getMemberStartdate();
+            $dStart = new DateTime( date( 'Y-m-d', $startDate ) );
+            $dEnd = new DateTime( date( 'Y-m-d', strtotime($date) ) ); // Today's date
+            $dDiff = $dStart->diff($dEnd);
+            $dDiff->format('%d');
+
+            $days = $dDiff->days;
+            $this->dbgOut('C2Days - Member start date: ' . date('Y-m-d', $startDate) . ' and end date: ' . $date .  ' for delay day count: ' . $days);
+        } else {
+            $days = $date;
+            $this->dbgOut('C2Days - Days of delay from start: ' . $date);
+        }
+
+        return $days;
+    }
+
+    public function convertToDate( $days )
+    {
+        $startDate = pmpro_getMemberStartdate();
+        $endDate = date( 'Y-m-d', strtotime( $startDate . " +" . $days . ' days' ));
+        $this->dbgOut('C2Date - Member start date: ' . date('Y-m-d', $startDate) . ' and end date: ' . $endDate .  ' for delay day count: ' . $days);
+        return $endDate;
+    }
+
 	//send an email RE new access to post_id to email of user_id
 	function sendEmail($post_id, $user_id)
 	{
@@ -184,19 +322,19 @@ class PMProSeries
 		register_post_type('pmpro_series',
 				array(
 						'labels' => array(
-                                'name' => __( 'Series' ),								
-								'singular_name' => __( 'Series' ),
+                                'name' => __( 'Sequences' ),
+								'singular_name' => __( 'Sequence' ),
                                 'slug' => 'series',
-                                'add_new' => __( 'New Series' ),
-                                'add_new_item' => __( 'New Series' ),
-                                'edit' => __( 'Edit Series' ),
-                                'edit_item' => __( 'Edit Series' ),
+                                'add_new' => __( 'New Sequence' ),
+                                'add_new_item' => __( 'New Sequence' ),
+                                'edit' => __( 'Edit Sequence' ),
+                                'edit_item' => __( 'Edit Sequence' ),
                                 'new_item' => __( 'Add New' ),
-                                'view' => __( 'View This Series' ),
-                                'view_item' => __( 'View This Series' ),
-                                'search_items' => __( 'Search Series' ),
-                                'not_found' => __( 'No Series Found' ),
-                                'not_found_in_trash' => __( 'No Series Found In Trash' )
+                                'view' => __( 'View Sequence' ),
+                                'view_item' => __( 'View This Sequence' ),
+                                'search_items' => __( 'Search Sequences' ),
+                                'not_found' => __( 'No Sequence Found' ),
+                                'not_found_in_trash' => __( 'No Sequence Found In Trash' ),
                         ),
 				'public' => true,					
 				/*'menu_icon' => plugins_url('images/icon-series16-sprite.png', dirname(__FILE__)),*/
@@ -208,10 +346,10 @@ class PMProSeries
 				'can_export' => true,
 				'show_in_nav_menus' => true,
 				'rewrite' => array(
-						'slug' => 'series',
+						'slug' => 'sequence',
 						'with_front' => false
 						),
-				'has_archive' => 'series'
+				'has_archive' => 'sequences'
 			)
 		);
 	}
@@ -226,6 +364,7 @@ class PMProSeries
 		{
 			wp_enqueue_style('pmpros-select2', plugins_url('css/select2.css', dirname(__FILE__)), '', '3.1', 'screen');
 			wp_enqueue_script('pmpros-select2', plugins_url('js/select2.js', dirname(__FILE__)), array( 'jquery' ), '3.1' );
+
 			add_action('admin_menu', array("PMProSeries", "defineMetaBoxes"));
 		}
 	}	
@@ -235,8 +374,9 @@ class PMProSeries
 		add_meta_box('pmpro_page_meta', 'Require Membership', 'pmpro_page_meta', 'pmpro_series', 'side');	
 		
 		//series meta box
-		add_meta_box('pmpro_series_meta', 'Posts in this Series', array("PMProSeries", "seriesMetaBox"), 'pmpro_series', 'normal');	
-	}
+		add_meta_box('pmpro_series_meta', 'Posts in this Series', array("PMProSeries", "seriesMetaBox"), 'pmpro_series', 'normal');
+
+    }
 	
 	//this is the actual series meta box
 	function seriesMetaBox()
@@ -249,7 +389,7 @@ class PMProSeries
 		</div>				
 		<?php		
 	}
-	
+
 	//this function returns a UL with the current posts
 	function getPostList($echo = false)
 	{
@@ -257,6 +397,12 @@ class PMProSeries
 		$this->getPosts();
 		if(!empty($this->posts))
 		{
+            // Order the posts in accordance with the 'sortOrder' option
+            if ($this->options['sortOrder'] == SORT_DESC)
+                    usort($this->posts, array("PMProSeries", "sortDescending"));
+
+            // TODO: Have upcoming posts be listed before or after the currently active posts (own section?) - based on sort setting
+
 			ob_start();
 			?>		
 			<ul id="pmpro_series-<?php echo $this->id; ?>" class="pmpro_series_list">
@@ -264,16 +410,23 @@ class PMProSeries
 				foreach($this->posts as $sp)
 				{
 				?>
-				<li>					
-					<?php if(pmpro_getMemberDays() >= $sp->delay) { ?>
+
+					<?php
+                        $memberFor = pmpro_getMemberDays();
+
+                        if ($this->isPastDelay( $memberFor, $sp->delay )) {
+                    ?>
+                    <li>
 						<span class="pmpro_series_item-title"><a href="<?php echo get_permalink($sp->id);?>"><?php echo get_the_title($sp->id);?></a></span>
 						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink($sp->id);?>">Available Now</a></span>
-					<?php } else { ?>
+                    </li>
+ 					<?php } elseif ( ($this->isPastDelay( $memberFor, $sp->delay )) && ( ! $this->hideUpcomingPosts() ) ) { ?>
+                    <li>
 						<span class="pmpro_series_item-title"><?php echo get_the_title($sp->id);?></span>
 						<span class="pmpro_series_item-unavailable">available on day <?php echo $sp->delay;?></span>
+                    </li>
 					<?php } ?>
 					<div class="clear"></div>
-				</li>
 				<?php
 				}		
 			?>
@@ -293,8 +446,30 @@ class PMProSeries
 		
 		return false;
 	}
-	
-	//this code updates the posts and draws the list/form
+
+    // Test whether to show future series posts (i.e. not yet available to member)
+    public function hideUpcomingPosts()
+    {
+        return ($this->options['hidden'] == 'on' ? true : false );
+    }
+
+    public function isValidDate( $data )
+    {
+        if ( count( preg_split( "/-/", $data ) ) == 3 )
+            return true;
+
+        return false;
+    }
+
+    public function isPastDelay( $memberFor, $delay )
+    {
+        if ($this->isValidDate($delay))
+            return ( time() >= strtotime( $delay . ' 00:00:00.0' )) ? true : false; // a date specified as the $delay
+
+        return ( $memberFor >= $delay ) ? true : false;
+    }
+
+    //this code updates the posts and draws the list/form
 	function getPostListForMetaBox()
 	{
 		global $wpdb;
@@ -305,8 +480,13 @@ class PMProSeries
 		
 		if(isset($_REQUEST['pmpros_post']))
 			$pmpros_post = intval($_REQUEST['pmpros_post']);
-		if(isset($_REQUEST['pmpros_delay']))
-			$delay = intval($_REQUEST['pmpros_delay']);
+		if(isset($_REQUEST['pmpros_delay'])) {
+            if ( $this->isValidDate( $_REQUEST['pmpros_delay'] ) )
+                $delay = $_REQUEST['pmpros_delay'];
+            else
+                $delay = intval($_REQUEST['pmpros_delay']);
+        }
+
 		if(isset($_REQUEST['pmpros_remove']))
 			$remove = intval($_REQUEST['pmpros_remove']);
 			
@@ -331,7 +511,11 @@ class PMProSeries
 		<thead>
 			<th>Order</th>
 			<th width="50%">Title</th>
-			<th>Delay (# of days)</th>
+			<?php if ($this->options['delayType'] == 'byDays'): ?>
+                <th>Delay (# of days)</th>
+            <?php else: ?>
+                <th>Date</th>
+            <?php endif; ?>
 			<th></th>
 			<th></th>
 		</thead>
@@ -352,7 +536,7 @@ class PMProSeries
 				<tr>
 					<td><?php echo $count?>.</td>
 					<td><?php echo get_the_title($post->id)?></td>
-					<td><?php echo $post->delay?></td>
+					<td><?php echo $post->delay ?></td>
 					<td>
 						<a href="javascript:pmpros_editPost('<?php echo $post->id;?>', '<?php echo $post->delay;?>'); void(0);">Edit</a>
 					</td>
@@ -374,7 +558,11 @@ class PMProSeries
 				<thead>
 					<tr>
 						<th>Post/Page</th>
-						<th>Delay (# of days)</th>
+                        <?php if ($this->options['delayType'] == 'byDays'): ?>
+                            <th>Delay (# of days)</th>
+                        <?php else: ?>
+                            <th>Date ('yyyy-mm-dd')</th>
+                        <?php endif; ?>
 						<th></th>
 					</tr>
 				</thead>
@@ -385,7 +573,7 @@ class PMProSeries
 							<option value=""></option>
 						<?php
 							$pmpros_post_types = apply_filters("pmpros_post_types", array("post", "page"));
-							$allposts = $wpdb->get_results("SELECT ID, post_title, post_status FROM $wpdb->posts WHERE post_status IN('publish', 'draft') AND post_type IN ('" . implode("','", $pmpros_post_types) . "') AND post_title <> '' ORDER BY post_title");
+							$allposts = $wpdb->get_results("SELECT ID, post_title, post_status FROM $wpdb->posts WHERE post_status IN('publish', 'draft', 'future', 'pending', 'private') AND post_type IN ('" . implode("','", $pmpros_post_types) . "') AND post_title <> '' ORDER BY post_title");
 							foreach($allposts as $p)
 							{
 							?>

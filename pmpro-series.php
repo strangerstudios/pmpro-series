@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: PMPro Series
+Plugin Name: PMPro Sequence
 Plugin URI: http://www.paidmembershipspro.com/pmpro-series/
 Description: Offer serialized (drip feed) content to your PMPro members.
-Version: .2.3
+Version: .2.4
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -11,16 +11,16 @@ Author URI: http://www.strangerstudios.com
 /*
 	The Story
 	
-	1. There will be a new "Series" tab in the Memberships menu of the WP dashboard.
-	2. Admins can create a new "Series".
-	3. Admins can add a page or post to a series along with a # of days after signup.
-	4. Admins can add a series to a membership level.
+	1. There will be a new "Sequences" tab in the Memberships menu of the WP dashboard.
+	2. Admins can create a new "Sequence".
+	3. Admins can add a page or post to a series along with a # of days after signup (or a specific date)
+	4. Admins can add a sequence to a membership level.
 	5. Admins can adjust the email template via an added page to their active theme.
 	
 	Then...
 	
-	1. User signs up for a membership level that gives him access to Series A.
-	2. User gets access to any "0 days after" series content.
+	1. User signs up for a membership level that gives him access to Sequence A.
+	2. User gets access to any "0 days after" (or on a specific date) series content.
 	3. Each day a script checks if a user should gain access to any new content, if so:
 	- User is given access to the content.
 	- An email is sent to the user letting them know that content is available.	
@@ -28,20 +28,20 @@ Author URI: http://www.strangerstudios.com
 	Checking for access:
 	* Is a membership level required?
 	* If so, does the user have one of those levels?
-	* Is the user's level "assigned" to a series?
+	* Is the user's level "assigned" to a sequence?
 	* If so, does the user have access to that content yet? (count days)
 	* If not, then the user will have access. (e.g. Pro members get access to everything right away.)
 	
 	Checking to send emails: (planned feature)
-	* For all members with series levels.
+	* For all members with sequence levels.
 	* What day of the membership is it?
-	* For all series.
+	* For all sequences.
 	* Get content.
 	* Send content for this day.
 	* Email update.
 	
 	Data Structure
-	* Series is a CPT
+	* Sequence is a CPT
 	* Use wp_pmpro_memberships_pages to link to membership levels
 	* wp_pmpro_series_content (series_id, post_id, day) stored in post meta
 */
@@ -50,6 +50,7 @@ Author URI: http://www.strangerstudios.com
 	Includes
 */
 require_once(dirname(__FILE__) . "/classes/class.pmproseries.php");
+require_once(dirname(__FILE__) . "/classes/class.pmpros-settings.php");
 
 
 /*
@@ -65,6 +66,10 @@ function pmprors_scripts()
 			wp_enqueue_style("pmprors_pmpro", plugins_url('css/pmpro_series.css',__FILE__ ));
 		/*}*/
 	}
+
+    if (is_admin())
+        $pmpros_settings_page = new PMPros_Settings;
+
 }
 add_action("init", "pmprors_scripts");
 
@@ -103,8 +108,11 @@ function pmpros_the_content($content)
 	
 	if($post->post_type == "pmpro_series" && pmpro_has_membership_access())
 	{
-		$series = new PMProSeries($post->ID);	
-		$content .= "<p>You are on day " . intval(pmpro_getMemberDays()) . " of your membership.</p>";
+		$series = new PMProSeries($post->ID);
+        $series->getSeriesOptions( $post->ID );
+
+        if ( $series->getOptions()['dayCount'] == 'on')
+            $content .= "<p>You are on day " . intval(pmpro_getMemberDays()) . " of your membership.</p>";
 		$content .= $series->getPostList();						
 	}
 	
@@ -147,6 +155,7 @@ function pmpros_hasAccess($user_id, $post_id)
 						//check specifically for the levels with access to this series
 						foreach($results[1] as $level_id)
 						{
+                            if ($this->options )
 							if(pmpro_getMemberDays($user_id, $level_id) >= $sp->delay)
 							{						
 								return true;	//user has access to this series and has been around longer than this post's delay
@@ -161,6 +170,7 @@ function pmpros_hasAccess($user_id, $post_id)
 	//haven't found anything yet. so must not have access
 	return false;
 }
+
 
 /*
 	Filter pmpro_has_membership_access based on series access.
@@ -284,10 +294,20 @@ if(!function_exists("pmpro_getMemberStartdate"))
 		if(empty($pmpro_member_days[$user_id][$level_id]))
 		{		
 			$startdate = pmpro_getMemberStartdate($user_id, $level_id);
-				
+		/**
+		    Removed to support TZ transitions and whole days
+
 			$now = time();
 			$days = ($now - $startdate)/3600/24;
-		
+		**/
+
+            /* Will take Daylight savings changes into account and ensure only integer value days returned */
+            $dStart = new DateTime( date('Y-m-d', $startdate) );
+            $dEnd = new DateTime( date('Y-m-d') ); // Today's date
+            $dDiff = $dStart->diff($dEnd);
+            $dDiff->format('%d');
+            $days = $dDiff->days;
+
 			$pmpro_member_days[$user_id][$level_id] = $days;
 		}
 		
