@@ -53,7 +53,7 @@ class PMProSeries
 
         wp_reset_postdata();
 
-        $this->dbgOut('Retrieved options for the series');
+        $this->dbgOut('Retrieved options for sequence ' . $series_id);
 
     }
 
@@ -63,6 +63,7 @@ class PMProSeries
 		if(empty($post_id) || !isset($delay))
 		{
 			$this->error = "Please enter a value for post and delay.";
+            $this->dbgOut('No Post ID or delay specified');
 			return false;
 		}
 
@@ -73,6 +74,7 @@ class PMProSeries
 		if(empty($post->ID))
 		{
 			$this->error = "A post with that id does not exist.";
+            $this->dbgOut('No Post with ' . $post_id . ' found');
 			return false;
 		}
 		
@@ -91,18 +93,25 @@ class PMProSeries
 		$this->posts[] = $temp;
 		
 		//sort
+        $this->dbgOut('Sorting the Sequence by delay');
 		usort($this->posts, array("PMProSeries", "sortByDelay"));
 
 		//save
 		update_post_meta($this->id, "_series_posts", $this->posts);
-		
+
+        $this->dbgOut('Post Meta updated and saved');
+
 		//add series to post
 		$post_series = get_post_meta($post_id, "_post_series", true);
-		if(!is_array($post_series))
+		if(!is_array($post_series)) {
+            $this->dbgOut('No (yet) an array of posts. Adding the single new post');
 			$post_series = array($this->id);
-		else
+        }
+        else
+        {
 			$post_series[] = $this->id;
-			
+            $this->dbgOut('Appended post (ID: ' . $this->id . ') to Sequence');
+        }
 		//save
 		update_post_meta($post_id, "_post_series", $post_series);
 	}
@@ -196,67 +205,28 @@ class PMProSeries
 		if($key === false)
 			return false;
 		else
-            return $this->normalizeDelay( $this->posts[$key]->delay );
+        {
+            $delay = $this->normalizeDelay( $this->posts[$key]->delay );
+            $this->dbgOut('Delay for post with id = ' . $post_id . ' is ' .$delay);
+            return $delay;
+        }
 	}
 
+    // Returns a "days to delay" value for the posts $a & $b
     function normalizeDelays($a, $b)
     {
-
-//        $aIsDate = $this->isValidDate($a->delay);
-//        $bIsDate = $this->isValidDate($b->delay);
-
-        // Check whether we're operating w/Dates rather than days.
-//        if ($this->options['delayType'] == 'byDate')
-//        {
-//            if (($aIsDate) && ($bIsDate)) {
-                $aDelay = $this->convertToDays($a->delay);
-                $bDelay = $this->convertToDays($b->delay);
-                //$this->dbgOut("Both are dates. a: " . $aDelay . " b: " . $bDelay);
-//            } elseif (($aIsDate) && (! $bIsDate )) {
-//                $aDelay = $this->convertToDays($a->delay);
-                //$this->dbgOut("Only a->delay is a date (" . $a->delay . ") translates to " . $aDelay . " days" );
-//                $bDelay = $b->delay;
-//            } elseif (((! $aIsDate) && ($bIsDate ))) {
-//                $bDelay = $this->convertToDays($b->delay);
-                //$this->dbgOut("Only b->delay is a date (" . $bDelay . ") days");
-//                $aDelay = $a->delay;
-//            } elseif ((!$aIsDate) && (!$bIsDate)) {
-//                $aDelay = $a->delay;
-//                $bDelay = $b->delay;
-                //$this->dbgOut("Both are day counts since start. a: " . $aDelay . " b: " . $bDelay);
-//            }
-//        } elseif ($this->options['delayType'] == 'byDays')
-//        {
-//            if ((! $aIsDate) && (! $bIsDate)) {
-//                $aDelay = $a->delay;
-//                $bDelay = $b->delay;
-                //$this->dbgOut("Both are day counts since start. a: " . $aDelay . " b: " . $bDelay);
-//            } elseif (($aIsDate) && (! $bIsDate )) {
-//                $aDelay = $this->convertToDays($a->delay);
-                //$this->dbgOut("Only a->delay is a date (" . $a->delay . ") translates to " . $aDelay . " days" );
-//                $bDelay = $b->delay;
-//            } elseif (((! $aIsDate) && ($bIsDate))) {
-//                $bDelay = $this->convertToDays($b->delay);
-                //$this->dbgOut("Only b->delay is a date (" . $b->delay . ") translates to " . $bDelay . " days" );
-//                $aDelay = $a->delay;
-//            } elseif (($aIsDate) && ($bIsDate)) {
-//                $aDelay = $this->convertToDays($a->delay);
-//                $bDelay = $this->convertToDays($b->delay);
-                // $this->dbgOut("a->delay is a date (" . $a->delay . ") translates to " . $aDelay . " days" );
-                //$this->dbgOut("b->delay is a date (" . $b->delay . ") translates to " . $bDelay . " days" );
-//            }
-//        }
-
-        return array($aDelay, $bDelay);
+        return array($this->convertToDays($a->delay), $this->convertToDays($b->delay));
     }
 
     public function normalizeDelay( $delay )
     {
         $this->dbgOut('In normalizeDelay() for delay:' . $delay);
 
-        if ( $this->isValidDate($delay) )
+        if ( $this->isValidDate($delay) ) {
+            $this->dbgOut('Delay specified as a valid date: ' . $delay);
             return $this->convertToDays($delay);
-
+        }
+        $this->dbgOut('Delay specified as # of days since membership start: ' . $delay);
         return $delay;
     }
 
