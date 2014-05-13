@@ -3,7 +3,7 @@
 Plugin Name: PMPro Series
 Plugin URI: http://www.paidmembershipspro.com/pmpro-series/
 Description: Offer serialized (drip feed) content to your PMPro members.
-Version: .2.3
+Version: .2.3.1
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -285,10 +285,16 @@ if(!function_exists("pmpro_getMemberStartdate"))
 		{		
 			$startdate = pmpro_getMemberStartdate($user_id, $level_id);
 				
-			$now = time();
-			$days = ($now - $startdate)/3600/24;
-		
-			$pmpro_member_days[$user_id][$level_id] = $days;
+			//check that there was a startdate at all
+			if(empty($startdate))
+				$pmpro_member_days[$user_id][$level_id] = 0;
+			else
+			{			
+				$now = time();
+				$days = ($now - $startdate)/3600/24;
+					
+				$pmpro_member_days[$user_id][$level_id] = $days;
+			}
 		}
 		
 		return $pmpro_member_days[$user_id][$level_id];
