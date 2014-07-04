@@ -3,7 +3,7 @@
 Plugin Name: PMPro Series
 Plugin URI: http://www.paidmembershipspro.com/pmpro-series/
 Description: Offer serialized (drip feed) content to your PMPro members.
-Version: .2.3.1
+Version: .3
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -50,7 +50,7 @@ Author URI: http://www.strangerstudios.com
 	Includes
 */
 require_once(dirname(__FILE__) . "/classes/class.pmproseries.php");
-
+require_once(dirname(__FILE__) . "/scheduled/crons.php");
 
 /*
 	Load CSS, JS files
@@ -344,17 +344,53 @@ function series_post_type_icon() {
 
 /*
 	We need to flush rewrite rules on activation/etc for the CPTs.
+	Register/unregister crons on activation/deactivation.
 */
 function pmpros_activation() 
 {	
+	//flush rewrite rules
 	PMProSeries::createCPT();
 	flush_rewrite_rules();
+	
+	//setup cron
+	wp_schedule_event(time(), 'daily', 'pmpros_check_for_new_content');
 }
 register_activation_hook( __FILE__, 'pmpros_activation' );
 function pmpros_deactivation() 
 {	
+	//flush rewrite rules
 	global $pmpros_deactivating;
 	$pmpros_deactivating = true;
     flush_rewrite_rules();
+	
+	//remove cron
+	wp_clear_scheduled_hook(time(), 'daily', 'pmpros_check_for_new_content');
 }
 register_deactivation_hook( __FILE__, 'pmpros_deactivation' );
+
+/* 
+	Add series post links to account page 
+*/
+function pmpros_member_links_bottom() {
+    global $wpdb, $current_user;
+
+    //get all series
+    $series = $wpdb->get_results("
+        SELECT *
+        FROM $wpdb->posts
+        WHERE post_type = 'pmpro_series'
+    ");
+
+    foreach($series as $s) {
+        $series = new PMProSeries($s->ID);
+        $series_posts = $series->getPosts();
+        foreach($series_posts as $series_post) {
+            if(pmpros_hasAccess($current_user->user_id, $series_post->id)) {
+                ?>
+                <li><a href="<?php echo get_permalink($series_post->id); ?>" title="<?php echo get_the_title($series_post->id); ?>"><?php echo get_the_title($series_post->id); ?></a></li>
+                <?php
+            }
+        }
+    }
+}
+add_action('pmpro_member_links_bottom', 'pmpros_member_links_bottom');
