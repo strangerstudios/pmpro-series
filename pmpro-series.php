@@ -50,7 +50,7 @@ Author URI: http://www.strangerstudios.com
 	Includes
 */
 require_once(dirname(__FILE__) . "/classes/class.pmproseries.php");
-//require_once(dirname(__FILE__) . "/scheduled/crons.php");
+require_once(dirname(__FILE__) . "/scheduled/crons.php");
 
 /*
 	Load CSS, JS files
