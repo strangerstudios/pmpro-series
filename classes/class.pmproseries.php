@@ -169,6 +169,28 @@ class PMProSeries
 	//send an email RE new access to post_id to email of user_id
 	function sendEmail($post_id, $user_id)
 	{
+        $email = new PMProEmail();
+
+        $user = get_user_by('id', $user_id);
+        $post = get_post($post_id);
+
+        $email->email = $user->user_email;
+        $email->subject = sprintf(__("New content is available at %s", "pmpro"), get_option("blogname"));
+        $email->template = "new_content";
+        $email->body = file_get_contents(plugins_url('email/new_content.html', dirname(__FILE__)));
+
+        $email->data = array(
+            "name" => $user->display_name,
+            "sitename" => get_option("blogname"),
+            "post_link" => '<a href="' . get_permalink($post->ID) . '" title="' . $post->post_title . '">' . $post->post_title . '</a>'
+        );
+
+        if(!empty($post->post_excerpt))
+            $email->data['excerpt'] = '<p>An excerpt of the post is below.</p><p>' . $post->post_excerpt . '</p>';
+        else
+            $email->data['excerpt'] = '';
+
+        $email->sendEmail();
 	}
 	
 	/*
