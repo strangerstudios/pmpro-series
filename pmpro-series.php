@@ -114,7 +114,7 @@ function pmpros_the_content($content)
 	if($post->post_type == "pmpro_series" && pmpro_has_membership_access())
 	{
 		$series = new PMProSeries($post->ID);	
-		$content .= sprintf("<p>%s</p>", sprintf(__n("You are on day %d of your membership.","pmproseries"), intval(pmpro_getMemberDays())));
+		$content .= '<p>' . sprintf(__("You are on day %d of your membership.","pmproseries"), intval(pmpro_getMemberDays())) . '</p>';
 		$content .= $series->getPostList();						
 	}
 	
@@ -222,14 +222,14 @@ function pmpros_pmpro_text_filter($text)
 				//user has one of the series levels, find out which one and tell him how many days left
 				$series = new PMProSeries($inseries);
 				$day = $series->getDelayForPost($post->ID);
-				$text = sprintf(__n("This content is part of the <a href='%s'>%s</a> series. You will gain access on day %s of your membership.", "pmproseries"), get_permalink($inseries), get_the_title($inseries), $day);
+				$text = sprintf(__("This content is part of the %s series. You will gain access on day %s of your membership.", "pmproseries"), '<a href="' . get_permalink($inseries) . '">' . get_the_title($inseries), $day) . '</a>';
 			}
 			else
 			{
 				//user has to sign up for one of the series
 				if(count($post_series) == 1)
 				{
-					$text = sprintf(__n("This content is part of the <a href='%s'>%s</a> series.", "pmproseries"), get_permalink($post_series[0]), get_the_title($post_series[0]));
+					$text = sprintf(__("This content is part of the %s series.", "pmproseries"), '<a href="' . get_permalink($post_series[0]) . '">' . get_the_title($post_series[0])) . '</a>';
 				}
 				else
 				{

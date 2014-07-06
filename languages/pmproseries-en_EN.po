@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PMPro Series .3\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/pmpro-series\n"
-"POT-Creation-Date: 2014-07-06 22:54:27+00:00\n"
-"PO-Revision-Date: 2014-07-07 00:54+0100\n"
+"POT-Creation-Date: 2014-07-06 23:23:35+00:00\n"
+"PO-Revision-Date: 2014-07-07 01:24+0100\n"
 "Last-Translator: Charlie MERLAND <charlie.merland@gmail.com>\n"
 "Language-Team: \n"
 "Language: English\n"
@@ -116,30 +116,21 @@ msgstr "Post/Page"
 msgid "Add to Series"
 msgstr "Add to Series"
 
-#: classes/class.pmproseries.php:436
-msgid "Saving..."
-msgstr "Saving..."
+#: pmpro-series.php:117
+msgid "You are on day %d of your membership."
+msgstr "Please enter a value for post and delay."
 
-#: classes/class.pmproseries.php:448
-msgid "Error saving series post [1]"
-msgstr "Error saving series post [1]"
+#: pmpro-series.php:225
+msgid ""
+"This content is part of the %s series. You will gain access on day %s of "
+"your membership."
+msgstr ""
+"This content is part of the %s series. You will gain access on day %s of "
+"your membership."
 
-#: classes/class.pmproseries.php:450 classes/class.pmproseries.php:457
-#: classes/class.pmproseries.php:472
-msgid "Save"
-msgstr "Save"
-
-#: classes/class.pmproseries.php:455
-msgid "Error saving series post [2]"
-msgstr "Error saving series post [2]"
-
-#: classes/class.pmproseries.php:483
-msgid "Error removing series post [1]"
-msgstr "Error removing series post [1]"
-
-#: classes/class.pmproseries.php:490
-msgid "Error removing series post [2]"
-msgstr "Error removing series post [2]"
+#: pmpro-series.php:232
+msgid "This content is part of the %s series."
+msgstr "This content is part of the %s series."
 
 #: pmpro-series.php:236
 msgid "This content is part of the following series: "
@@ -164,3 +155,25 @@ msgstr "Stranger Studios"
 #. Author URI of the plugin/theme
 msgid "http://www.strangerstudios.com"
 msgstr "http://www.strangerstudios.com"
+
+#, fuzzy
+#~ msgid "This content is part of the <a href='%s'>%s</a> series."
+#~ msgstr "This content is part of the following series: "
+
+#~ msgid "Saving..."
+#~ msgstr "Saving..."
+
+#~ msgid "Error saving series post [1]"
+#~ msgstr "Error saving series post [1]"
+
+#~ msgid "Save"
+#~ msgstr "Save"
+
+#~ msgid "Error saving series post [2]"
+#~ msgstr "Error saving series post [2]"
+
+#~ msgid "Error removing series post [1]"
+#~ msgstr "Error removing series post [1]"
+
+#~ msgid "Error removing series post [2]"
+#~ msgstr "Error removing series post [2]"
