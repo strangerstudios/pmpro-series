@@ -68,6 +68,16 @@ function pmprors_scripts()
 }
 add_action("init", "pmprors_scripts");
 
+/*
+	Load textdomain
+*/
+function pmpros_load_textdomain()
+{
+	$locale = apply_filters("plugin_locale", get_locale(), "pmproseries");
+	load_textdomain("pmproseries", trailingslashit( WP_LANG_DIR ) . basename( __DIR__ ) . "/languages/pmproseries-" . $locale . ".mo");
+	load_plugin_textdomain("pmproseries", FALSE, basename( __DIR__ ) . "/languages/");
+}
+add_action("init", "pmpros_load_textdomain");
 
 /*
 	PMPro Series CPT
@@ -104,7 +114,7 @@ function pmpros_the_content($content)
 	if($post->post_type == "pmpro_series" && pmpro_has_membership_access())
 	{
 		$series = new PMProSeries($post->ID);	
-		$content .= "<p>You are on day " . intval(pmpro_getMemberDays()) . " of your membership.</p>";
+		$content .= sprintf("<p>%s</p>", sprintf(__n("You are on day %d of your membership.","pmproseries"), intval(pmpro_getMemberDays())));
 		$content .= $series->getPostList();						
 	}
 	
@@ -212,18 +222,18 @@ function pmpros_pmpro_text_filter($text)
 				//user has one of the series levels, find out which one and tell him how many days left
 				$series = new PMProSeries($inseries);
 				$day = $series->getDelayForPost($post->ID);
-				$text = "This content is part of the <a href='" . get_permalink($inseries) . "'>" . get_the_title($inseries) . "</a> series. You will gain access on day " . $day . " of your membership.";
+				$text = sprintf(__n("This content is part of the <a href='%s'>%s</a> series. You will gain access on day %s of your membership.", "pmproseries"), get_permalink($inseries), get_the_title($inseries), $day);
 			}
 			else
 			{
 				//user has to sign up for one of the series
 				if(count($post_series) == 1)
 				{
-					$text = "This content is part of the <a href='" . get_permalink($post_series[0]) . "'>" . get_the_title($post_series[0]) . "</a> series.";
+					$text = sprintf(__n("This content is part of the <a href='%s'>%s</a> series.", "pmproseries"), get_permalink($post_series[0]), get_the_title($post_series[0]));
 				}
 				else
 				{
-					$text = "This content is part of the following series: ";
+					$text = __("This content is part of the following series: ", "pmproseries");
 					$series = array();
 					foreach($post_series as $series_id)
 						$series[] = "<a href='" . get_permalink($series_id) . "'>" . get_the_title($series_id) . "</a>";

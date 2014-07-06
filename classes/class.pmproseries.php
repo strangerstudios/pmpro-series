@@ -27,7 +27,7 @@ class PMProSeries
 	{
 		if(empty($post_id) || !isset($delay))
 		{
-			$this->error = "Please enter a value for post and delay.";
+			$this->error = __("Please enter a value for post and delay.", "pmproseries");
 			return false;
 		}
 		
@@ -35,7 +35,7 @@ class PMProSeries
 			
 		if(empty($post->ID))
 		{
-			$this->error = "A post with that id does not exist.";
+			$this->error = __("A post with that id does not exist.", "pmproseries");
 			return false;
 		}
 		
@@ -186,7 +186,7 @@ class PMProSeries
         );
 
         if(!empty($post->post_excerpt))
-            $email->data['excerpt'] = '<p>An excerpt of the post is below.</p><p>' . $post->post_excerpt . '</p>';
+            $email->data['excerpt'] = '<p>' . __('An excerpt of the post is below.', "pmproseries") . '</p><p>' . $post->post_excerpt . '</p>';
         else
             $email->data['excerpt'] = '';
 
@@ -205,21 +205,21 @@ class PMProSeries
 		
 		register_post_type('pmpro_series',
 				array(
-						'labels' => array(
-                                'name' => __( 'Series' ),								
-								'singular_name' => __( 'Series' ),
-                                'slug' => 'series',
-                                'add_new' => __( 'New Series' ),
-                                'add_new_item' => __( 'New Series' ),
-                                'edit' => __( 'Edit Series' ),
-                                'edit_item' => __( 'Edit Series' ),
-                                'new_item' => __( 'Add New' ),
-                                'view' => __( 'View This Series' ),
-                                'view_item' => __( 'View This Series' ),
-                                'search_items' => __( 'Search Series' ),
-                                'not_found' => __( 'No Series Found' ),
-                                'not_found_in_trash' => __( 'No Series Found In Trash' )
-                        ),
+					'labels' => array(
+					'name' => __( 'Series', 'pmproseries' ),								
+					'singular_name' => __( 'Serie', 'pmproseries' ),
+					'slug' => 'series',
+					'add_new' => __( 'New Series', 'pmproseries' ),
+					'add_new_item' => __( 'New Series', 'pmproseries' ),
+					'edit' => __( 'Edit Series', 'pmproseries' ),
+					'edit_item' => __( 'Edit Series', 'pmproseries' ),
+					'new_item' => __( 'Add New', 'pmproseries' ),
+					'view' => __( 'View This Series', 'pmproseries' ),
+					'view_item' => __( 'View This Series', 'pmproseries' ),
+					'search_items' => __( 'Search Series', 'pmproseries' ),
+					'not_found' => __( 'No Series Found', 'pmproseries' ),
+					'not_found_in_trash' => __( 'No Series Found In Trash', 'pmproseries' )
+				),
 				'public' => true,					
 				/*'menu_icon' => plugins_url('images/icon-series16-sprite.png', dirname(__FILE__)),*/
 				'show_ui' => true,
@@ -230,9 +230,9 @@ class PMProSeries
 				'can_export' => true,
 				'show_in_nav_menus' => true,
 				'rewrite' => array(
-						'slug' => 'series',
-						'with_front' => false
-						),
+					'slug' => 'series',
+					'with_front' => false
+				),
 				'has_archive' => 'series'
 			)
 		);
@@ -254,10 +254,10 @@ class PMProSeries
 	function defineMetaBoxes()
 	{
 		//PMPro box
-		add_meta_box('pmpro_page_meta', 'Require Membership', 'pmpro_page_meta', 'pmpro_series', 'side');	
+		add_meta_box('pmpro_page_meta', __('Require Membership', 'pmproseries'), 'pmpro_page_meta', 'pmpro_series', 'side');	
 		
 		//series meta box
-		add_meta_box('pmpro_series_meta', 'Posts in this Series', array("PMProSeries", "seriesMetaBox"), 'pmpro_series', 'normal');	
+		add_meta_box('pmpro_series_meta', __('Posts in this Series', 'pmproseries'), array("PMProSeries", "seriesMetaBox"), 'pmpro_series', 'normal');	
 	}
 	
 	//this is the actual series meta box
@@ -289,10 +289,10 @@ class PMProSeries
 				<li>					
 					<?php if(pmpro_getMemberDays() >= $sp->delay) { ?>
 						<span class="pmpro_series_item-title"><a href="<?php echo get_permalink($sp->id);?>"><?php echo get_the_title($sp->id);?></a></span>
-						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink($sp->id);?>">Available Now</a></span>
+						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink($sp->id);?>"><?php _e('Available Now', 'pmproseries');?></a></span>
 					<?php } else { ?>
 						<span class="pmpro_series_item-title"><?php echo get_the_title($sp->id);?></span>
-						<span class="pmpro_series_item-unavailable">available on day <?php echo $sp->delay;?></span>
+						<span class="pmpro_series_item-unavailable"><?php printf(__('available on day %s', 'pmproseries'), $sp->delay);?></span>
 					<?php } ?>
 					<div class="clear"></div>
 				</li>
@@ -351,9 +351,9 @@ class PMProSeries
 		
 		<table id="pmpros_table" class="wp-list-table widefat fixed">
 		<thead>
-			<th>Order</th>
-			<th width="50%">Title</th>
-			<th>Delay (# of days)</th>
+			<th><?php _e('Order', 'pmproseries');?></th>
+			<th width="50%"><?php _e('Title', 'pmproseries');?></th>
+			<th><?php _e('Delay (# of days)', 'pmproseries');?></th>
 			<th></th>
 			<th></th>
 		</thead>
@@ -376,10 +376,10 @@ class PMProSeries
 					<td><?php echo get_the_title($post->id)?></td>
 					<td><?php echo $post->delay?></td>
 					<td>
-						<a href="javascript:pmpros_editPost('<?php echo $post->id;?>', '<?php echo $post->delay;?>'); void(0);">Edit</a>
+						<a href="javascript:pmpros_editPost('<?php echo $post->id;?>', '<?php echo $post->delay;?>'); void(0);"><?php _e('Edit');?></a>
 					</td>
 					<td>
-						<a href="javascript:pmpros_removePost('<?php echo $post->id;?>'); void(0);">Remove</a>
+						<a href="javascript:pmpros_removePost('<?php echo $post->id;?>'); void(0);"><?php _e('Remove');?></a>
 					</td>
 				</tr>
 			<?php
@@ -391,12 +391,12 @@ class PMProSeries
 		</table>
 		
 		<div id="postcustomstuff">
-			<p><strong>Add/Edit Posts:</strong></p>
+			<p><strong><?php _e('Add/Edit Posts:', 'pmproseries');?></strong></p>
 			<table id="newmeta">
 				<thead>
 					<tr>
-						<th>Post/Page</th>
-						<th>Delay (# of days)</th>
+						<th><?php _e('Post/Page', 'pmproseries');?></th>
+						<th><?php _e('Delay (# of days)', 'pmproseries');?></th>
 						<th></th>
 					</tr>
 				</thead>
@@ -424,7 +424,7 @@ class PMProSeries
 						</script>
 						</td>
 						<td><input id="pmpros_delay" name="pmpros_delay" type="text" value="" size="7" /></td>
-						<td><a class="button" id="pmpros_save">Add to Series</a></td>
+						<td><a class="button" id="pmpros_save"><?php _e('Add to Series', 'pmproseries');?></a></td>
 					</tr>
 				</tbody>
 			</table>
@@ -433,11 +433,11 @@ class PMProSeries
 			jQuery(document).ready(function() {
 				jQuery('#pmpros_save').click(function() {
 					
-					if(jQuery(this).html() == 'Saving...')
+					if(jQuery(this).html() == '<?php _e('Saving...', 'pmproseries');?>')
 						return;	//already saving, ignore this request
 					
 					//disable save button
-					jQuery(this).html('Saving...');					
+					jQuery(this).html("<?php _e('Saving...', 'pmproseries');?>");					
 					
 					//pass field values to AJAX service and refresh table above
 					jQuery.ajax({
@@ -445,16 +445,16 @@ class PMProSeries
 						dataType: 'html',
 						data: "pmpros_add_post=1&pmpros_series=<?php echo $this->id;?>&pmpros_post=" + jQuery('#pmpros_post').val() + '&pmpros_delay=' + jQuery('#pmpros_delay').val(),
 						error: function(xml){
-							alert('Error saving series post [1]');
+							alert("<?php _e('Error saving series post [1]', 'pmproseries');?>");
 							//enable save button
-							jQuery(this).html('Save');												
+							jQuery(this).html("<?php _e('Save');?>");												
 						},
 						success: function(responseHTML){
 							if (responseHTML == 'error')
 							{
-								alert('Error saving series post [2]');
+								alert("<?php _e('Error saving series post [2]', 'pmproseries');?>");
 								//enable save button
-								jQuery(this).html('Save');		
+								jQuery(this).html("<?php _e('Save');?>");		
 							}
 							else
 							{
@@ -469,7 +469,7 @@ class PMProSeries
 			{
 				jQuery('#pmpros_post').val(post_id).trigger("change");
 				jQuery('#pmpros_delay').val(delay);
-				jQuery('#pmpros_save').html('Save');
+				jQuery('#pmpros_save').html("<?php _e('Save');?>");
 				location.href = "#pmpros_edit_post";
 			}
 			
@@ -480,14 +480,14 @@ class PMProSeries
 					dataType: 'html',
 					data: "pmpros_add_post=1&pmpros_series=<?php echo $this->id;?>&pmpros_remove="+post_id,
 					error: function(xml){
-						alert('Error removing series post [1]');
+						alert("<?php _e('Error removing series post [1]', 'pmproseries');?>");
 						//enable save button
 						jQuery('#pmpros_save').removeAttr('disabled');												
 					},
 					success: function(responseHTML){
 						if (responseHTML == 'error')
 						{
-							alert('Error removing series post [2]');
+							alert("<?php _e('Error removing series post [2]', 'pmproseries');?>");
 							//enable save button
 							jQuery('#pmpros_save').removeAttr('disabled');	
 						}

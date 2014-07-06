@@ -1,0 +1,167 @@
+# Copyright (C) 2014 PMPro Series
+# This file is distributed under the same license as the PMPro Series package.
+msgid ""
+msgstr ""
+"Project-Id-Version: PMPro Series .3\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/pmpro-series\n"
+"POT-Creation-Date: 2014-07-06 22:54:27+00:00\n"
+"PO-Revision-Date: 2014-07-07 00:55+0100\n"
+"Last-Translator: Charlie MERLAND <charlie.merland@gmail.com>\n"
+"Language-Team: \n"
+"Language: French\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: classes/class.pmproseries.php:30
+msgid "Please enter a value for post and delay."
+msgstr "Entrez une valeur pour l'article et le délai."
+
+#: classes/class.pmproseries.php:38
+msgid "A post with that id does not exist."
+msgstr "Cet ID ne correspond à aucun article existant."
+
+#: classes/class.pmproseries.php:178
+msgid "New content is available at %s"
+msgstr "Nouveau contenu disponible à %s"
+
+#: classes/class.pmproseries.php:189
+msgid "An excerpt of the post is below."
+msgstr "Ci-dessous un extrait de l'article."
+
+#: classes/class.pmproseries.php:209
+msgid "Series"
+msgstr "Séries"
+
+#: classes/class.pmproseries.php:210
+msgid "Serie"
+msgstr "Serie"
+
+#: classes/class.pmproseries.php:212 classes/class.pmproseries.php:213
+msgid "New Series"
+msgstr "Nouvelle série"
+
+#: classes/class.pmproseries.php:214 classes/class.pmproseries.php:215
+msgid "Edit Series"
+msgstr "Modifier la série"
+
+#: classes/class.pmproseries.php:216
+msgid "Add New"
+msgstr "Ajouter une série"
+
+#: classes/class.pmproseries.php:217 classes/class.pmproseries.php:218
+msgid "View This Series"
+msgstr "Voir cette série"
+
+#: classes/class.pmproseries.php:219
+msgid "Search Series"
+msgstr "Rechercher les séries"
+
+#: classes/class.pmproseries.php:220
+msgid "No Series Found"
+msgstr "Aucune série trouvée"
+
+#: classes/class.pmproseries.php:221
+msgid "No Series Found In Trash"
+msgstr "Aucune série trouvée dans la corbeille"
+
+#: classes/class.pmproseries.php:257
+msgid "Require Membership"
+msgstr "Nécessite un abonnement"
+
+#: classes/class.pmproseries.php:260
+msgid "Posts in this Series"
+msgstr "Articles de cette série"
+
+#: classes/class.pmproseries.php:292
+msgid "Available Now"
+msgstr "Disponible"
+
+#: classes/class.pmproseries.php:295
+msgid "available on day %s"
+msgstr "Disponible le jour %s"
+
+#: classes/class.pmproseries.php:354
+msgid "Order"
+msgstr "Ordre"
+
+#: classes/class.pmproseries.php:355
+msgid "Title"
+msgstr "Titre"
+
+#: classes/class.pmproseries.php:356 classes/class.pmproseries.php:399
+msgid "Delay (# of days)"
+msgstr "Délai (nombre de jours)"
+
+#: classes/class.pmproseries.php:379
+msgid "Edit"
+msgstr "Modifier"
+
+#: classes/class.pmproseries.php:382
+msgid "Remove"
+msgstr "Supprimer"
+
+#: classes/class.pmproseries.php:394
+msgid "Add/Edit Posts:"
+msgstr "Ajouter/modifier des articles"
+
+#: classes/class.pmproseries.php:398
+msgid "Post/Page"
+msgstr "Articles/pages"
+
+#: classes/class.pmproseries.php:427
+msgid "Add to Series"
+msgstr "Ajouter à la série"
+
+#: classes/class.pmproseries.php:436
+msgid "Saving..."
+msgstr "Sauvegarde…"
+
+#: classes/class.pmproseries.php:448
+msgid "Error saving series post [1]"
+msgstr "Erreur lors de l'enregistrement [1]"
+
+#: classes/class.pmproseries.php:450 classes/class.pmproseries.php:457
+#: classes/class.pmproseries.php:472
+msgid "Save"
+msgstr "Sauvegarder"
+
+#: classes/class.pmproseries.php:455
+msgid "Error saving series post [2]"
+msgstr "Erreur lors de l'enregistrement [2]"
+
+#: classes/class.pmproseries.php:483
+msgid "Error removing series post [1]"
+msgstr "Erreur lors de la suppression [1]"
+
+#: classes/class.pmproseries.php:490
+msgid "Error removing series post [2]"
+msgstr "Erreur lors de la suppression [2]"
+
+#: pmpro-series.php:236
+msgid "This content is part of the following series: "
+msgstr "Ce contenu fait partie des séries :"
+
+#. Plugin Name of the plugin/theme
+msgid "PMPro Series"
+msgstr "PMPro Series"
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.paidmembershipspro.com/pmpro-series/"
+msgstr "http://www.paidmembershipspro.com/pmpro-series/"
+
+#. Description of the plugin/theme
+msgid "Offer serialized (drip feed) content to your PMPro members."
+msgstr ""
+"Donne accès à des contenus au compte-gouttes (drip feed) à vos abonnés PMPro."
+
+#. Author of the plugin/theme
+msgid "Stranger Studios"
+msgstr "Stranger Studios"
+
+#. Author URI of the plugin/theme
+msgid "http://www.strangerstudios.com"
+msgstr "http://www.strangerstudios.com"
