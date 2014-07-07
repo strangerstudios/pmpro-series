@@ -324,22 +324,7 @@ class PMProSeries
 		//boot out people without permissions
 		if(!current_user_can("edit_posts"))
 			return false;
-		
-		if(isset($_REQUEST['pmpros_post']))
-			$pmpros_post = intval($_REQUEST['pmpros_post']);
-		if(isset($_REQUEST['pmpros_delay']))
-			$delay = intval($_REQUEST['pmpros_delay']);
-		if(isset($_REQUEST['pmpros_remove']))
-			$remove = intval($_REQUEST['pmpros_remove']);
-			
-		//adding a post
-		if(!empty($pmpros_post))			
-			$this->addPost($pmpros_post, $delay);
-			
-		//removing a post
-		if(!empty($remove))
-			$this->removePost($remove);
-						
+
 		//show posts
 		$this->getPosts();
 				
@@ -423,82 +408,17 @@ class PMProSeries
 							jQuery('#pmpros_post').select2();
 						</script>
 						</td>
-						<td><input id="pmpros_delay" name="pmpros_delay" type="text" value="" size="7" /></td>
-						<td><a class="button" id="pmpros_save"><?php _e('Add to Series', 'pmproseries');?></a></td>
+						<td>
+							<input id="pmpros_delay" name="pmpros_delay" type="text" value="" size="7" />
+							<input id="pmpros_serie" name="pmpros_serie" type="hidden" value="<?php echo $this->id;?>" />
+							<?php wp_nonce_field('pmpros-serie-add-post','pmpros_addpost_nonce'); ?>
+							<?php wp_nonce_field('pmpros-serie-rm-post','pmpros_rmpost_nonce'); ?>
+						</td>
+						<td><a class="button" id="pmpros_save" onclick="javascript:pmpros_addPost(); return false;"><?php _e('Add to Series', 'pmproseries');?></a></td>
 					</tr>
 				</tbody>
 			</table>
-		</div>
-		<script>						
-			jQuery(document).ready(function() {
-				jQuery('#pmpros_save').click(function() {
-					
-					if(jQuery(this).html() == '<?php _e('Saving...', 'pmproseries');?>')
-						return;	//already saving, ignore this request
-					
-					//disable save button
-					jQuery(this).html("<?php _e('Saving...', 'pmproseries');?>");					
-					
-					//pass field values to AJAX service and refresh table above
-					jQuery.ajax({
-						url: '<?php echo home_url()?>',type:'GET',timeout:2000,
-						dataType: 'html',
-						data: "pmpros_add_post=1&pmpros_series=<?php echo $this->id;?>&pmpros_post=" + jQuery('#pmpros_post').val() + '&pmpros_delay=' + jQuery('#pmpros_delay').val(),
-						error: function(xml){
-							alert("<?php _e('Error saving series post [1]', 'pmproseries');?>");
-							//enable save button
-							jQuery(this).html("<?php _e('Save');?>");												
-						},
-						success: function(responseHTML){
-							if (responseHTML == 'error')
-							{
-								alert("<?php _e('Error saving series post [2]', 'pmproseries');?>");
-								//enable save button
-								jQuery(this).html("<?php _e('Save');?>");		
-							}
-							else
-							{
-								jQuery('#pmpros_series_posts').html(responseHTML);
-							}																						
-						}
-					});
-				});	
-			});				
-			
-			function pmpros_editPost(post_id, delay)
-			{
-				jQuery('#pmpros_post').val(post_id).trigger("change");
-				jQuery('#pmpros_delay').val(delay);
-				jQuery('#pmpros_save').html("<?php _e('Save');?>");
-				location.href = "#pmpros_edit_post";
-			}
-			
-			function pmpros_removePost(post_id)
-			{								
-				jQuery.ajax({
-					url: '<?php echo home_url()?>',type:'GET',timeout:2000,
-					dataType: 'html',
-					data: "pmpros_add_post=1&pmpros_series=<?php echo $this->id;?>&pmpros_remove="+post_id,
-					error: function(xml){
-						alert("<?php _e('Error removing series post [1]', 'pmproseries');?>");
-						//enable save button
-						jQuery('#pmpros_save').removeAttr('disabled');												
-					},
-					success: function(responseHTML){
-						if (responseHTML == 'error')
-						{
-							alert("<?php _e('Error removing series post [2]', 'pmproseries');?>");
-							//enable save button
-							jQuery('#pmpros_save').removeAttr('disabled');	
-						}
-						else
-						{
-							jQuery('#pmpros_series_posts').html(responseHTML);
-						}																						
-					}
-				});
-			}
-		</script>		
-		<?php		
+		</div>	
+		<?php
 	}
 }

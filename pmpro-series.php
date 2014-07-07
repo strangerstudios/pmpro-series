@@ -66,7 +66,33 @@ function pmprors_scripts()
 		/*}*/
 	}
 }
-add_action("init", "pmprors_scripts");
+add_action("wp_enqueue_scripts", "pmprors_scripts");
+
+/*
+	Load admin JS files
+*/
+function pmprors_admin_scripts($hook)
+{
+	if('post.php'==$hook && 'pmpro_series'==get_post_type()) {
+
+		wp_register_script("pmprors_pmpro", plugins_url('js/pmpro_series.js',__FILE__ ), array('jquery'), null, true);
+
+		$localize = array(
+			'lang' => array(
+				'save'           => __('Save', 'pmproseries'),
+				'saving'         => __('Saving...', 'pmproseries'),
+				'saving_error_1' => __('Error saving series post [1]', 'pmproseries'),
+				'saving_error_2' => __('Error saving series post [2]', 'pmproseries'),
+				'remove_error_1' => __('Error removing series post [1]', 'pmproseries'),
+				'remove_error_2' => __('Error removing series post [2]', 'pmproseries'),
+			)
+		);
+
+		wp_localize_script("pmprors_pmpro", "pmpro_series", $localize);
+		wp_enqueue_script("pmprors_pmpro");
+	}
+}
+add_action("admin_enqueue_scripts", "pmprors_admin_scripts");
 
 /*
 	Load textdomain
@@ -90,19 +116,51 @@ add_action("init", array("PMProSeries", "createCPT"));
 add_action("init", array("PMProSeries", "checkForMetaBoxes"), 20);
 
 /*
-	Detect AJAX calls
-*/
-function pmpros_ajax()
+ * Add-to-series AJAX callback
+ */
+function pmpros_add_post_callback()
 {
-	if(isset($_REQUEST['pmpros_add_post']))
-	{
-		$series_id = $_REQUEST['pmpros_series'];				
-		$series = new PMProSeries($series_id);
-		$series->getPostListForMetaBox();
-		exit;
-	}
+	check_ajax_referer( 'pmpros-serie-add-post', 'pmpros_addpost_nonce' );
+
+	$serie_id = ( isset( $_POST['pmpros_series'] ) && '' != $_POST['pmpros_series'] ? intval( $_POST['pmpros_series'] ) : null );
+	$pmpros_post = ( isset( $_POST['pmpros_post'] ) && '' != $_POST['pmpros_post'] ? intval( $_POST['pmpros_post'] ) : null );
+	$pmpros_delay = ( isset( $_POST['pmpros_delay'] ) && '' != $_POST['pmpros_delay'] ? intval( $_POST['pmpros_delay'] ) : 0 );
+
+	$series = new PMProSeries( $serie_id );
+
+	//adding a post
+	if( current_user_can( 'edit_posts' ) && ! is_null( $pmpros_post ) )
+		$series->addPost( $pmpros_post, $pmpros_delay );
+
+	/*//removing a post
+	if(!empty($remove))
+		$series->removePost($remove);*/
+
+	$series->getPostListForMetaBox();
+	wp_die();
 }
-add_action("init", "pmpros_ajax");
+add_action("wp_ajax_pmpros_add_post", "pmpros_add_post_callback");
+
+/*
+ * Remove-from-series AJAX callback
+ */
+function pmpros_rm_post_callback()
+{
+	check_ajax_referer( 'pmpros-serie-rm-post', 'pmpros_rmpost_nonce' );
+
+	$serie_id = ( isset( $_POST['pmpros_series'] ) && '' != $_POST['pmpros_series'] ? intval( $_POST['pmpros_series'] ) : null );
+	$pmpros_post = ( isset( $_POST['pmpros_post'] ) && '' != $_POST['pmpros_post'] ? intval( $_POST['pmpros_post'] ) : null );
+
+	$series = new PMProSeries( $serie_id );
+
+	//removing a post
+	if( current_user_can( 'edit_posts' ) && ! is_null( $pmpros_post ) )
+		$series->removePost( $pmpros_post );
+
+	$series->getPostListForMetaBox();
+	wp_die();
+}
+add_action("wp_ajax_pmpros_rm_post", "pmpros_rm_post_callback");
 
 /*
 	Show list of series pages at end of series
