@@ -202,24 +202,25 @@ class PMProSeries
 		global $pmpros_deactivating;
 		if(!empty($pmpros_deactivating))
 			return false;
+
+        $labels = apply_filters('pmpros_series_labels', array(
+            'name' => __( 'Series' ),
+            'singular_name' => __( 'Series' ),
+            'slug' => 'series',
+            'add_new' => __( 'New Series' ),
+            'add_new_item' => __( 'New Series' ),
+            'edit' => __( 'Edit Series' ),
+            'edit_item' => __( 'Edit Series' ),
+            'new_item' => __( 'Add New' ),
+            'view' => __( 'View This Series' ),
+            'view_item' => __( 'View This Series' ),
+            'search_items' => __( 'Search Series' ),
+            'not_found' => __( 'No Series Found' ),
+            'not_found_in_trash' => __( 'No Series Found In Trash' )
+        ));
 		
-		register_post_type('pmpro_series',
-				array(
-						'labels' => array(
-                                'name' => __( 'Series' ),								
-								'singular_name' => __( 'Series' ),
-                                'slug' => 'series',
-                                'add_new' => __( 'New Series' ),
-                                'add_new_item' => __( 'New Series' ),
-                                'edit' => __( 'Edit Series' ),
-                                'edit_item' => __( 'Edit Series' ),
-                                'new_item' => __( 'Add New' ),
-                                'view' => __( 'View This Series' ),
-                                'view_item' => __( 'View This Series' ),
-                                'search_items' => __( 'Search Series' ),
-                                'not_found' => __( 'No Series Found' ),
-                                'not_found_in_trash' => __( 'No Series Found In Trash' )
-                        ),
+		register_post_type('pmpro_series', array(
+				'labels' => $labels,
 				'public' => true,					
 				/*'menu_icon' => plugins_url('images/icon-series16-sprite.png', dirname(__FILE__)),*/
 				'show_ui' => true,

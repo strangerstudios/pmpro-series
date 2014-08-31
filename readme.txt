@@ -26,6 +26,7 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 == Changelog ==
 = .3.1 =
 * Fixed some warnings. (Thanks, Virtualced)
+* Added pmpros_series_labels filter
 
 = .3 =
 * Added account page links
