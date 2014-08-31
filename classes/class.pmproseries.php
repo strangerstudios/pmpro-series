@@ -196,7 +196,7 @@ class PMProSeries
 	/*
 		Create CPT
 	*/
-	function createCPT()
+	static function createCPT()
 	{
 		//don't want to do this when deactivating
 		global $pmpros_deactivating;
@@ -241,7 +241,7 @@ class PMProSeries
 	/*
 		Meta boxes
 	*/	
-	function checkForMetaBoxes()
+	static function checkForMetaBoxes()
 	{
 		//add meta boxes
 		if (is_admin())
@@ -251,7 +251,7 @@ class PMProSeries
 			add_action('admin_menu', array("PMProSeries", "defineMetaBoxes"));
 		}
 	}	
-	function defineMetaBoxes()
+	static function defineMetaBoxes()
 	{
 		//PMPro box
 		add_meta_box('pmpro_page_meta', 'Require Membership', 'pmpro_page_meta', 'pmpro_series', 'side');	
@@ -261,7 +261,7 @@ class PMProSeries
 	}
 	
 	//this is the actual series meta box
-	function seriesMetaBox()
+	static function seriesMetaBox()
 	{
 		global $post;
 		$series = new PMProSeries($post->ID);
