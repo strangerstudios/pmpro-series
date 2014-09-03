@@ -3,7 +3,7 @@
 Plugin Name: PMPro Series
 Plugin URI: http://www.paidmembershipspro.com/pmpro-series/
 Description: Offer serialized (drip feed) content to your PMPro members.
-Version: .3.1
+Version: .3.2
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -384,13 +384,16 @@ function pmpros_member_links_bottom() {
     foreach($series as $s) {
         $series = new PMProSeries($s->ID);
         $series_posts = $series->getPosts();
-        foreach($series_posts as $series_post) {
-            if(pmpros_hasAccess($current_user->user_id, $series_post->id)) {
-                ?>
-                <li><a href="<?php echo get_permalink($series_post->id); ?>" title="<?php echo get_the_title($series_post->id); ?>"><?php echo get_the_title($series_post->id); ?></a></li>
-                <?php
-            }
-        }
+        if(!empty($series_posts))
+		{
+			foreach($series_posts as $series_post) {
+				if(pmpros_hasAccess($current_user->user_id, $series_post->id)) {
+					?>
+					<li><a href="<?php echo get_permalink($series_post->id); ?>" title="<?php echo get_the_title($series_post->id); ?>"><?php echo get_the_title($series_post->id); ?></a></li>
+					<?php
+				}
+			}
+		}
     }
 }
 add_action('pmpro_member_links_bottom', 'pmpros_member_links_bottom');
