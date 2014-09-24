@@ -3,7 +3,7 @@
 Plugin Name: PMPro Series
 Plugin URI: http://www.paidmembershipspro.com/pmpro-series/
 Description: Offer serialized (drip feed) content to your PMPro members.
-Version: .3.2
+Version: .3.3
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -166,7 +166,7 @@ function pmpros_hasAccess($user_id, $post_id)
 	Filter pmpro_has_membership_access based on series access.
 */
 function pmpros_pmpro_has_membership_access_filter($hasaccess, $mypost, $myuser, $post_membership_levels)
-{
+{	
 	//If the user doesn't have access already, we won't change that. So only check if they already have access.
 	if($hasaccess)
 	{			
@@ -212,7 +212,12 @@ function pmpros_pmpro_text_filter($text)
 				//user has one of the series levels, find out which one and tell him how many days left
 				$series = new PMProSeries($inseries);
 				$day = $series->getDelayForPost($post->ID);
-				$text = "This content is part of the <a href='" . get_permalink($inseries) . "'>" . get_the_title($inseries) . "</a> series. You will gain access on day " . $day . " of your membership.";
+				
+				$member_days = pmpro_getMemberDays($current_user->ID);
+				$days_left = $day - $member_days;
+				$date = date(get_option("date_format", strtotime("+ $days_left Days", current_time("timestamp"))));
+				
+				$text = "This content is part of the <a href='" . get_permalink($inseries) . "'>" . get_the_title($inseries) . "</a> series. You will gain access on " . $date . ".";
 			}
 			else
 			{

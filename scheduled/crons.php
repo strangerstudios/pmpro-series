@@ -1,5 +1,6 @@
 <?php
 /* Check for new content, email user if it exists. */
+add_action("pmpros_check_for_new_content", "pmpros_check_for_new_content");
 function pmpros_check_for_new_content() {
 
     global $wpdb;
@@ -24,6 +25,8 @@ function pmpros_check_for_new_content() {
         foreach($series_posts as $series_post) {
             foreach($users as $user) {
                 $notified = get_user_meta($user->user_id,'pmpros_notified', true);
+				if(empty($notified))
+					$notified = array();
                 if(pmpros_hasAccess($user->user_id, $series_post->id) && !in_array($series_post->id, $notified)) {
                     $series->sendEmail($series_post->id, $user->user_id);
                     $notified[] = $series_post->id;

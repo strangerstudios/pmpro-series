@@ -169,7 +169,10 @@ class PMProSeries
 	//send an email RE new access to post_id to email of user_id
 	function sendEmail($post_id, $user_id)
 	{
-        $email = new PMProEmail();
+        if(!class_exists("PMProEmail"))
+			return;
+		
+		$email = new PMProEmail();
 
         $user = get_user_by('id', $user_id);
         $post = get_post($post_id);
