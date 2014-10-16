@@ -296,16 +296,20 @@ class PMProSeries
 			?>		
 			<ul id="pmpro_series-<?php echo $this->id; ?>" class="pmpro_series_list">
 			<?php			
+				$member_days = pmpro_getMemberDays($current_user->ID);				
+				
 				foreach($this->posts as $sp)
 				{
+					$days_left = ceil($sp->delay - $member_days);
+					$date = date(get_option("date_format"), strtotime("+ $days_left Days", current_time("timestamp")));
 				?>
 				<li>					
-					<?php if(pmpro_getMemberDays() >= $sp->delay) { ?>
+					<?php if(max(0, $member_days) >= $sp->delay) { ?>
 						<span class="pmpro_series_item-title"><a href="<?php echo get_permalink($sp->id);?>"><?php echo get_the_title($sp->id);?></a></span>
 						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink($sp->id);?>">Available Now</a></span>
 					<?php } else { ?>
 						<span class="pmpro_series_item-title"><?php echo get_the_title($sp->id);?></span>
-						<span class="pmpro_series_item-unavailable">available on day <?php echo $sp->delay;?></span>
+						<span class="pmpro_series_item-unavailable">available on <?php echo $date; ?></span>
 					<?php } ?>
 					<div class="clear"></div>
 				</li>

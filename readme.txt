@@ -24,10 +24,15 @@ This plugin currently requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-series/issues
 
 == Changelog ==
+= .3.4 =
+* Can now use custom email templates for new content notifications. (.../your_theme/paid-memberships-pro/series/new_content.html)
+* Fixed bug in code that adds links to series posts in the member links section of the membership account page.
+* Fixed bug with Day 0 content if timezones/etc aren't lined up on server/site.
+* Changed series list to show dates of availability instead of "on day X".
+
 = .3.3 =
 * Now showing the date content in a series will become available instead of the number of days.
 * Fixed bug where pmpros_check_for_new_content() function was not being fired by the cron.
-* Can now use custom email templates for new content notifications. (.../your_theme/paid-memberships-pro/series/new_content.html)
 
 = .3.2 =
 * Fixed a warning. (Thanks, Karmyn)

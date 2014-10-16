@@ -147,7 +147,7 @@ function pmpros_hasAccess($user_id, $post_id)
 						//check specifically for the levels with access to this series
 						foreach($results[1] as $level_id)
 						{
-							if(pmpro_getMemberDays($user_id, $level_id) >= $sp->delay)
+							if(max(0, pmpro_getMemberDays($user_id, $level_id)) >= $sp->delay)
 							{						
 								return true;	//user has access to this series and has been around longer than this post's delay
 							}
@@ -380,18 +380,22 @@ function pmpros_member_links_bottom() {
     global $wpdb, $current_user;
 
     //get all series
-    $series = $wpdb->get_results("
+    $all_series = $wpdb->get_results("
         SELECT *
         FROM $wpdb->posts
         WHERE post_type = 'pmpro_series'
     ");
-
-    foreach($series as $s) {
+	
+	if(empty($all_series))
+		return;
+		
+    foreach($all_series as $s) {
         $series = new PMProSeries($s->ID);
         $series_posts = $series->getPosts();
-        if(!empty($series_posts))
+        		
+		if(!empty($series_posts))
 		{
-			foreach($series_posts as $series_post) {
+			foreach($series_posts as $series_post) {								
 				if(pmpros_hasAccess($current_user->user_id, $series_post->id)) {
 					?>
 					<li><a href="<?php echo get_permalink($series_post->id); ?>" title="<?php echo get_the_title($series_post->id); ?>"><?php echo get_the_title($series_post->id); ?></a></li>
