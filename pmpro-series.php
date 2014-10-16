@@ -214,8 +214,8 @@ function pmpros_pmpro_text_filter($text)
 				$day = $series->getDelayForPost($post->ID);
 				
 				$member_days = pmpro_getMemberDays($current_user->ID);
-				$days_left = $day - $member_days;
-				$date = date(get_option("date_format", strtotime("+ $days_left Days", current_time("timestamp"))));
+				$days_left = ceil($day - $member_days);
+				$date = date(get_option("date_format"), strtotime("+ $days_left Days", current_time("timestamp")));
 				
 				$text = "This content is part of the <a href='" . get_permalink($inseries) . "'>" . get_the_title($inseries) . "</a> series. You will gain access on " . $date . ".";
 			}
