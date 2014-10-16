@@ -27,6 +27,7 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 = .3.3 =
 * Now showing the date content in a series will become available instead of the number of days.
 * Fixed bug where pmpros_check_for_new_content() function was not being fired by the cron.
+* Can now use custom email templates for new content notifications. (.../your_theme/paid-memberships-pro/series/new_content.html)
 
 = .3.2 =
 * Fixed a warning. (Thanks, Karmyn)

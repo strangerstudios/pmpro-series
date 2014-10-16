@@ -180,7 +180,16 @@ class PMProSeries
         $email->email = $user->user_email;
         $email->subject = sprintf(__("New content is available at %s", "pmpro"), get_option("blogname"));
         $email->template = "new_content";
-        $email->body = file_get_contents(plugins_url('email/new_content.html', dirname(__FILE__)));
+        
+		//check for custom email template
+        if(file_exists(get_stylesheet_directory() . '/paid-memberships-pro/series/new_content.html'))
+            $template_path = get_stylesheet_directory() . '/paid-memberships-pro/series/new_content.html';
+        elseif(file_exists(get_template_directory() . '/paid-memberships-pro/series/new_content.html'))
+            $template_path = get_template_directory() . '/paid-memberships-pro/series/new_content.html';
+        else
+            $template_path = plugins_url('email/new_content.html', dirname(__FILE__));
+
+        $email->body = file_get_contents($template_path);
 
         $email->data = array(
             "name" => $user->display_name,
