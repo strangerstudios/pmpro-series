@@ -231,7 +231,7 @@ class PMProSeries
             'not_found_in_trash' => __( 'No Series Found In Trash' )
         ));
 		
-		register_post_type('pmpro_series', array(
+		register_post_type('pmpro_series', apply_filters('pmpros_series_registration', array(
 				'labels' => $labels,
 				'public' => true,					
 				/*'menu_icon' => plugins_url('images/icon-series16-sprite.png', dirname(__FILE__)),*/
@@ -247,7 +247,7 @@ class PMProSeries
 						'with_front' => false
 						),
 				'has_archive' => 'series'
-			)
+			))
 		);
 	}
 	
