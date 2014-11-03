@@ -167,7 +167,7 @@ class PMProSeries
 	}
 	
 	//send an email RE new access to post_id to email of user_id
-	function sendEmail($post_id, $user_id)
+	function sendEmail($post_ids, $user_id)
 	{
         if(!class_exists("PMProEmail"))
 			return;
@@ -175,8 +175,15 @@ class PMProSeries
 		$email = new PMProEmail();
 
         $user = get_user_by('id', $user_id);
-        $post = get_post($post_id);
-
+        
+		//build list of posts
+		$post_list = "<ul>\n";
+		foreach($post_ids as $post_id)
+		{
+			$post_list .= '<li><a href="' . get_permalink($post_id) . '">' . get_the_title($post_id) . '</a></li>' . "\n";
+		}
+		$post_list .= "</ul>\n";
+		
         $email->email = $user->user_email;
         $email->subject = sprintf(__("New content is available at %s", "pmpro"), get_option("blogname"));
         $email->template = "new_content";
@@ -194,7 +201,8 @@ class PMProSeries
         $email->data = array(
             "name" => $user->display_name,
             "sitename" => get_option("blogname"),
-            "post_link" => '<a href="' . get_permalink($post->ID) . '" title="' . $post->post_title . '">' . $post->post_title . '</a>'
+            "post_list" => $post_list,
+			"login_link" => wp_login_url()
         );
 
         if(!empty($post->post_excerpt))

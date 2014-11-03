@@ -1,4 +1,16 @@
 <?php
+//test
+function init_test()
+{
+	if(empty($_REQUEST['test']))
+		return;
+		
+	pmpros_check_for_new_content();
+	exit;
+}
+add_action('init', 'init_test');
+//end test
+
 /* Check for new content, email user if it exists. */
 add_action("pmpros_check_for_new_content", "pmpros_check_for_new_content");
 function pmpros_check_for_new_content() {
@@ -19,20 +31,42 @@ function pmpros_check_for_new_content() {
         WHERE post_type = 'pmpro_series'
     ");
 
-    foreach($series as $s) {
+	//store emails to send
+	$emails = array();
+	
+    //search through series looking for emails to send
+	foreach($series as $s) {
         $series = new PMProSeries($s->ID);
         $series_posts = $series->getPosts();
+				
+		if(empty($series_posts))
+			continue;
+		
         foreach($series_posts as $series_post) {
             foreach($users as $user) {
                 $notified = get_user_meta($user->user_id,'pmpros_notified', true);
 				if(empty($notified))
 					$notified = array();
                 if(pmpros_hasAccess($user->user_id, $series_post->id) && !in_array($series_post->id, $notified)) {
-                    $series->sendEmail($series_post->id, $user->user_id);
-                    $notified[] = $series_post->id;
-                    update_user_meta($user->user_id, 'pmpros_notified', $notified);
+                    //add email to array to send
+					if(empty($emails[$user->user_id]))
+						$emails[$user->user_id] = array();
+					$emails[$user->user_id][] = $series_post->id;
+					//$series->sendEmail($series_post->id, $user->user_id);                    
                 }
             }
         }
     }
+	
+	//send emails
+	foreach($emails as $user_id => $posts)
+	{		
+		//send email
+		$series->sendEmail($posts, $user_id);
+		
+		//remember that we emailed about these posts
+		$notified = get_user_meta($user_id, "pmpros_notified", true);
+		
+		$notified = array_unique(array_merge($posts, $notified));		
+	}
 }
