@@ -1,16 +1,4 @@
 <?php
-//test
-function init_test()
-{
-	if(empty($_REQUEST['test']))
-		return;
-		
-	pmpros_check_for_new_content();
-	exit;
-}
-add_action('init', 'init_test');
-//end test
-
 /* Check for new content, email user if it exists. */
 add_action("pmpros_check_for_new_content", "pmpros_check_for_new_content");
 function pmpros_check_for_new_content() {
