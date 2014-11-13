@@ -53,8 +53,10 @@ function pmpros_check_for_new_content() {
 		$series->sendEmail($posts, $user_id);
 		
 		//remember that we emailed about these posts
-		$notified = get_user_meta($user_id, "pmpros_notified", true);
-		
-		$notified = array_unique(array_merge($posts, $notified));		
+		$notified = get_user_meta($user_id, "pmpros_notified", true);		
+		if(!is_array($notified))
+			$notified = array();
+		$notified = array_unique(array_merge($posts, $notified));
+		update_user_meta($user_id, "pmpros_notified", $notified);
 	}
 }
