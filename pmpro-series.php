@@ -295,7 +295,7 @@ if(!function_exists("pmpro_getMemberStartdate"))
 				$pmpro_member_days[$user_id][$level_id] = 0;
 			else
 			{			
-				$now = time();
+				$now = current_time('timestamp');
 				$days = ($now - $startdate)/3600/24;
 					
 				$pmpro_member_days[$user_id][$level_id] = $days;
@@ -358,7 +358,7 @@ function pmpros_activation()
 	flush_rewrite_rules();
 	
 	//setup cron
-	wp_schedule_event(time(), 'daily', 'pmpros_check_for_new_content');
+	wp_schedule_event(current_time('timestamp'), 'daily', 'pmpros_check_for_new_content');
 }
 register_activation_hook( __FILE__, 'pmpros_activation' );
 function pmpros_deactivation() 
@@ -369,7 +369,7 @@ function pmpros_deactivation()
     flush_rewrite_rules();
 	
 	//remove cron
-	wp_clear_scheduled_hook(time(), 'daily', 'pmpros_check_for_new_content');
+	wp_clear_scheduled_hook(current_time('timestamp'), 'daily', 'pmpros_check_for_new_content');
 }
 register_deactivation_hook( __FILE__, 'pmpros_deactivation' );
 
