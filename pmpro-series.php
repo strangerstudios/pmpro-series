@@ -396,7 +396,7 @@ function pmpros_member_links_bottom() {
 		if(!empty($series_posts))
 		{
 			foreach($series_posts as $series_post) {								
-				if(pmpros_hasAccess($current_user->user_id, $series_post->id)) {
+				if(pmpros_hasAccess($current_user->ID, $series_post->id)) {
 					?>
 					<li><a href="<?php echo get_permalink($series_post->id); ?>" title="<?php echo get_the_title($series_post->id); ?>"><?php echo get_the_title($series_post->id); ?></a></li>
 					<?php
