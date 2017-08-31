@@ -2,7 +2,7 @@
 class PMProSeries
 {
 	//constructor
-	function PMProSeries($id = NULL)
+	function __construct($id = NULL)
 	{
 		if(!empty($id))
 			return $this->getSeriesByID($id);
