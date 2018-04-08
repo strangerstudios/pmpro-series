@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: PMPro Series
-Plugin URI: http://www.paidmembershipspro.com/pmpro-series/
+Plugin Name: Paid Memberships Pro - Series Add On
+Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-series-for-drip-feed-content/
 Description: Offer serialized (drip feed) content to your PMPro members.
 Version: .3.8
-Author: Stranger Studios
-Author URI: http://www.strangerstudios.com
+Author: Paid Memberships Pro
+Author URI: https://www.paidmembershipspro.com
 */
 
 /*
@@ -410,3 +410,36 @@ function pmpros_member_links_bottom() {
     }
 }
 add_action('pmpro_member_links_bottom', 'pmpros_member_links_bottom');
+
+/**
+ * Function to add links to the plugin action links
+ *
+ * @param array $links Array of links to be shown in plugin action links.
+ */
+function pmpros_plugin_action_links( $links ) {
+	if ( current_user_can( 'manage_options' ) ) {
+		$new_links = array(
+			'<a href="' . get_admin_url( null, 'edit.php?post_type=pmpro_series' ) . '">' . __( 'Settings', 'pmpro-series' ) . '</a>',
+		);
+	}
+	return array_merge( $new_links, $links );
+}
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'pmpros_plugin_action_links' );
+
+/**
+ * Function to add links to the plugin row meta
+ *
+ * @param array  $links Array of links to be shown in plugin meta.
+ * @param string $file Filename of the plugin meta is being shown for.
+ */
+function pmpros_plugin_row_meta( $links, $file ) {
+	if ( strpos( $file, 'pmpro-series.php' ) !== false ) {
+		$new_links = array(
+			'<a href="' . esc_url( 'https://www.paidmembershipspro.com/add-ons/pmpro-series-for-drip-feed-content/' ) . '" title="' . esc_attr( __( 'View Documentation', 'pmpro-series' ) ) . '">' . __( 'Docs', 'pmpro-series' ) . '</a>',
+			'<a href="' . esc_url( 'http://paidmembershipspro.com/support/' ) . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro-series' ) ) . '">' . __( 'Support', 'pmpro-series' ) . '</a>',
+		);
+		$links = array_merge( $links, $new_links );
+	}
+	return $links;
+}
+add_filter( 'plugin_row_meta', 'pmpros_plugin_row_meta', 10, 2 );
