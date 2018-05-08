@@ -310,47 +310,6 @@ if(!function_exists("pmpro_getMemberStartdate"))
 	}
 }
 
-add_action( 'admin_head', 'series_post_type_icon' );
- 
-function series_post_type_icon() {
-    ?>
-    <style>
-        /* Admin Menu - 16px */
-        #menu-posts-pmpro_series .wp-menu-image {
-            background: url(<?php echo plugins_url('images/icon-series16-sprite.png', __FILE__); ?>) no-repeat 6px 6px !important;
-        }
-        #menu-posts-pmpro_series:hover .wp-menu-image, #menu-posts-pmpro_series.wp-has-current-submenu .wp-menu-image {
-            background-position: 6px -26px !important;
-        }
-        /* Post Screen - 32px */
-        .icon32-posts-pmpro_series {
-            background: url(<?php echo plugins_url('images/icon-series32.png', __FILE__); ?>) no-repeat left top !important;
-        }
-        @media
-        only screen and (-webkit-min-device-pixel-ratio: 1.5),
-        only screen and (   min--moz-device-pixel-ratio: 1.5),
-        only screen and (     -o-min-device-pixel-ratio: 3/2),
-        only screen and (        min-device-pixel-ratio: 1.5),
-        only screen and (                min-resolution: 1.5dppx) {
-             
-            /* Admin Menu - 16px @2x */
-            #menu-posts-pmpro_series .wp-menu-image {
-                background-image: url(<?php echo plugins_url('images/icon-series16-sprite_2x.png', __FILE__); ?>) !important;
-                -webkit-background-size: 16px 48px;
-                -moz-background-size: 16px 48px;
-                background-size: 16px 48px;
-            }
-            /* Post Screen - 32px @2x */
-            .icon32-posts-pmpro_series {
-                background-image:url(<?php echo plugins_url('images/icon-series32_2x.png', __FILE__); ?>) !important;
-                -webkit-background-size: 32px 32px;
-                -moz-background-size: 32px 32px;
-                background-size: 32px 32px;
-            }         
-        }
-    </style>
-<?php } 
-
 /*
 	We need to flush rewrite rules on activation/etc for the CPTs.
 	Register/unregister crons on activation/deactivation.
