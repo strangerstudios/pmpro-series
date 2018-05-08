@@ -1,8 +1,8 @@
-=== Paid Memberships Pro - Series Add On ===
+=== PMPro Series ===
 Contributors: strangerstudios
 Tags: series, drip feed, serial, delayed, limited, memberships
 Requires at least: 3.4
-Tested up to: 4.9.5
+Tested up to: 4.0
 Stable tag: .3.7
 
 Create "Series" which are groups of posts/pages where content is revealed to members over time. This is the "drip feed content" module for Paid Memberships Pro.

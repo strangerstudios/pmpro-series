@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Paid Memberships Pro - Series Add On
-Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-series-for-drip-feed-content/
+Plugin Name: PMPro Series
+Plugin URI: http://www.paidmembershipspro.com/pmpro-series/
 Description: Offer serialized (drip feed) content to your PMPro members.
-Version: .3.8
-Author: Paid Memberships Pro
-Author URI: https://www.paidmembershipspro.com
+Version: .3.7
+Author: Stranger Studios
+Author URI: http://www.strangerstudios.com
 */
 
 /*
@@ -131,10 +131,6 @@ function pmpros_hasAccess($user_id, $post_id)
 	//check each series
 	foreach($post_series as $series_id)
 	{
-		// if the series doesn't exist, we can't deny access to the post_id.
-		if ( FALSE === get_post_status( $series_id ) ) {
-			return true;
-		}
 		//does the user have access to any of the series pages?
 		$results = pmpro_has_membership_access($series_id, $user_id, true);	//passing true there to get the levels which have access to this page
 		if($results[0])	//first item in array is if the user has access
@@ -299,7 +295,7 @@ if(!function_exists("pmpro_getMemberStartdate"))
 				$pmpro_member_days[$user_id][$level_id] = 0;
 			else
 			{			
-				$now = current_time('timestamp');
+				$now = time();
 				$days = ($now - $startdate)/3600/24;
 					
 				$pmpro_member_days[$user_id][$level_id] = $days;
@@ -309,47 +305,6 @@ if(!function_exists("pmpro_getMemberStartdate"))
 		return $pmpro_member_days[$user_id][$level_id];
 	}
 }
-
-add_action( 'admin_head', 'series_post_type_icon' );
- 
-function series_post_type_icon() {
-    ?>
-    <style>
-        /* Admin Menu - 16px */
-        #menu-posts-pmpro_series .wp-menu-image {
-            background: url(<?php echo plugins_url('images/icon-series16-sprite.png', __FILE__); ?>) no-repeat 6px 6px !important;
-        }
-        #menu-posts-pmpro_series:hover .wp-menu-image, #menu-posts-pmpro_series.wp-has-current-submenu .wp-menu-image {
-            background-position: 6px -26px !important;
-        }
-        /* Post Screen - 32px */
-        .icon32-posts-pmpro_series {
-            background: url(<?php echo plugins_url('images/icon-series32.png', __FILE__); ?>) no-repeat left top !important;
-        }
-        @media
-        only screen and (-webkit-min-device-pixel-ratio: 1.5),
-        only screen and (   min--moz-device-pixel-ratio: 1.5),
-        only screen and (     -o-min-device-pixel-ratio: 3/2),
-        only screen and (        min-device-pixel-ratio: 1.5),
-        only screen and (                min-resolution: 1.5dppx) {
-             
-            /* Admin Menu - 16px @2x */
-            #menu-posts-pmpro_series .wp-menu-image {
-                background-image: url(<?php echo plugins_url('images/icon-series16-sprite_2x.png', __FILE__); ?>) !important;
-                -webkit-background-size: 16px 48px;
-                -moz-background-size: 16px 48px;
-                background-size: 16px 48px;
-            }
-            /* Post Screen - 32px @2x */
-            .icon32-posts-pmpro_series {
-                background-image:url(<?php echo plugins_url('images/icon-series32_2x.png', __FILE__); ?>) !important;
-                -webkit-background-size: 32px 32px;
-                -moz-background-size: 32px 32px;
-                background-size: 32px 32px;
-            }         
-        }
-    </style>
-<?php } 
 
 /*
 	We need to flush rewrite rules on activation/etc for the CPTs.
@@ -362,7 +317,7 @@ function pmpros_activation()
 	flush_rewrite_rules();
 	
 	//setup cron
-	wp_schedule_event(current_time('timestamp'), 'daily', 'pmpros_check_for_new_content');
+	wp_schedule_event(time(), 'daily', 'pmpros_check_for_new_content');
 }
 register_activation_hook( __FILE__, 'pmpros_activation' );
 function pmpros_deactivation() 
@@ -373,7 +328,7 @@ function pmpros_deactivation()
     flush_rewrite_rules();
 	
 	//remove cron
-	wp_clear_scheduled_hook(current_time('timestamp'), 'daily', 'pmpros_check_for_new_content');
+	wp_clear_scheduled_hook(time(), 'daily', 'pmpros_check_for_new_content');
 }
 register_deactivation_hook( __FILE__, 'pmpros_deactivation' );
 
@@ -400,7 +355,7 @@ function pmpros_member_links_bottom() {
 		if(!empty($series_posts))
 		{
 			foreach($series_posts as $series_post) {								
-				if(pmpros_hasAccess($current_user->ID, $series_post->id)) {
+				if(pmpros_hasAccess($current_user->user_id, $series_post->id)) {
 					?>
 					<li><a href="<?php echo get_permalink($series_post->id); ?>" title="<?php echo get_the_title($series_post->id); ?>"><?php echo get_the_title($series_post->id); ?></a></li>
 					<?php
@@ -410,36 +365,3 @@ function pmpros_member_links_bottom() {
     }
 }
 add_action('pmpro_member_links_bottom', 'pmpros_member_links_bottom');
-
-/**
- * Function to add links to the plugin action links
- *
- * @param array $links Array of links to be shown in plugin action links.
- */
-function pmpros_plugin_action_links( $links ) {
-	if ( current_user_can( 'manage_options' ) ) {
-		$new_links = array(
-			'<a href="' . get_admin_url( null, 'edit.php?post_type=pmpro_series' ) . '">' . __( 'Settings', 'pmpro-series' ) . '</a>',
-		);
-	}
-	return array_merge( $new_links, $links );
-}
-add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'pmpros_plugin_action_links' );
-
-/**
- * Function to add links to the plugin row meta
- *
- * @param array  $links Array of links to be shown in plugin meta.
- * @param string $file Filename of the plugin meta is being shown for.
- */
-function pmpros_plugin_row_meta( $links, $file ) {
-	if ( strpos( $file, 'pmpro-series.php' ) !== false ) {
-		$new_links = array(
-			'<a href="' . esc_url( 'https://www.paidmembershipspro.com/add-ons/pmpro-series-for-drip-feed-content/' ) . '" title="' . esc_attr( __( 'View Documentation', 'pmpro-series' ) ) . '">' . __( 'Docs', 'pmpro-series' ) . '</a>',
-			'<a href="' . esc_url( 'http://paidmembershipspro.com/support/' ) . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro-series' ) ) . '">' . __( 'Support', 'pmpro-series' ) . '</a>',
-		);
-		$links = array_merge( $links, $new_links );
-	}
-	return $links;
-}
-add_filter( 'plugin_row_meta', 'pmpros_plugin_row_meta', 10, 2 );
