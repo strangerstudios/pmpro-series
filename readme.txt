@@ -8,7 +8,7 @@ Stable tag: .3.7
 Create "Series" which are groups of posts/pages where content is revealed to members over time. This is the "drip feed content" module for Paid Memberships Pro.
 
 == Description ==
-This plugin currently requires Paid Memberships Pro. 
+This plugin currently requires Paid Memberships Pro.
 
 == Installation ==
 
@@ -24,6 +24,10 @@ This plugin currently requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-series/issues
 
 == Changelog ==
+
+= .3.X =
+* BUG/ENHANCEMENT: Fixed menu_icon for Series CPT to use dashicons-clock in place of custom image.
+
 = .3.7 =
 * Fixed new content email cron to remember which posts members were notified of.
 
