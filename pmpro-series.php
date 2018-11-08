@@ -79,6 +79,7 @@ add_action("init", array("PMProSeries", "createCPT"));
 */
 add_action("init", array("PMProSeries", "checkForMetaBoxes"), 20);
 
+
 /*
 	Detect AJAX calls
 */
@@ -369,6 +370,27 @@ function pmpros_member_links_bottom() {
     }
 }
 add_action('pmpro_member_links_bottom', 'pmpros_member_links_bottom');
+
+/**
+ * Integrate with Email Templates Admin Editor - 
+ *
+ */
+function pmpros_email_templates( $templates ) {
+	// Add the new content template.
+	$templates['new_content'] = array(
+		'subject' => 'New content is available at !!sitename!!',
+		'description' => 'New Series Content Notification',
+		'body' => file_get_contents( dirname( __FILE__ ) . "/email/new_content.html" ),
+	);
+	return $templates;
+}
+add_filter( 'pmproet_templates', 'pmpros_email_templates', 10, 1 );
+
+function pmpros_add_email_template( $templates, $page_name, $type = 'emails', $where = 'local', $ext = 'html' ) {
+	$templates[] = dirname(__FILE__) . "/email/new_content.html";
+	return $templates;
+}
+add_filter( 'pmpro_email_custom_template_path', 'pmpros_add_email_template', 10, 5 );
 
 /**
  * Function to add links to the plugin action links

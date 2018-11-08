@@ -175,13 +175,13 @@ class PMProSeries
 	//send an email RE new access to post_id to email of user_id
 	function sendEmail($post_ids, $user_id)
 	{
-        if(!class_exists("PMProEmail"))
+		if(!class_exists("PMProEmail"))
 			return;
-		
+
 		$email = new PMProEmail();
 
-        $user = get_user_by('id', $user_id);
-        
+		$user = get_user_by('id', $user_id);
+
 		//build list of posts
 		$post_list = "<ul>\n";
 		foreach($post_ids as $post_id)
@@ -189,34 +189,27 @@ class PMProSeries
 			$post_list .= '<li><a href="' . get_permalink($post_id) . '">' . get_the_title($post_id) . '</a></li>' . "\n";
 		}
 		$post_list .= "</ul>\n";
-		
-        $email->email = $user->user_email;
-        $email->subject = sprintf(__("New content is available at %s", "pmpro"), get_option("blogname"));
-        $email->template = "new_content";
-        
-		//check for custom email template
-        if(file_exists(get_stylesheet_directory() . '/paid-memberships-pro/series/new_content.html'))
-            $template_path = get_stylesheet_directory() . '/paid-memberships-pro/series/new_content.html';
-        elseif(file_exists(get_template_directory() . '/paid-memberships-pro/series/new_content.html'))
-            $template_path = get_template_directory() . '/paid-memberships-pro/series/new_content.html';
-        else
-            $template_path = plugins_url('email/new_content.html', dirname(__FILE__));
 
-        $email->body = file_get_contents($template_path);
+		$email->email = $user->user_email;
+		$email->subject = sprintf(__("New content is available at %s", "pmpro"), get_option("blogname"));
+		$email->template = "new_content";
 
-        $email->data = array(
-            "name" => $user->display_name,
-            "sitename" => get_option("blogname"),
-            "post_list" => $post_list,
+		$email->body .= file_get_contents( dirname( __FILE__ ) . "/email/new_content.html" );
+
+		$email->data = array(
+			"name" => $user->display_name,
+			"sitename" => get_option("blogname"),
+			"post_list" => $post_list,
 			"login_link" => wp_login_url()
-        );
+		);
 
-        if(!empty($post->post_excerpt))
-            $email->data['excerpt'] = '<p>An excerpt of the post is below.</p><p>' . $post->post_excerpt . '</p>';
-        else
-            $email->data['excerpt'] = '';
+		if( ! empty( $post->post_excerpt ) ) {
+			$email->data['excerpt'] = '<p>An excerpt of the post is below.</p><p>' . $post->post_excerpt . '</p>';
+		} else {
+			$email->data['excerpt'] = '';
+		}
 
-        $email->sendEmail();
+		$email->sendEmail();
 	}
 	
 	/*
