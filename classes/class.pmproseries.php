@@ -249,7 +249,7 @@ class PMProSeries
 		register_post_type('pmpro_series', apply_filters('pmpros_series_registration', array(
 				'labels' => $labels,
 				'public' => true,					
-				/*'menu_icon' => plugins_url('images/icon-series16-sprite.png', dirname(__FILE__)),*/
+				'menu_icon' => 'dashicons-clock',
 				'show_ui' => true,
 				'show_in_menu' => true,				
 				'publicly_queryable' => true,
