@@ -403,9 +403,9 @@ class PMProSeries
 			{
 			?>
 				<tr>
-					<td><?php echo $count?>.</td>
-					<td><?php echo get_the_title($post->id)?></td>
-					<td><?php echo $post->delay?></td>
+					<td><?php echo $count; ?>.</td>
+					<td><?php echo get_the_title( $post->id ); ?></td>
+					<td><?php echo $post->delay; ?></td>
 					<td>
 						<a href="javascript:pmpros_editPost('<?php echo $post->id;?>', '<?php echo $post->delay;?>'); void(0);">Edit</a>
 					</td>
