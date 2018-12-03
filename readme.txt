@@ -10,6 +10,42 @@ Create "Series" which are groups of posts/pages where content is revealed to mem
 == Description ==
 This plugin currently requires Paid Memberships Pro.
 
+How this plugin works:
+
+1. There will be a new "Series" tab in the Memberships menu of the WP dashboard.
+2. Admins can create a new "Series".
+3. Admins can add a page or post to a series along with a # of days after signup.
+4. Admins can add a series to a membership level.
+5. Admins can adjust the email template via an added page to their active theme.
+
+Then...
+
+1. User signs up for a membership level that gives him access to Series A.
+2. User gets access to any "0 days after" series content.
+3. Each day a script checks if a user should gain access to any new content, if so:
+- User is given access to the content.
+- An email is sent to the user letting them know that content is available.
+
+Checking for access:
+* Is a membership level required?
+* If so, does the user have one of those levels?
+* Is the user's level "assigned" to a series?
+* If so, does the user have access to that content yet? (count days)
+* If not, then the user will have access. (e.g. Pro members get access to everything right away.)
+
+Checking to send emails:
+* For all members with series levels.
+* What day of the membership is it?
+* For all series.
+* Get content.
+* Send content for this day.
+* Email update.
+
+Data Structure
+* Series is a CPT
+* Use wp_pmpro_memberships_pages to link to membership levels
+* wp_pmpro_series_content (series_id, post_id, day) stored in post meta
+
 == Installation ==
 
 1. Upload the `pmpro-series` directory to the `/wp-content/plugins/` directory of your site.
@@ -25,7 +61,7 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 
 == Changelog ==
 
-= .3.X =
+= .3.8 =
 * BUG/ENHANCEMENT: Fixed menu_icon for Series CPT to use dashicons-clock in place of custom image.
 
 = .3.7 =
