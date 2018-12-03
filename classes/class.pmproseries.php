@@ -189,6 +189,19 @@ class PMProSeries
 			$post_list .= '<li><a href="' . get_permalink($post_id) . '">' . get_the_title($post_id) . '</a></li>' . "\n";
 		}
 		$post_list .= "</ul>\n";
+		
+    $email->email = $user->user_email;
+    $subject = sprintf(__("New content is available at %s", "pmpro"), get_option("blogname"));
+	  $email->subject = apply_filters( 'pmpros_new_content_subject', $subject, $user, $post_ids );
+    $email->template = "new_content";
+        
+		//check for custom email template
+    if(file_exists(get_stylesheet_directory() . '/paid-memberships-pro/series/new_content.html'))
+        $template_path = get_stylesheet_directory() . '/paid-memberships-pro/series/new_content.html';
+    elseif(file_exists(get_template_directory() . '/paid-memberships-pro/series/new_content.html'))
+        $template_path = get_template_directory() . '/paid-memberships-pro/series/new_content.html';
+    else
+            $template_path = plugins_url('email/new_content.html', dirname(__FILE__));
 
 		$email->email = $user->user_email;
 		$email->subject = sprintf(__("New content is available at %s", "pmpro"), get_option("blogname"));
@@ -241,7 +254,7 @@ class PMProSeries
 		register_post_type('pmpro_series', apply_filters('pmpros_series_registration', array(
 				'labels' => $labels,
 				'public' => true,					
-				/*'menu_icon' => plugins_url('images/icon-series16-sprite.png', dirname(__FILE__)),*/
+				'menu_icon' => 'dashicons-clock',
 				'show_ui' => true,
 				'show_in_menu' => true,				
 				'publicly_queryable' => true,
@@ -395,9 +408,9 @@ class PMProSeries
 			{
 			?>
 				<tr>
-					<td><?php echo $count?>.</td>
-					<td><?php echo get_the_title($post->id)?></td>
-					<td><?php echo $post->delay?></td>
+					<td><?php echo $count; ?>.</td>
+					<td><?php echo get_the_title( $post->id ); ?></td>
+					<td><?php echo $post->delay; ?></td>
 					<td>
 						<a href="javascript:pmpros_editPost('<?php echo $post->id;?>', '<?php echo $post->delay;?>'); void(0);">Edit</a>
 					</td>

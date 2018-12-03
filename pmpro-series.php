@@ -9,44 +9,6 @@ Author URI: https://www.paidmembershipspro.com
 */
 
 /*
-	The Story
-
-	1. There will be a new "Series" tab in the Memberships menu of the WP dashboard.
-	2. Admins can create a new "Series".
-	3. Admins can add a page or post to a series along with a # of days after signup.
-	4. Admins can add a series to a membership level.
-	5. Admins can adjust the email template via an added page to their active theme.
-
-	Then...
-
-	1. User signs up for a membership level that gives him access to Series A.
-	2. User gets access to any "0 days after" series content.
-	3. Each day a script checks if a user should gain access to any new content, if so:
-	- User is given access to the content.
-	- An email is sent to the user letting them know that content is available.
-
-	Checking for access:
-	* Is a membership level required?
-	* If so, does the user have one of those levels?
-	* Is the user's level "assigned" to a series?
-	* If so, does the user have access to that content yet? (count days)
-	* If not, then the user will have access. (e.g. Pro members get access to everything right away.)
-
-	Checking to send emails: (planned feature)
-	* For all members with series levels.
-	* What day of the membership is it?
-	* For all series.
-	* Get content.
-	* Send content for this day.
-	* Email update.
-
-	Data Structure
-	* Series is a CPT
-	* Use wp_pmpro_memberships_pages to link to membership levels
-	* wp_pmpro_series_content (series_id, post_id, day) stored in post meta
-*/
-
-/*
 	Includes
 */
 require_once(dirname(__FILE__) . "/classes/class.pmproseries.php");
@@ -223,6 +185,7 @@ function pmpros_pmpro_text_filter($text)
 				$date = date(get_option("date_format"), strtotime("+ $days_left Days", current_time("timestamp")));
 
 				$text = "This content is part of the <a href='" . get_permalink($inseries) . "'>" . get_the_title($inseries) . "</a> series. You will gain access on " . $date . ".";
+				$text = apply_filters( 'pmpros_days_left_message', $text, $member_days, $days_left, $current_user->ID );
 			}
 			else
 			{
@@ -230,6 +193,7 @@ function pmpros_pmpro_text_filter($text)
 				if(count($post_series) == 1)
 				{
 					$text = "This content is part of the <a href='" . get_permalink($post_series[0]) . "'>" . get_the_title($post_series[0]) . "</a> series.";
+					$text = apply_filters( 'pmpros_content_access_message_single_item', $text, $post_series );
 				}
 				else
 				{
@@ -238,6 +202,7 @@ function pmpros_pmpro_text_filter($text)
 					foreach($post_series as $series_id)
 						$series[] = "<a href='" . get_permalink($series_id) . "'>" . get_the_title($series_id) . "</a>";
 					$text .= implode(", ", $series) . ".";
+					$text = apply_filters( 'pmpros_content_access_message_many_items', $text, $post_series );
 				}
 			}
 		}
