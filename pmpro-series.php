@@ -184,6 +184,7 @@ function pmpros_pmpro_text_filter($text)
 				$date = date(get_option("date_format"), strtotime("+ $days_left Days", current_time("timestamp")));
 
 				$text = "This content is part of the <a href='" . get_permalink($inseries) . "'>" . get_the_title($inseries) . "</a> series. You will gain access on " . $date . ".";
+				$text = apply_filters( 'pmpros_change_days_left_message', $text, $member_days, $days_left, $current_user->ID );
 			}
 			else
 			{
@@ -191,6 +192,7 @@ function pmpros_pmpro_text_filter($text)
 				if(count($post_series) == 1)
 				{
 					$text = "This content is part of the <a href='" . get_permalink($post_series[0]) . "'>" . get_the_title($post_series[0]) . "</a> series.";
+					$text = apply_filters( 'pmpros_change_content_access_message_single_item', $text, $post_series );
 				}
 				else
 				{
@@ -199,6 +201,7 @@ function pmpros_pmpro_text_filter($text)
 					foreach($post_series as $series_id)
 						$series[] = "<a href='" . get_permalink($series_id) . "'>" . get_the_title($series_id) . "</a>";
 					$text .= implode(", ", $series) . ".";
+					$text = apply_filters( 'pmpros_change_content_access_message_many_items', $text, $post_series );
 				}
 			}
 		}
