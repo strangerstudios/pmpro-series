@@ -175,13 +175,13 @@ class PMProSeries
 	//send an email RE new access to post_id to email of user_id
 	function sendEmail($post_ids, $user_id)
 	{
-        if(!class_exists("PMProEmail"))
+		if(!class_exists("PMProEmail"))
 			return;
-		
+
 		$email = new PMProEmail();
 
-        $user = get_user_by('id', $user_id);
-        
+		$user = get_user_by('id', $user_id);
+
 		//build list of posts
 		$post_list = "<ul>\n";
 		foreach($post_ids as $post_id)
@@ -190,34 +190,39 @@ class PMProSeries
 		}
 		$post_list .= "</ul>\n";
 		
-        $email->email = $user->user_email;
-        $subject = sprintf(__("New content is available at %s", "pmpro"), get_option("blogname"));
-	$email->subject = apply_filters( 'pmpros_new_content_subject', $subject, $user, $post_ids );
-        $email->template = "new_content";
+    $email->email = $user->user_email;
+    $subject = sprintf(__("New content is available at %s", "pmpro"), get_option("blogname"));
+	  $email->subject = apply_filters( 'pmpros_new_content_subject', $subject, $user, $post_ids );
+    $email->template = "new_content";
         
 		//check for custom email template
-        if(file_exists(get_stylesheet_directory() . '/paid-memberships-pro/series/new_content.html'))
-            $template_path = get_stylesheet_directory() . '/paid-memberships-pro/series/new_content.html';
-        elseif(file_exists(get_template_directory() . '/paid-memberships-pro/series/new_content.html'))
-            $template_path = get_template_directory() . '/paid-memberships-pro/series/new_content.html';
-        else
+    if(file_exists(get_stylesheet_directory() . '/paid-memberships-pro/series/new_content.html'))
+        $template_path = get_stylesheet_directory() . '/paid-memberships-pro/series/new_content.html';
+    elseif(file_exists(get_template_directory() . '/paid-memberships-pro/series/new_content.html'))
+        $template_path = get_template_directory() . '/paid-memberships-pro/series/new_content.html';
+    else
             $template_path = plugins_url('email/new_content.html', dirname(__FILE__));
 
-        $email->body = file_get_contents($template_path);
+		$email->email = $user->user_email;
+		$email->subject = sprintf(__("New content is available at %s", "pmpro"), get_option("blogname"));
+		$email->template = "new_content";
 
-        $email->data = array(
-            "name" => $user->display_name,
-            "sitename" => get_option("blogname"),
-            "post_list" => $post_list,
+		$email->body .= file_get_contents( dirname( __FILE__ ) . "/email/new_content.html" );
+
+		$email->data = array(
+			"name" => $user->display_name,
+			"sitename" => get_option("blogname"),
+			"post_list" => $post_list,
 			"login_link" => wp_login_url()
-        );
+		);
 
-        if(!empty($post->post_excerpt))
-            $email->data['excerpt'] = '<p>An excerpt of the post is below.</p><p>' . $post->post_excerpt . '</p>';
-        else
-            $email->data['excerpt'] = '';
+		if( ! empty( $post->post_excerpt ) ) {
+			$email->data['excerpt'] = '<p>An excerpt of the post is below.</p><p>' . $post->post_excerpt . '</p>';
+		} else {
+			$email->data['excerpt'] = '';
+		}
 
-        $email->sendEmail();
+		$email->sendEmail();
 	}
 	
 	/*
@@ -318,7 +323,7 @@ class PMProSeries
 					$days_left = ceil($sp->delay - $member_days);
 					$date = date(get_option("date_format"), strtotime("+ $days_left Days", current_time("timestamp")));
 				?>
-				<li>					
+				<li class="pmpro_series_item-li-<?php if(max(0, $member_days) >= $sp->delay) { ?>available<?php } else { ?>unavailable<?php } ?>">
 					<?php if(max(0, $member_days) >= $sp->delay) { ?>
 						<span class="pmpro_series_item-title"><a href="<?php echo get_permalink($sp->id);?>"><?php echo get_the_title($sp->id);?></a></span>
 						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink($sp->id);?>">Available Now</a></span>
@@ -326,7 +331,6 @@ class PMProSeries
 						<span class="pmpro_series_item-title"><?php echo get_the_title($sp->id);?></span>
 						<span class="pmpro_series_item-unavailable">available on <?php echo $date; ?></span>
 					<?php } ?>
-					<div class="clear"></div>
 				</li>
 				<?php
 				}		
