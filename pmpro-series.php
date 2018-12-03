@@ -32,6 +32,30 @@ add_action("wp_enqueue_scripts", "pmprors_scripts");
 
 
 /*
+	Load admin JS files
+*/
+function pmprors_admin_scripts($hook)
+{
+	if('post.php'==$hook && 'pmpro_series'==get_post_type()) {
+		wp_register_script( "pmprors_pmpro", plugins_url( 'js/pbrx-series.js', __FILE__ ), array( 'jquery' ), null, true );
+
+		$localize = array(
+			'series_id'      => $_GET['post'],
+			'save'           => __('Save', 'pmproseries'),
+			'saving'         => __('Saving...', 'pmproseries'),
+			'saving_error_1' => __('Error saving series post [1]', 'pmproseries'),
+			'saving_error_2' => __('Error saving series post [2]', 'pmproseries'),
+			'remove_error_1' => __('Error removing series post [1]', 'pmproseries'),
+			'remove_error_2' => __('Error removing series post [2]', 'pmproseries'),
+		);
+
+		wp_localize_script( "pmprors_pmpro", "pmpro_series", $localize );
+		wp_enqueue_script("pmprors_pmpro");
+	}
+}
+add_action( 'admin_enqueue_scripts', 'pmprors_admin_scripts' );
+
+/*
 	PMPro Series CPT
 */
 add_action("init", array("PMProSeries", "createCPT"));
