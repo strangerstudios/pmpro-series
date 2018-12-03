@@ -14,25 +14,26 @@
 require_once dirname( __FILE__ ) . '/classes/class.pmproseries.php';
 require_once dirname( __FILE__ ) . '/scheduled/crons.php';
 
+
 /**
- *  Load CSS, JS files
+ * [pmprors_scripts] Load frontend CSS file.
+ *
+ * @return void
  */
 function pmprors_scripts() {
-		/*
-		if(!defined("PMPRO_VERSION"))
-		{*/
-			// load some styles that we need from PMPro
-			wp_enqueue_style( 'pmprors_pmpro', plugins_url( 'css/pmpro_series.css', __FILE__ ) );
-		/*}*/
+	wp_enqueue_style( 'pmprors_pmpro', plugins_url( 'css/pmpro_series.css', __FILE__ ) );
 }
 add_action( 'wp_enqueue_scripts', 'pmprors_scripts' );
 
-
 /**
- * Load admin JS files
+ * [pmprors_admin_scripts] Load admin JS files.
+ *
+ * @param  [type] $hook
+ * @return void
  */
 function pmprors_admin_scripts( $hook ) {
 	if ( 'post.php' == $hook && 'pmpro_series' == get_post_type() ) {
+		wp_enqueue_style( 'pmprors-admin', plugins_url( 'css/pmpro-series-admin.css', __FILE__ ) );
 		wp_register_script( 'pmprors_pmpro', plugins_url( 'js/pmpro-series.js', __FILE__ ), array( 'jquery' ), null, true );
 
 		$localize = array(
@@ -75,9 +76,13 @@ function pmpros_ajax() {
 }
 add_action( 'init', 'pmpros_ajax' );
 
-/*
-	Show list of series pages at end of series
-*/
+
+/**
+ * [pmpros_the_content] Show list of series pages at end of series.
+ *
+ * @param  [type] $content
+ * @return [type]
+ */
 function pmpros_the_content( $content ) {
 	global $post;
 
@@ -95,9 +100,9 @@ add_filter( 'the_content', 'pmpros_the_content' );
 /**
  * [pmpros_hasAccess] Makes sure people can't view content they don't have access to. This function returns true if a user has access to a page, including logic for series/delays.
  *
- * @param  [type] $user_id [description]
- * @param  [type] $post_id [description]
- * @return [type]          [description]
+ * @param  [type] $user_id
+ * @param  [type] $post_id
+ * @return [type]
  */
 function pmpros_hasAccess( $user_id, $post_id ) {
 	// is this post in a series?
@@ -143,9 +148,15 @@ function pmpros_hasAccess( $user_id, $post_id ) {
 	return false;
 }
 
-/*
-	Filter pmpro_has_membership_access based on series access.
-*/
+/**
+ * [pmpros_pmpro_has_membership_access_filter] Filter pmpro_has_membership_access based on series access.
+ *
+ * @param  [type] $hasaccess
+ * @param  [type] $mypost
+ * @param  [type] $myuser
+ * @param  [type] $post_membership_levels
+ * @return [type]
+ */
 function pmpros_pmpro_has_membership_access_filter( $hasaccess, $mypost, $myuser, $post_membership_levels ) {
 	// If the user doesn't have access already, we won't change that. So only check if they already have access.
 	if ( $hasaccess ) {
@@ -222,9 +233,13 @@ add_filter( 'pmpro_not_logged_in_text_filter', 'pmpros_pmpro_text_filter' );
 	Couple functions from PMPro in case we don't have them yet.
 */
 if ( ! function_exists( 'pmpro_getMemberStartdate' ) ) {
-	/*
-		Get a member's start date... either in general or for a specific level_id.
-	*/
+	/**
+	 * [pmpro_getMemberStartdate] Get a member's start date... either in general or for a specific level_id.
+	 *
+	 * @param  [type]  $user_id
+	 * @param  integer $level_id
+	 * @return [type]
+	 */
 	function pmpro_getMemberStartdate( $user_id = null, $level_id = 0 ) {
 		if ( empty( $user_id ) ) {
 			global $current_user;
@@ -252,9 +267,9 @@ if ( ! function_exists( 'pmpro_getMemberStartdate' ) ) {
 	/**
 	 * [pmpro_getMemberDays description]
 	 *
-	 * @param  [type]  $user_id  [description]
-	 * @param  integer $level_id [description]
-	 * @return [type]            [description]
+	 * @param  [type]  $user_id
+	 * @param  integer $level_id
+	 * @return [type]
 	 */
 	function pmpro_getMemberDays( $user_id = null, $level_id = 0 ) {
 		if ( empty( $user_id ) ) {
@@ -288,7 +303,7 @@ if ( ! function_exists( 'pmpro_getMemberStartdate' ) ) {
 /**
  * [pmpros_activation description]
  *
- * @return [type] [description]
+ * @return [type]
  */
 function pmpros_activation() {
 	// flush rewrite rules
@@ -349,8 +364,8 @@ add_action( 'pmpro_member_links_bottom', 'pmpros_member_links_bottom' );
 /**
  * [pmpros_email_templates] Integrate with Email Templates Admin Editor
  *
- * @param  [type] $templates [description]
- * @return [type]            [description]
+ * @param  [type] $templates
+ * @return [type]
  */
 function pmpros_email_templates( $templates ) {
 	// Add the new content template.
