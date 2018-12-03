@@ -28,7 +28,7 @@ function pmprors_scripts()
 		/*}*/
 	}
 }
-add_action("init", "pmprors_scripts");
+add_action("wp_enqueue_scripts", "pmprors_scripts");
 
 
 /*
