@@ -235,7 +235,7 @@ class PMProSeries {
 		$post_list .= "</ul>\n";
 
 		$email->email    = $user->user_email;
-		$subject         = sprintf( __( 'New content is available at %s', 'pmpro' ), get_option( 'blogname' ) );
+		$subject         = sprintf( __( 'New content is available at %s', 'pmpro-series' ), get_option( 'blogname' ) );
 		$email->subject  = apply_filters( 'pmpros_new_content_subject', $subject, $user, $post_ids );
 		$email->template = 'new_content';
 
@@ -249,7 +249,7 @@ class PMProSeries {
 		}
 
 		$email->email    = $user->user_email;
-		$email->subject  = sprintf( __( 'New content is available at %s', 'pmpro' ), get_option( 'blogname' ) );
+		$email->subject  = sprintf( __( 'New content is available at %s', 'pmpro-series' ), get_option( 'blogname' ) );
 		$email->template = 'new_content';
 
 		$email->body .= file_get_contents( dirname( __FILE__ ) . '/email/new_content.html' );

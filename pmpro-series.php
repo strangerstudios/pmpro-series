@@ -6,6 +6,8 @@
  * Version: .3.8
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com
+ * Text Domain: pmpro-series
+ * Domain Path: /languages
  */
 
 /*
@@ -14,7 +16,15 @@
 require_once dirname( __FILE__ ) . '/classes/class.pmproseries.php';
 require_once dirname( __FILE__ ) . '/scheduled/crons.php';
 
-
+/**
+ * [pmpro_series_load_textdomain] Load plugin text domain and register strings for translation.
+ *
+ * @return void
+ */
+function pmpro_series_load_textdomain() {
+	load_plugin_textdomain( 'pmpro-series', false, basename( dirname( __FILE__ ) ) . '/languages' );
+}
+add_action( 'plugins_loaded', 'pmpro_series_load_textdomain' );
 /**
  * [pmprors_scripts] Load frontend CSS file.
  *
@@ -38,12 +48,12 @@ function pmprors_admin_scripts( $hook ) {
 
 		$localize = array(
 			'series_id'      => $_GET['post'],
-			'save'           => __( 'Save', 'pmproseries' ),
-			'saving'         => __( 'Saving...', 'pmproseries' ),
-			'saving_error_1' => __( 'Error saving series post [1]', 'pmproseries' ),
-			'saving_error_2' => __( 'Error saving series post [2]', 'pmproseries' ),
-			'remove_error_1' => __( 'Error removing series post [1]', 'pmproseries' ),
-			'remove_error_2' => __( 'Error removing series post [2]', 'pmproseries' ),
+			'save'           => __( 'Save', 'pmpro-series' ),
+			'saving'         => __( 'Saving...', 'pmpro-series' ),
+			'saving_error_1' => __( 'Error saving series post [1]', 'pmpro-series' ),
+			'saving_error_2' => __( 'Error saving series post [2]', 'pmpro-series' ),
+			'remove_error_1' => __( 'Error removing series post [1]', 'pmpro-series' ),
+			'remove_error_2' => __( 'Error removing series post [2]', 'pmpro-series' ),
 		);
 
 		wp_localize_script( 'pmprors_pmpro', 'pmpro_series', $localize );
@@ -370,8 +380,8 @@ add_action( 'pmpro_member_links_bottom', 'pmpros_member_links_bottom' );
 function pmpros_email_templates( $templates ) {
 	// Add the new content template.
 	$templates['new_content'] = array(
-		'subject'     => 'New content is available at !!sitename!!',
-		'description' => 'New Series Content Notification',
+		'subject'     => sprintf( __( "New content is available at %s", 'pmpro-series' ), '!!sitename!!' ),
+		'description' => __( 'New Series Content Notification', 'pmpro-series' ),
 		'body'        => file_get_contents( dirname( __FILE__ ) . '/email/new_content.html' ),
 	);
 	return $templates;
@@ -419,7 +429,7 @@ function pmpros_plugin_row_meta( $links, $file ) {
 	if ( strpos( $file, 'pmpro-series.php' ) !== false ) {
 		$new_links = array(
 			'<a href="' . esc_url( 'https://www.paidmembershipspro.com/add-ons/pmpro-series-for-drip-feed-content/' ) . '" title="' . esc_attr( __( 'View Documentation', 'pmpro-series' ) ) . '">' . __( 'Docs', 'pmpro-series' ) . '</a>',
-			'<a href="' . esc_url( 'http://paidmembershipspro.com/support/' ) . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro-series' ) ) . '">' . __( 'Support', 'pmpro-series' ) . '</a>',
+			'<a href="' . esc_url( 'https://paidmembershipspro.com/support/' ) . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro-series' ) ) . '">' . __( 'Support', 'pmpro-series' ) . '</a>',
 		);
 		$links     = array_merge( $links, $new_links );
 	}
