@@ -33,6 +33,8 @@ add_action( 'wp_enqueue_scripts', 'pmprors_scripts' );
  */
 function pmprors_admin_scripts( $hook ) {
 	if ( 'post.php' == $hook && 'pmpro_series' == get_post_type() ) {
+		wp_enqueue_style( 'pmpros-select2', plugins_url( 'css/select2.css', __FILE__ ), '', '3.1', 'screen' );
+		wp_enqueue_script( 'pmpros-select2', plugins_url( 'js/select2.js', __FILE__ ), array( 'jquery' ), '3.1' );
 		wp_enqueue_style( 'pmprors-admin', plugins_url( 'css/pmpro-series-admin.css', __FILE__ ) );
 		wp_register_script( 'pmprors_pmpro', plugins_url( 'js/pmpro-series.js', __FILE__ ), array( 'jquery' ), null, true );
 
@@ -157,11 +159,11 @@ function pmpros_hasAccess( $user_id, $post_id ) {
  * @param  [type] $post_membership_levels
  * @return [type]
  */
-function pmpros_pmpro_has_membership_access_filter( $hasaccess, $mypost, $myuser, $post_membership_levels ) {
+function pmpros_pmpro_has_membership_access_filter( $hasaccess, $post, $user, $post_membership_levels ) {
 	// If the user doesn't have access already, we won't change that. So only check if they already have access.
 	if ( $hasaccess ) {
 		// okay check if the user has access
-		if ( pmpros_hasAccess( $myuser->ID, $mypost->ID ) ) {
+		if ( pmpros_hasAccess( $user->ID, $post->ID ) ) {
 			$hasaccess = true;
 		} else {
 			$hasaccess = false;

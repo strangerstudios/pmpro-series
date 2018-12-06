@@ -334,8 +334,6 @@ class PMProSeries {
 	static function checkForMetaBoxes() {
 		// add meta boxes
 		if ( is_admin() ) {
-			wp_enqueue_style( 'pmpros-select2', plugins_url( 'css/select2.css', dirname( __FILE__ ) ), '', '3.1', 'screen' );
-			wp_enqueue_script( 'pmpros-select2', plugins_url( 'js/select2.js', dirname( __FILE__ ) ), array( 'jquery' ), '3.1' );
 			add_action( 'admin_menu', array( 'PMProSeries', 'defineMetaBoxes' ) );
 		}
 	}
