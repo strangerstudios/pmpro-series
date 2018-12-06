@@ -380,7 +380,7 @@ add_action( 'pmpro_member_links_bottom', 'pmpros_member_links_bottom' );
 function pmpros_email_templates( $templates ) {
 	// Add the new content template.
 	$templates['new_content'] = array(
-		'subject'     => sprintf( __( "New content is available at %s", 'pmpro-series' ), '!!sitename!!' ),
+		'subject'     => sprintf( __( "New content is available at %s", 'pmpro-series' ), "!!sitename!!" ),
 		'description' => __( 'New Series Content Notification', 'pmpro-series' ),
 		'body'        => file_get_contents( dirname( __FILE__ ) . '/email/new_content.html' ),
 	);
