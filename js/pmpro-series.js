@@ -31,7 +31,8 @@ function pmpros_removePost(post_id) {
 	});
 }
 
-jQuery(document).ready(function($) {
+function pmpros_Setup() {
+	
 	$('#pmpros_post').select2();
 	var seriesid = pmpro_series.series_id;
 	$('#pmpros_save').click(function() {
@@ -61,8 +62,13 @@ jQuery(document).ready(function($) {
 					$(this).html('Save');		
 				}else{
 					$('#pmpros_series_posts').html(responseHTML);
+					pmpros_Setup();
 				}																						
 			}
 		});
 	});	
-});				
+}
+
+jQuery(document).ready(function($) {
+	pmpros_Setup();
+});
