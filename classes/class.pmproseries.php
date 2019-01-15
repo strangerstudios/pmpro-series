@@ -517,7 +517,7 @@ class PMProSeries {
 				<tbody>
 					<tr>
 						<td>
-						<select id="pmpros_post" multiple="multiple" name="pmpros_post">
+						<select id="pmpros_post" name="pmpros_post">
 							<option value=""></option>
 						<?php
 							$pmpros_post_types = apply_filters( 'pmpros_post_types', array( 'post', 'page' ) );
