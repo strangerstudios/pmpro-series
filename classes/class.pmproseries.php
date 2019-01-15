@@ -313,6 +313,7 @@ class PMProSeries {
 					'menu_icon'          => 'dashicons-clock',
 					'show_ui'            => true,
 					'show_in_menu'       => true,
+					'show_in_rest'       => true,
 					'publicly_queryable' => true,
 					'hierarchical'       => true,
 					'supports'           => array( 'title', 'editor', 'thumbnail', 'custom-fields', 'author' ),
