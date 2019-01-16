@@ -404,7 +404,12 @@ class PMProSeries {
 						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink( $sp->id ); ?>">Available Now</a></span>
 					<?php } else { ?>
 						<span class="pmpro_series_item-title"><?php echo get_the_title( $sp->id ); ?></span>
-						<span class="pmpro_series_item-unavailable">available on <?php echo $date; ?></span>
+						<span class="pmpro_series_item-unavailable">
+							<?php
+								/* translators: %s: series post available date */
+								printf( esc_html__( 'available on %s.', 'pmpro-series' ), $date );
+							?>
+						</span>
 					<?php } ?>
 				</li>
 				<?php
