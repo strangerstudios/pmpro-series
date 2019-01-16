@@ -40,14 +40,14 @@ class PMProSeries {
 	 */
 	function addPost( $post_id, $delay ) {
 		if ( empty( $post_id ) || ! isset( $delay ) ) {
-			$this->error = 'Please enter a value for post and delay.';
+			$this->error = __( 'Please enter a value for post and delay.', 'pmpro-series' );
 			return false;
 		}
 
 		$post = get_post( $post_id );
 
 		if ( empty( $post->ID ) ) {
-			$this->error = 'A post with that id does not exist.';
+			$this->error = __( 'A post with that id does not exist.', 'pmpro-series' );
 			return false;
 		}
 
@@ -235,7 +235,7 @@ class PMProSeries {
 		$post_list .= "</ul>\n";
 
 		$email->email    = $user->user_email;
-		$subject         = sprintf( __( 'New content is available at %s', 'pmpro' ), get_option( 'blogname' ) );
+		$subject         = sprintf( __( 'New content is available at %s', 'pmpro-series' ), get_option( 'blogname' ) );
 		$email->subject  = apply_filters( 'pmpros_new_content_subject', $subject, $user, $post_ids );
 		$email->template = 'new_content';
 
@@ -249,7 +249,7 @@ class PMProSeries {
 		}
 
 		$email->email    = $user->user_email;
-		$email->subject  = sprintf( __( 'New content is available at %s', 'pmpro' ), get_option( 'blogname' ) );
+		$email->subject  = sprintf( __( 'New content is available at %s', 'pmpro-series' ), get_option( 'blogname' ) );
 		$email->template = 'new_content';
 
 		$email->body .= file_get_contents( dirname( __FILE__ ) . '/email/new_content.html' );
@@ -262,7 +262,7 @@ class PMProSeries {
 		);
 
 		if ( ! empty( $post->post_excerpt ) ) {
-			$email->data['excerpt'] = '<p>An excerpt of the post is below.</p><p>' . $post->post_excerpt . '</p>';
+			$email->data['excerpt'] = '<p>' . __( 'An excerpt of the post is below.', 'pmpro-series' ) . '</p><p>' . $post->post_excerpt . '</p>';
 		} else {
 			$email->data['excerpt'] = '';
 		}
@@ -285,19 +285,19 @@ class PMProSeries {
 		$labels = apply_filters(
 			'pmpros_series_labels',
 			array(
-				'name'               => __( 'Series' ),
-				'singular_name'      => __( 'Series' ),
+				'name'               => __( 'Series', 'pmpro-series' ),
+				'singular_name'      => __( 'Series', 'pmpro-series' ),
 				'slug'               => 'series',
-				'add_new'            => __( 'New Series' ),
-				'add_new_item'       => __( 'New Series' ),
-				'edit'               => __( 'Edit Series' ),
-				'edit_item'          => __( 'Edit Series' ),
-				'new_item'           => __( 'Add New' ),
-				'view'               => __( 'View This Series' ),
-				'view_item'          => __( 'View This Series' ),
-				'search_items'       => __( 'Search Series' ),
-				'not_found'          => __( 'No Series Found' ),
-				'not_found_in_trash' => __( 'No Series Found In Trash' ),
+				'add_new'            => __( 'New Series', 'pmpro-series' ),
+				'add_new_item'       => __( 'New Series', 'pmpro-series' ),
+				'edit'               => __( 'Edit Series', 'pmpro-series' ),
+				'edit_item'          => __( 'Edit Series', 'pmpro-series' ),
+				'new_item'           => __( 'Add New', 'pmpro-series' ),
+				'view'               => __( 'View This Series', 'pmpro-series' ),
+				'view_item'          => __( 'View This Series', 'pmpro-series' ),
+				'search_items'       => __( 'Search Series', 'pmpro-series' ),
+				'not_found'          => __( 'No Series Found', 'pmpro-series' ),
+				'not_found_in_trash' => __( 'No Series Found In Trash', 'pmpro-series' ),
 			)
 		);
 
@@ -347,10 +347,10 @@ class PMProSeries {
 	static function defineMetaBoxes() {
 		// Add "Require Membership" meta box if Paid Memberships Pro is active.
 		if ( defined( 'PMPRO_VERSION' ) ) {
-			add_meta_box( 'pmpro_page_meta', 'Require Membership', 'pmpro_page_meta', 'pmpro_series', 'side' );
+			add_meta_box( 'pmpro_page_meta', __( 'Require Membership', 'pmpro-series' ), 'pmpro_page_meta', 'pmpro_series', 'side' );
 		}
 		// series meta box
-		add_meta_box( 'pmpro_series_meta', 'Manage Series', array( 'PMProSeries', 'seriesMetaBox' ), 'pmpro_series', 'normal' );
+		add_meta_box( 'pmpro_series_meta', __( 'Manage Series', 'pmpro-series'), array( 'PMProSeries', 'seriesMetaBox' ), 'pmpro_series', 'normal' );
 	}
 
 	/**
@@ -403,7 +403,7 @@ class PMProSeries {
 					unavailable<?php } ?>">
 				<?php if ( max( 0, $member_days ) >= $sp->delay ) { ?>
 						<span class="pmpro_series_item-title"><a href="<?php echo get_permalink( $sp->id ); ?>"><?php echo get_the_title( $sp->id ); ?></a></span>
-						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink( $sp->id ); ?>">Available Now</a></span>
+						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink( $sp->id ); ?>"><?php _e( 'Available Now', 'pmpro-series' );?></a></span>
 					<?php } else { ?>
 						<span class="pmpro_series_item-title"><?php echo get_the_title( $sp->id ); ?></span>
 						<span class="pmpro_series_item-unavailable">

@@ -6,6 +6,8 @@
  * Version: .4
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com
+ * Text Domain: pmpro-series
+ * Domain Path: /languages
  */
 
 /*
@@ -46,12 +48,12 @@ function pmpros_admin_scripts( $hook ) {
 
 		$localize = array(
 			'series_id'      => $post_id,
-			'save'           => __( 'Save', 'pmproseries' ),
-			'saving'         => __( 'Saving...', 'pmproseries' ),
-			'saving_error_1' => __( 'Error saving series post [1]', 'pmproseries' ),
-			'saving_error_2' => __( 'Error saving series post [2]', 'pmproseries' ),
-			'remove_error_1' => __( 'Error removing series post [1]', 'pmproseries' ),
-			'remove_error_2' => __( 'Error removing series post [2]', 'pmproseries' ),
+			'save'           => __( 'Save', 'pmpro-series' ),
+			'saving'         => __( 'Saving...', 'pmpro-series' ),
+			'saving_error_1' => __( 'Error saving series post [1]', 'pmpro-series' ),
+			'saving_error_2' => __( 'Error saving series post [2]', 'pmpro-series' ),
+			'remove_error_1' => __( 'Error removing series post [1]', 'pmpro-series' ),
+			'remove_error_2' => __( 'Error removing series post [2]', 'pmpro-series' ),
 		);
 
 		wp_localize_script( 'pmpros_pmpro', 'pmpro_series', $localize );
@@ -99,7 +101,7 @@ function pmpros_the_content( $content ) {
 		// Display the Series if Paid Memberships Pro is active.
 		if ( function_exists( 'pmpro_has_membership_access' ) && pmpro_has_membership_access() ) {
 			$series   = new PMProSeries( $post->ID );
-			$content .= '<p>You are on day ' . intval( pmpro_getMemberDays() ) . ' of your membership.</p>';
+			$content .= '<p>' . sprintf( __( 'You are on day %d of your membership.', 'pmpro-series' ), intval( pmpro_getMemberDays() ) ) . '</p>';
 			$content .= $series->getPostList();
 		}
 		
@@ -216,22 +218,28 @@ function pmpros_pmpro_text_filter( $text ) {
 
 				$member_days = pmpro_getMemberDays( $current_user->ID );
 				$days_left   = ceil( $day - $member_days );
-				$date        = date( get_option( 'date_format' ), strtotime( "+ $days_left Days", current_time( 'timestamp' ) ) );
+				$series_date_text        = date( get_option( 'date_format' ), strtotime( "+ $days_left Days", current_time( 'timestamp' ) ) );
 
-				$text = "This content is part of the <a href='" . get_permalink( $inseries ) . "'>" . get_the_title( $inseries ) . '</a> series. You will gain access on ' . $date . '.';
+				$series_link_text = '<a href="' . get_permalink( $inseries ) . '">' . get_the_title( $inseries ) . '</a>';
+				$text = sprintf( __( 'This content is part of the %s series. You will gain access on %s.', 'pmpro-series' ),  $series_link_text, $series_date_text );
+
 				$text = apply_filters( 'pmpros_days_left_message', $text, $member_days, $days_left, $current_user->ID );
 			} else {
 				// user has to sign up for one of the series
 				if ( count( $post_series ) == 1 ) {
-					$text = "This content is part of the <a href='" . get_permalink( $post_series[0] ) . "'>" . get_the_title( $post_series[0] ) . '</a> series.';
+					$series_link_text = '<a href="' . get_permalink( $post_series[0] ) . '">' . get_the_title( $post_series[0] ) . '</a>';
+					$text = sprintf( __( 'This content is part of the %s series.', 'pmpro-series' ),  $series_link_text );
+					
 					$text = apply_filters( 'pmpros_content_access_message_single_item', $text, $post_series );
 				} else {
-					$text   = 'This content is part of the following series: ';
 					$series = array();
 					foreach ( $post_series as $series_id ) {
 						$series[] = "<a href='" . get_permalink( $series_id ) . "'>" . get_the_title( $series_id ) . '</a>';
 					}
-					$text .= implode( ', ', $series ) . '.';
+					$series_list_text .= implode( ', ', $series ) . '.';
+					
+					$text   = sprintf( __( 'This content is part of the following series: %s', 'pmpro-series' ), $series_list_text );
+					
 					$text  = apply_filters( 'pmpros_content_access_message_many_items', $text, $post_series );
 				}
 			}
@@ -384,8 +392,8 @@ add_action( 'pmpro_member_links_bottom', 'pmpros_member_links_bottom' );
 function pmpros_email_templates( $templates ) {
 	// Add the new content template.
 	$templates['new_content'] = array(
-		'subject'     => 'New content is available at !!sitename!!',
-		'description' => 'New Series Content Notification',
+		'subject'     => __( 'New content is available at !!sitename!!', 'pmpro-series' ),
+		'description' => __( 'New Series Content Notification', 'pmpro-series' ),
 		'body'        => file_get_contents( dirname( __FILE__ ) . '/email/new_content.html' ),
 	);
 	return $templates;
@@ -433,7 +441,7 @@ function pmpros_plugin_row_meta( $links, $file ) {
 	if ( strpos( $file, 'pmpro-series.php' ) !== false ) {
 		$new_links = array(
 			'<a href="' . esc_url( 'https://www.paidmembershipspro.com/add-ons/pmpro-series-for-drip-feed-content/' ) . '" title="' . esc_attr( __( 'View Documentation', 'pmpro-series' ) ) . '">' . __( 'Docs', 'pmpro-series' ) . '</a>',
-			'<a href="' . esc_url( 'http://paidmembershipspro.com/support/' ) . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro-series' ) ) . '">' . __( 'Support', 'pmpro-series' ) . '</a>',
+			'<a href="' . esc_url( 'https://www.paidmembershipspro.com/support/' ) . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro-series' ) ) . '">' . __( 'Support', 'pmpro-series' ) . '</a>',
 		);
 		$links     = array_merge( $links, $new_links );
 	}
