@@ -344,9 +344,10 @@ class PMProSeries {
 	 * @return [type]
 	 */
 	static function defineMetaBoxes() {
-		 // PMPro box
-		add_meta_box( 'pmpro_page_meta', 'Require Membership', 'pmpro_page_meta', 'pmpro_series', 'side' );
-
+		// Add "Require Membership" meta box if Paid Memberships Pro is active.
+		if ( defined( 'PMPRO_VERSION' ) ) {
+			add_meta_box( 'pmpro_page_meta', 'Require Membership', 'pmpro_page_meta', 'pmpro_series', 'side' );
+		}
 		// series meta box
 		add_meta_box( 'pmpro_series_meta', 'Posts in this Series', array( 'PMProSeries', 'seriesMetaBox' ), 'pmpro_series', 'normal' );
 	}

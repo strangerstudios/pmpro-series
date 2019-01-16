@@ -88,12 +88,18 @@ add_action( 'init', 'pmpros_ajax' );
 function pmpros_the_content( $content ) {
 	global $post;
 
-	if ( $post->post_type == 'pmpro_series' && pmpro_has_membership_access() ) {
-		$series   = new PMProSeries( $post->ID );
-		$content .= '<p>You are on day ' . intval( pmpro_getMemberDays() ) . ' of your membership.</p>';
-		$content .= $series->getPostList();
+	if ( $post->post_type == 'pmpro_series' ) {
+		
+		// Display the Series if Paid Memberships Pro is active.
+		if ( function_exists( 'pmpro_has_membership_access' ) && pmpro_has_membership_access() ) {
+			$series   = new PMProSeries( $post->ID );
+			$content .= '<p>You are on day ' . intval( pmpro_getMemberDays() ) . ' of your membership.</p>';
+			$content .= $series->getPostList();
+		}
+		
+		// Note: Let's eventually work to make this compatible if Paid Memberships Pro is not active.		
 	}
-
+	
 	return $content;
 }
 add_filter( 'the_content', 'pmpros_the_content' );
