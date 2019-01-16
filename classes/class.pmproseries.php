@@ -311,6 +311,7 @@ class PMProSeries {
 					'menu_icon'          => 'dashicons-clock',
 					'show_ui'            => true,
 					'show_in_menu'       => true,
+					'show_in_rest'       => true,
 					'publicly_queryable' => true,
 					'hierarchical'       => true,
 					'supports'           => array( 'title', 'editor', 'thumbnail', 'custom-fields', 'author' ),
@@ -543,8 +544,8 @@ class PMProSeries {
 					?>
 					</select>
 					</td>
-					<td><input id="pmpros_delay" name="pmpros_delay" type="text" value="" size="7" /></td>
-					<td><a class="button button-primary" id="pmpros_save"><?php _e( 'Add to Series', 'pmpro-series' ); ?></a></td>
+					<td width="20%"><input id="pmpros_delay" name="pmpros_delay" type="text" value="" size="7" /></td>
+					<td width="20%"><a class="button button-primary" id="pmpros_save"><?php _e( 'Add to Series', 'pmpro-series' ); ?></a></td>
 				</tr>
 			</tbody>
 		</table>

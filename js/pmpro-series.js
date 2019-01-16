@@ -34,7 +34,7 @@ function pmpros_removePost(post_id) {
 
 function pmpros_Setup() {
 	
-	$('#pmpros_post').select2();
+	$('#pmpros_post').select2({width: 'elements'});
 	var seriesid = pmpro_series.series_id;
 	$('#pmpros_save').click(function() {
 			
