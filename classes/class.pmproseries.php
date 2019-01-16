@@ -349,7 +349,7 @@ class PMProSeries {
 			add_meta_box( 'pmpro_page_meta', 'Require Membership', 'pmpro_page_meta', 'pmpro_series', 'side' );
 		}
 		// series meta box
-		add_meta_box( 'pmpro_series_meta', 'Posts in this Series', array( 'PMProSeries', 'seriesMetaBox' ), 'pmpro_series', 'normal' );
+		add_meta_box( 'pmpro_series_meta', 'Manage Series', array( 'PMProSeries', 'seriesMetaBox' ), 'pmpro_series', 'normal' );
 	}
 
 	/**
@@ -476,14 +476,13 @@ class PMProSeries {
 		<?php if ( ! empty( $this->error ) ) { ?>
 			<div class="message error"><p><?php echo $this->error; ?></p></div>
 		<?php } ?>
-		
-		<table id="pmpros_table" class="wp-list-table widefat fixed">
+		<h3><?php _e( 'Posts in this Series', 'pmpro-series' ); ?></h3>
+		<table id="pmpros_table" class="wp-list-table widefat striped">
 		<thead>
-			<th>Order</th>
-			<th width="50%">Title</th>
-			<th>Delay (# of days)</th>
-			<th></th>
-			<th></th>
+			<th><?php _e( 'Order', 'pmpro-series' ); ?></th>
+			<th width="50%"><?php _e( 'Title', 'pmpro-series' ); ?></th>
+			<th width="20%"><?php _e( 'Delay (# of days)', 'pmpro-series' ); ?></th>
+			<th width="20%"><?php _e( 'Actions', 'pmpro-series' ); ?></th>
 		</thead>
 		<tbody>
 		<?php
@@ -500,10 +499,8 @@ class PMProSeries {
 					<td><?php echo get_the_title( $post->id ); ?></td>
 					<td><?php echo $post->delay; ?></td>
 					<td>
-						<a href="javascript:pmpros_editPost('<?php echo $post->id; ?>', '<?php echo $post->delay; ?>'); void(0);">Edit</a>
-					</td>
-					<td>
-						<a href="javascript:pmpros_removePost('<?php echo $post->id; ?>'); void(0);">Remove</a>
+						<a class="button button-secondary" href="javascript:pmpros_editPost('<?php echo $post->id; ?>', '<?php echo $post->delay; ?>'); void(0);"><?php _e( 'edit', 'pmpro-series' ); ?></a>
+						<a class="button button-secondary" href="javascript:pmpros_removePost('<?php echo $post->id; ?>'); void(0);"><?php _e( 'remove', 'pmpro-series' ); ?></a>
 					</td>
 				</tr>
 				<?php
@@ -513,47 +510,44 @@ class PMProSeries {
 		?>
 		</tbody>
 		</table>
-		
-		<div id="postcustomstuff">
-			<p><strong>Add/Edit Posts:</strong></p>
-			<table id="newmeta">
-				<thead>
-					<tr>
-						<th>Post/Page</th>
-						<th>Delay (# of days)</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>
-						<select id="pmpros_post" name="pmpros_post">
-							<option value=""></option>
+		<h3><?php _e( 'Add/Edit Posts', 'pmpro-series' ); ?></h3>
+		<table id="newmeta" class="wp-list-table widefat striped">
+			<thead>
+				<tr>
+					<th><?php _e( 'Post/Page', 'pmpro-series' ); ?></th>
+					<th><?php _e( 'Delay (# of days)', 'pmpro-series' ); ?></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+					<select id="pmpros_post" name="pmpros_post">
+						<option value=""></option>
+					<?php
+						$pmpros_post_types = apply_filters( 'pmpros_post_types', array( 'post', 'page' ) );
+						$allposts          = $wpdb->get_results( "SELECT ID, post_title, post_status FROM $wpdb->posts WHERE post_status IN('publish', 'draft') AND post_type IN ('" . implode( "','", $pmpros_post_types ) . "') AND post_title <> '' ORDER BY post_title" );
+					foreach ( $allposts as $p ) {
+						?>
+						<option value="<?php echo $p->ID; ?>"><?php echo esc_textarea( $p->post_title ); ?> (#
 						<?php
-							$pmpros_post_types = apply_filters( 'pmpros_post_types', array( 'post', 'page' ) );
-							$allposts          = $wpdb->get_results( "SELECT ID, post_title, post_status FROM $wpdb->posts WHERE post_status IN('publish', 'draft') AND post_type IN ('" . implode( "','", $pmpros_post_types ) . "') AND post_title <> '' ORDER BY post_title" );
-						foreach ( $allposts as $p ) {
-							?>
-							<option value="<?php echo $p->ID; ?>"><?php echo esc_textarea( $p->post_title ); ?> (#
-							<?php
-							echo $p->ID;
+						echo $p->ID;
 
-							if ( $p->post_status == 'draft' ) {
-								echo '-DRAFT';
-							}
-							?>
-								)</option>
-							<?php
+						if ( $p->post_status == 'draft' ) {
+							echo '-DRAFT';
 						}
 						?>
-						</select>
-						</td>
-						<td><input id="pmpros_delay" name="pmpros_delay" type="text" value="" size="7" /></td>
-						<td><a class="button" id="pmpros_save">Add to Series</a></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>		
+							)</option>
+						<?php
+					}
+					?>
+					</select>
+					</td>
+					<td><input id="pmpros_delay" name="pmpros_delay" type="text" value="" size="7" /></td>
+					<td><a class="button button-primary" id="pmpros_save"><?php _e( 'Add to Series', 'pmpro-series' ); ?></a></td>
+				</tr>
+			</tbody>
+		</table>
 		<?php
 	}
 }
