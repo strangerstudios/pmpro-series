@@ -381,8 +381,12 @@ class PMProSeries {
 			<ul id="pmpro_series-<?php echo $this->id; ?>" class="pmpro_series_list">
 			<?php
 				$member_days = pmpro_getMemberDays( $current_user->ID );
+				$post_list_posts = $this->posts;
 
-			foreach ( $this->posts as $sp ) {
+				// Filter to allow plugins to modify the posts included in the Series.
+				$post_list_posts = apply_filters('pmpro_series_post_list_posts', $post_list_posts, $this);
+
+			foreach ( $post_list_posts as $sp ) {
 				$days_left = ceil( $sp->delay - $member_days );
 				$date      = date( get_option( 'date_format' ), strtotime( "+ $days_left Days", current_time( 'timestamp' ) ) );
 				?>
