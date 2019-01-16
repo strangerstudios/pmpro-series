@@ -1,0 +1,151 @@
+# Copyright (C) 2014 PMPro Series
+# This file is distributed under the same license as the PMPro Series package.
+msgid ""
+msgstr ""
+"Project-Id-Version: PMPro Series .3\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/pmpro-series\n"
+"POT-Creation-Date: 2014-07-06 23:23:35+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: classes/class.pmproseries.php:30
+msgid "Please enter a value for post and delay."
+msgstr ""
+
+#: classes/class.pmproseries.php:38
+msgid "A post with that id does not exist."
+msgstr ""
+
+#: classes/class.pmproseries.php:178
+msgid "New content is available at %s"
+msgstr ""
+
+#: classes/class.pmproseries.php:189
+msgid "An excerpt of the post is below."
+msgstr ""
+
+#: classes/class.pmproseries.php:209
+msgid "Series"
+msgstr ""
+
+#: classes/class.pmproseries.php:210
+msgid "Serie"
+msgstr ""
+
+#: classes/class.pmproseries.php:212 classes/class.pmproseries.php:213
+msgid "New Series"
+msgstr ""
+
+#: classes/class.pmproseries.php:214 classes/class.pmproseries.php:215
+msgid "Edit Series"
+msgstr ""
+
+#: classes/class.pmproseries.php:216
+msgid "Add New"
+msgstr ""
+
+#: classes/class.pmproseries.php:217 classes/class.pmproseries.php:218
+msgid "View This Series"
+msgstr ""
+
+#: classes/class.pmproseries.php:219
+msgid "Search Series"
+msgstr ""
+
+#: classes/class.pmproseries.php:220
+msgid "No Series Found"
+msgstr ""
+
+#: classes/class.pmproseries.php:221
+msgid "No Series Found In Trash"
+msgstr ""
+
+#: classes/class.pmproseries.php:257
+msgid "Require Membership"
+msgstr ""
+
+#: classes/class.pmproseries.php:260
+msgid "Posts in this Series"
+msgstr ""
+
+#: classes/class.pmproseries.php:292
+msgid "Available Now"
+msgstr ""
+
+#: classes/class.pmproseries.php:295
+msgid "available on day %s"
+msgstr ""
+
+#: classes/class.pmproseries.php:354
+msgid "Order"
+msgstr ""
+
+#: classes/class.pmproseries.php:355
+msgid "Title"
+msgstr ""
+
+#: classes/class.pmproseries.php:356 classes/class.pmproseries.php:399
+msgid "Delay (# of days)"
+msgstr ""
+
+#: classes/class.pmproseries.php:379
+msgid "Edit"
+msgstr ""
+
+#: classes/class.pmproseries.php:382
+msgid "Remove"
+msgstr ""
+
+#: classes/class.pmproseries.php:394
+msgid "Add/Edit Posts:"
+msgstr ""
+
+#: classes/class.pmproseries.php:398
+msgid "Post/Page"
+msgstr ""
+
+#: classes/class.pmproseries.php:427
+msgid "Add to Series"
+msgstr ""
+
+#: pmpro-series.php:117
+msgid "You are on day %d of your membership."
+msgstr ""
+
+#: pmpro-series.php:225
+msgid ""
+"This content is part of the %s series. You will gain access on day %s of "
+"your membership."
+msgstr ""
+
+#: pmpro-series.php:232
+msgid "This content is part of the %s series."
+msgstr ""
+
+#: pmpro-series.php:236
+msgid "This content is part of the following series: "
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "PMPro Series"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.paidmembershipspro.com/pmpro-series/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Offer serialized (drip feed) content to your PMPro members."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Stranger Studios"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.strangerstudios.com"
+msgstr ""

@@ -16,6 +16,16 @@
 require_once dirname( __FILE__ ) . '/classes/class.pmproseries.php';
 require_once dirname( __FILE__ ) . '/scheduled/crons.php';
 
+/*
+	Load textdomain
+*/
+function pmpros_load_textdomain() {
+	$locale = apply_filters( 'plugin_locale', get_locale(), 'pmpro-series' );
+	load_textdomain( 'pmpro-series', trailingslashit( WP_LANG_DIR ) . basename( __DIR__ ) . '/languages/pmpro-series-' . $locale . '.mo');
+	load_plugin_textdomain( 'pmpro-series', FALSE, basename( __DIR__ ) . '/languages/');
+}
+add_action( 'init', 'pmpros_load_textdomain' );
+
 
 /**
  * [pmpros_scripts] Load frontend CSS file.
