@@ -3,7 +3,7 @@
  * Plugin Name: Paid Memberships Pro - Series Add On
  * Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-series-for-drip-feed-content/
  * Description: Offer serialized (drip feed) content to your PMPro members.
- * Version: .3.8
+ * Version: .4
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com
  */

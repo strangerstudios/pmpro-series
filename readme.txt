@@ -1,9 +1,9 @@
 === Paid Memberships Pro - Series Add On ===
 Contributors: strangerstudios
 Tags: series, drip feed, serial, delayed, limited, memberships
-Requires at least: 3.4
-Tested up to: 4.9.5
-Stable tag: .3.7
+Requires at least: 4
+Tested up to: 5.0.3
+Stable tag: .4
 
 Create "Series" which are groups of posts/pages where content is revealed to members over time. This is the "drip feed content" module for Paid Memberships Pro.
 
@@ -61,8 +61,20 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 
 == Changelog ==
 
-= .3.8 =
-* BUG/ENHANCEMENT: Fixed menu_icon for Series CPT to use dashicons-clock in place of custom image.
+= .4 =
+* BUG FIX: Fixed issues that came up if PMPro was not active.
+* BUG FIX: Fixes issues when running certain versions of PHP.
+* BUG FIX: Fixed issue where users couldn't access pages that were part of a deleted series. (Thanks, Thomas Sjolshagen)
+* BUG FIX/ENHANCEMENT: Works with Gutenberg and PMPro 2.0+ now.
+* BUG FIX/ENHANCEMENT: You can now add posts into a series before saving/refreshing a new post.
+* BUG FIX/ENHANCEMENT: Fixed menu_icon for Series CPT to use dashicons-clock in place of custom image.
+* BUG FIX/ENHANCEMENT: Updated to the latest version of select2.
+* BUG FIX/ENHANCEMENT: Using current_time('timestamp') instead of time(). (Thanks, Thomas Sjolshagen)
+* ENHANCEMENT: Wrapped strings for translation and added French language files. (Thanks, Charlie Merland)
+* ENHANCEMENT: Added pmpros_days_left_message, pmpros_content_access_message_single_item, and pmpros_content_access_message_many_items filters to filter the text shown in certain cases via hooks. (Thanks, Curtis McHale)
+* ENHANCEMENT: Added pmpros_new_content_subject filter. (Thanks, Curtis McHale)
+* ENHANCEMENT: Improved styling of the series list.
+* ENHANCEMENT: Updating to add support for the Email Templates Admin Editor Add On.
 
 = .3.7 =
 * Fixed new content email cron to remember which posts members were notified of.
