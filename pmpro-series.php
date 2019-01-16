@@ -32,14 +32,20 @@ add_action( 'wp_enqueue_scripts', 'pmpros_scripts' );
  * @return void
  */
 function pmpros_admin_scripts( $hook ) {
-	if ( 'post.php' == $hook && 'pmpro_series' == get_post_type() ) {
+	if ( in_array( $hook, array( 'post.php', 'post-new.php' ) ) && 'pmpro_series' == get_post_type() ) {
 		wp_enqueue_style( 'pmpros-select2', plugins_url( 'css/select2.css', __FILE__ ), '', '3.1', 'screen' );
 		wp_enqueue_script( 'pmpros-select2', plugins_url( 'js/select2.js', __FILE__ ), array( 'jquery' ), '3.1' );
 		wp_enqueue_style( 'pmpros-admin', plugins_url( 'css/pmpro-series-admin.css', __FILE__ ) );
 		wp_register_script( 'pmpros_pmpro', plugins_url( 'js/pmpro-series.js', __FILE__ ), array( 'jquery' ), null, true );
 
+		if ( ! empty( $_GET['post'] ) ) {
+			$post_id = intval( $_GET['post'] );
+		} else {
+			$post_id = '';
+		}
+
 		$localize = array(
-			'series_id'      => $_GET['post'],
+			'series_id'      => $post_id,
 			'save'           => __( 'Save', 'pmproseries' ),
 			'saving'         => __( 'Saving...', 'pmproseries' ),
 			'saving_error_1' => __( 'Error saving series post [1]', 'pmproseries' ),
