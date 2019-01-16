@@ -26,6 +26,7 @@ function pmpros_removePost(post_id) {
 				jQuery('#pmpros_save').removeAttr('disabled');	
 			}else{
 				jQuery('#pmpros_series_posts').html(responseHTML);
+				pmpros_Setup();
 			}																						
 		}
 	});
