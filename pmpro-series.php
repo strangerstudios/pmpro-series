@@ -16,27 +16,27 @@ require_once dirname( __FILE__ ) . '/scheduled/crons.php';
 
 
 /**
- * [pmprors_scripts] Load frontend CSS file.
+ * [pmpros_scripts] Load frontend CSS file.
  *
  * @return void
  */
-function pmprors_scripts() {
-	wp_enqueue_style( 'pmprors_pmpro', plugins_url( 'css/pmpro_series.css', __FILE__ ) );
+function pmpros_scripts() {
+	wp_enqueue_style( 'pmpros_pmpro', plugins_url( 'css/pmpro_series.css', __FILE__ ) );
 }
-add_action( 'wp_enqueue_scripts', 'pmprors_scripts' );
+add_action( 'wp_enqueue_scripts', 'pmpros_scripts' );
 
 /**
- * [pmprors_admin_scripts] Load admin JS files.
+ * [pmpros_admin_scripts] Load admin JS files.
  *
  * @param  [type] $hook
  * @return void
  */
-function pmprors_admin_scripts( $hook ) {
+function pmpros_admin_scripts( $hook ) {
 	if ( 'post.php' == $hook && 'pmpro_series' == get_post_type() ) {
 		wp_enqueue_style( 'pmpros-select2', plugins_url( 'css/select2.css', __FILE__ ), '', '3.1', 'screen' );
 		wp_enqueue_script( 'pmpros-select2', plugins_url( 'js/select2.js', __FILE__ ), array( 'jquery' ), '3.1' );
-		wp_enqueue_style( 'pmprors-admin', plugins_url( 'css/pmpro-series-admin.css', __FILE__ ) );
-		wp_register_script( 'pmprors_pmpro', plugins_url( 'js/pmpro-series.js', __FILE__ ), array( 'jquery' ), null, true );
+		wp_enqueue_style( 'pmpros-admin', plugins_url( 'css/pmpro-series-admin.css', __FILE__ ) );
+		wp_register_script( 'pmpros_pmpro', plugins_url( 'js/pmpro-series.js', __FILE__ ), array( 'jquery' ), null, true );
 
 		$localize = array(
 			'series_id'      => $_GET['post'],
@@ -48,11 +48,11 @@ function pmprors_admin_scripts( $hook ) {
 			'remove_error_2' => __( 'Error removing series post [2]', 'pmproseries' ),
 		);
 
-		wp_localize_script( 'pmprors_pmpro', 'pmpro_series', $localize );
-		wp_enqueue_script( 'pmprors_pmpro' );
+		wp_localize_script( 'pmpros_pmpro', 'pmpro_series', $localize );
+		wp_enqueue_script( 'pmpros_pmpro' );
 	}
 }
-add_action( 'admin_enqueue_scripts', 'pmprors_admin_scripts' );
+add_action( 'admin_enqueue_scripts', 'pmpros_admin_scripts' );
 
 /*
 	PMPro Series CPT
