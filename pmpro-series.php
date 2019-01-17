@@ -122,6 +122,32 @@ function pmpros_the_content( $content ) {
 }
 add_filter( 'the_content', 'pmpros_the_content' );
 
+/**
+ * Check if a user has access to a series.
+ */
+function pmpros_hasAccessToSeries( $series_id, $user_id, $return_membership_levels = false ) {
+	if ( function_exists( 'pmpro_has_membership_access' ) ) {
+		// Remove our filter to avoid loops.
+		remove_filter( 'pmpro_has_membership_access_filter', 'pmpros_pmpro_has_membership_access_filter', 10, 4 );
+		
+		// Get results.
+		$results = pmpro_has_membership_access( $series_id, $user_id, true );
+		
+		// Add the filter back.
+		add_filter( 'pmpro_has_membership_access_filter', 'pmpros_pmpro_has_membership_access_filter', 10, 4 );
+	} else {
+		// Assume true
+		$results = array();
+		$results[] = true;
+		$results[] = array();
+	}
+	
+	if ( $return_membership_levels ) {
+		return $results;
+	} else {
+		return $results[0];
+	}
+}
 
 /**
  * [pmpros_hasAccess] Makes sure people can't view content they don't have access to. This function returns true if a user has access to a page, including logic for series/delays.
@@ -132,11 +158,11 @@ add_filter( 'the_content', 'pmpros_the_content' );
  */
 function pmpros_hasAccess( $user_id, $post_id ) {
 	// is this post in a series?
-	$post_series = get_post_meta( $post_id, '_post_series', true );
+	$post_series = pmpros_getPostSeries( $post_id );
 	if ( empty( $post_series ) ) {
 		return true;        // not in a series
 	}
-
+	
 	// does this user have a level giving them access to everything?
 	$all_access_levels = apply_filters( 'pmproap_all_access_levels', array(), $user_id, $post_id );
 	if ( ! empty( $all_access_levels )
@@ -147,20 +173,16 @@ function pmpros_hasAccess( $user_id, $post_id ) {
 
 	// check each series
 	foreach ( $post_series as $series_id ) {
-		// if the series doesn't exist, we can't deny access to the post_id.
-		if ( false === get_post_status( $series_id ) ) {
-			return true;
-		}
+		
 		// does the user have access to any of the series pages?
 		if ( function_exists( 'pmpro_has_membership_access' ) ) {
-			// passing true as 3rd param to get the levels which have access to this page
-			$results = pmpro_has_membership_access( $series_id, $user_id, true );
+			$results = pmpros_hasAccessToSeries( $series_id, $user_id, true );
 			$hasaccess = $results[0];
 		} else {
 			$hasaccess = 1;	// PMPro not active. Assume access, but check MemberDays below.
 		}
 
-		if ( $results[0] ) {
+		if ( $hasaccess ) {
 			// has the user been around long enough for any of the delays?
 			$series_posts = get_post_meta( $series_id, '_series_posts', true );
 			if ( ! empty( $series_posts ) ) {
@@ -201,7 +223,7 @@ function pmpros_hasAccess( $user_id, $post_id ) {
  */
 function pmpros_pmpro_has_membership_access_filter( $hasaccess, $post, $user, $post_membership_levels ) {
 	// If the user doesn't have access already, we won't change that. So only check if they already have access.
-	if ( $hasaccess ) {
+	if ( $hasaccess && !empty( $post ) ) {
 		// okay check if the user has access
 		if ( pmpros_hasAccess( $user->ID, $post->ID ) ) {
 			$hasaccess = true;
@@ -214,6 +236,57 @@ function pmpros_pmpro_has_membership_access_filter( $hasaccess, $post, $user, $p
 }
 add_filter( 'pmpro_has_membership_access_filter', 'pmpros_pmpro_has_membership_access_filter', 10, 4 );
 
+/**
+ * Get the series a post is in.
+ * @param $post_id	int	ID of the post to check series for.
+ * NOTE: When getting/setting the _post_series post meta, use get_post_meta
+ * 		 to get the value directly.
+ */
+function pmpros_getPostSeries( $post_id = NULL ) {
+	// Default to the global post.
+	if ( empty( $post_id ) ) {
+		global $post;
+		
+		if ( ! empty( $post ) && ! empty( $post->ID ) ) {
+			$post_id = $post->ID;
+		}
+	}
+	
+	// Get ID from post object if passed in.
+	if ( is_object( $post_id ) && ! empty( $post_id->ID ) ) {
+		$post_id = $post_id->ID;
+	}
+	
+	// Bail if no post.
+	if ( empty( $post_id ) ) {
+		return array();
+	}
+	
+	// If this is a series itself, bail.
+	if ( get_post_type( $post_id ) == 'pmpro_series' ) {
+		return array();
+	}
+	
+	// Get series from post meta.
+	$post_series = get_post_meta( $post_id, '_post_series', true );
+	
+	// Make sure it's an array.
+	if ( empty( $post_series ) ) {
+		$post_series = array();
+	} elseif ( ! is_array( $post_series ) ) {
+		$post_series = array( $post_series );
+	}
+	
+	// Make sure the posts are published.
+	$new_post_series = array();
+	foreach( $post_series as $series_id ) {
+		if ( ! empty( $series_id ) && get_post_status( $series_id ) == 'publish' ) {
+			$new_post_series[] = $series_id;
+		}
+	}
+
+	return $new_post_series;
+}
 
 /**
  * [pmpros_pmpro_text_filter] Filter the message for users without access.
@@ -227,7 +300,7 @@ function pmpros_pmpro_text_filter( $text ) {
 	if ( ! empty( $current_user ) && ! empty( $post ) ) {
 		if ( ! pmpros_hasAccess( $current_user->ID, $post->ID ) ) {
 			// Update text. The either have to wait or sign up.
-			$post_series = get_post_meta( $post->ID, '_post_series', true );
+			$post_series = pmpros_getPostSeries( $post->ID );
 
 			$inseries = false;
 			foreach ( $post_series as $ps ) {
@@ -262,7 +335,7 @@ function pmpros_pmpro_text_filter( $text ) {
 					foreach ( $post_series as $series_id ) {
 						$series[] = "<a href='" . get_permalink( $series_id ) . "'>" . get_the_title( $series_id ) . '</a>';
 					}
-					$series_list_text .= implode( ', ', $series ) . '.';
+					$series_list_text = implode( ', ', $series ) . '.';
 					
 					$text   = sprintf( __( 'This content is part of the following series: %s', 'pmpro-series' ), $series_list_text );
 					
