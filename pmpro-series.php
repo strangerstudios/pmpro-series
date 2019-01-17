@@ -109,7 +109,7 @@ function pmpros_the_content( $content ) {
 	if ( $post->post_type == 'pmpro_series' ) {
 		
 		// Display the Series if Paid Memberships Pro is active.
-		if ( function_exists( 'pmpro_has_membership_access' ) && pmpro_has_membership_access() ) {
+		if ( !function_exists( 'pmpro_has_membership_access' ) || pmpro_has_membership_access() ) {
 			$series   = new PMProSeries( $post->ID );
 			$content .= '<p>' . sprintf( __( 'You are on day %d of your membership.', 'pmpro-series' ), intval( pmpro_getMemberDays() ) ) . '</p>';
 			$content .= $series->getPostList();
@@ -139,7 +139,9 @@ function pmpros_hasAccess( $user_id, $post_id ) {
 
 	// does this user have a level giving them access to everything?
 	$all_access_levels = apply_filters( 'pmproap_all_access_levels', array(), $user_id, $post_id );
-	if ( ! empty( $all_access_levels ) && pmpro_hasMembershipLevel( $all_access_levels, $user_id ) ) {
+	if ( ! empty( $all_access_levels )
+	&& function_exists( 'pmpro_hasMembershipLevel' )
+	&& pmpro_hasMembershipLevel( $all_access_levels, $user_id ) ) {
 		return true;    // user has one of the all access levels
 	}
 
@@ -150,7 +152,14 @@ function pmpros_hasAccess( $user_id, $post_id ) {
 			return true;
 		}
 		// does the user have access to any of the series pages?
-		$results = pmpro_has_membership_access( $series_id, $user_id, true ); // passing true there to get the levels which have access to this page
+		if ( function_exists( 'pmpro_has_membership_access' ) ) {
+			// passing true as 3rd param to get the levels which have access to this page
+			$results = pmpro_has_membership_access( $series_id, $user_id, true );
+			$hasaccess = $results[0];
+		} else {
+			$hasaccess = 1;	// PMPro not active. Assume access, but check MemberDays below.
+		}
+
 		if ( $results[0] ) {
 			// has the user been around long enough for any of the delays?
 			$series_posts = get_post_meta( $series_id, '_series_posts', true );
@@ -158,10 +167,17 @@ function pmpros_hasAccess( $user_id, $post_id ) {
 				foreach ( $series_posts as $sp ) {
 					// this post we are checking is in this series
 					if ( $sp->id == $post_id ) {
-						// check specifically for the levels with access to this series
-						foreach ( $results[1] as $level_id ) {
-							if ( max( 0, pmpro_getMemberDays( $user_id, $level_id ) ) >= $sp->delay ) {
-								return true;    // user has access to this series and has been around longer than this post's delay
+						if ( ! empty( $results ) ) {
+							// check specifically for the levels with access to this series
+							foreach ( $results[1] as $level_id ) {
+								if ( max( 0, pmpro_getMemberDays( $user_id, $level_id ) ) >= $sp->delay ) {
+									return true;    // user has access to this series and has been around longer than this post's delay
+								}
+							}
+						} else {
+							// check if they've been a user long enough
+							if ( max( 0, pmpro_getMemberDays( $user_id ) ) >= $sp->delay ) {
+								return true;
 							}
 						}
 					}
@@ -215,7 +231,7 @@ function pmpros_pmpro_text_filter( $text ) {
 
 			$inseries = false;
 			foreach ( $post_series as $ps ) {
-				if ( pmpro_has_membership_access( $ps ) ) {
+				if ( !function_exists('pmpro_has_membership_access') || pmpro_has_membership_access( $ps ) ) {
 					$inseries = $ps;
 					break;
 				}
@@ -284,8 +300,10 @@ if ( ! function_exists( 'pmpro_getMemberStartdate' ) ) {
 
 			if ( ! empty( $level_id ) ) {
 				$sqlQuery = "SELECT UNIX_TIMESTAMP(startdate) FROM $wpdb->pmpro_memberships_users WHERE status = 'active' AND membership_id IN(" . $wpdb->escape( $level_id ) . ") AND user_id = '" . $user_id . "' ORDER BY id LIMIT 1";
-			} else {
+			} elseif( !empty( $wpdb->pmpro_memberships_users) ) {
 				$sqlQuery = "SELECT UNIX_TIMESTAMP(startdate) FROM $wpdb->pmpro_memberships_users WHERE status = 'active' AND user_id = '" . $user_id . "' ORDER BY id LIMIT 1";
+			} else {
+				$sqlQuery = "SELECT UNIX_TIMESTAMP(user_registered) FROM $wpdb->users WHERE ID = '" . esc_sql( $user_id ) . "' LIMIT 1";
 			}
 
 			$startdate = apply_filters( 'pmpro_member_startdate', $wpdb->get_var( $sqlQuery ), $user_id, $level_id );
