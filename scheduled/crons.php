@@ -38,8 +38,10 @@ function pmpros_check_for_new_content() {
                 if(pmpros_hasAccess($user->user_id, $series_post->id) && !in_array($series_post->id, $notified)) {
                     //add email to array to send
 					if(empty($emails[$user->user_id]))
-						$emails[$user->user_id] = array();
-					$emails[$user->user_id][] = $series_post->id;
+                        $emails[$user->user_id] = array();
+                    //don't add to email if we're already emailing about this post
+                    if( !in_array($series_post->id, $emails[$user->user_id]) )                   
+                        $emails[$user->user_id][] = $series_post->id;
 					//$series->sendEmail($series_post->id, $user->user_id);                    
                 }
             }

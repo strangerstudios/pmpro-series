@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: series, drip feed, serial, delayed, limited, memberships
 Requires at least: 4
-Tested up to: 5.0.3
-Stable tag: .4
+Tested up to: 5.3.2
+Stable tag: .4.1
 
 Create "Series" which are groups of posts/pages where content is revealed to members over time. This is the "drip feed content" module for Paid Memberships Pro.
 
@@ -60,6 +60,10 @@ Data Structure
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-series/issues
 
 == Changelog ==
+
+= .4.1 - 2020-01-09=
+* BUG FIX: Fixed issues where posts belonging to more than one series would show up multiple times in the new content email.
+* BUG FIX: Fixed JavaScript issues of posts/pages not being added to series.
 
 = .4 =
 * BUG FIX: Fixed issues that came up if PMPro was not active.
