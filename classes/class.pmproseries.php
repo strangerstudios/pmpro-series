@@ -394,14 +394,14 @@ class PMProSeries {
 				?>
 				<li class="pmpro_series_item-li-
 				<?php
-				if ( max( 0, $member_days ) >= $sp->delay ) {
+				if ( apply_filters( 'pmpro_series_override_delay', ( max( 0, $member_days ) >= $sp->delay ), $member_days, $sp->delay, $current_user->ID ) ) {
 					?>
 					available
 					<?php
 				} else {
 					?>
 					unavailable<?php } ?>">
-				<?php if ( max( 0, $member_days ) >= $sp->delay ) { ?>
+				<?php if ( apply_filters( 'pmpro_series_override_delay', ( max( 0, $member_days ) >= $sp->delay ), $member_days, $sp->delay, $current_user->ID ) ) { ?>
 						<span class="pmpro_series_item-title"><a href="<?php echo get_permalink( $sp->id ); ?>"><?php echo get_the_title( $sp->id ); ?></a></span>
 						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink( $sp->id ); ?>"><?php _e( 'Available Now', 'pmpro-series' );?></a></span>
 					<?php } else { ?>
