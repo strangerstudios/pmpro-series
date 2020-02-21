@@ -120,7 +120,7 @@ function pmpros_the_content( $content ) {
 			 * @param int.   $days.   How many days a user is into the membership.
 			 *
 			 */
-			$content .= apply_filters( 'pmpros_days_into_membership', '<p class="pmpro_series_days_into_membership">' . sprintf( __( 'You are on day %d of your membership.', 'pmpro-series' ), intval( pmpro_getMemberDays() ) ) . '</p>', intval( pmpro_getMemberDays() );
+			$content .= apply_filters( 'pmpros_days_into_membership', '<p class="pmpro_series_days_into_membership">' . sprintf( __( 'You are on day %d of your membership.', 'pmpro-series' ), intval( pmpro_getMemberDays() ) ) . '</p>', intval( pmpro_getMemberDays() ) );
 			$content .= $series->getPostList();
 		}
 		
