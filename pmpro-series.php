@@ -111,7 +111,15 @@ function pmpros_the_content( $content ) {
 		// Display the Series if Paid Memberships Pro is active.
 		if ( !function_exists( 'pmpro_has_membership_access' ) || pmpro_has_membership_access() ) {
 			$series   = new PMProSeries( $post->ID );
-			$content .= '<p>' . sprintf( __( 'You are on day %d of your membership.', 'pmpro-series' ), intval( pmpro_getMemberDays() ) ) . '</p>';
+			/**
+			 * Filter the text for current days into the Membership.
+			 *
+			 * @since 4.2
+			 *
+			 * @param string $content The content to filter/chnge.
+			 *
+			 */
+			$content .= apply_filters( 'pmpros_days_into_membership', '<p class="pmpro_series_days_into_membership">' . sprintf( __( 'You are on day %d of your membership.', 'pmpro-series' ), intval( pmpro_getMemberDays() ) ) . '</p>' );
 			$content .= $series->getPostList();
 		}
 		
