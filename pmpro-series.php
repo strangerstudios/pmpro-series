@@ -111,7 +111,7 @@ function pmpros_the_content( $content ) {
 		// Display the Series if Paid Memberships Pro is active.
 		if ( !function_exists( 'pmpro_has_membership_access' ) || pmpro_has_membership_access() ) {
 			$series   = new PMProSeries( $post->ID );
-			$content .= '<p>' . sprintf( __( 'You are on day %d of your membership.', 'pmpro-series' ), intval( pmpro_getMemberDays() ) ) . '</p>';
+			$content .= '<p>' . sprintf( __( 'You are on day %d of your membership.', 'pmpro-series' ), intval( pmpros_getMemberDays() ) ) . '</p>';
 			$content .= $series->getPostList();
 		}
 		
@@ -192,13 +192,13 @@ function pmpros_hasAccess( $user_id, $post_id ) {
 						if ( ! empty( $results ) ) {
 							// check specifically for the levels with access to this series
 							foreach ( $results[1] as $level_id ) {
-								if ( max( 0, pmpro_getMemberDays( $user_id, $level_id ) ) >= $sp->delay ) {
+								if ( max( 0, pmpros_getMemberDays( $user_id, $level_id ) ) >= $sp->delay ) {
 									return true;    // user has access to this series and has been around longer than this post's delay
 								}
 							}
 						} else {
 							// check if they've been a user long enough
-							if ( max( 0, pmpro_getMemberDays( $user_id ) ) >= $sp->delay ) {
+							if ( max( 0, pmpros_getMemberDays( $user_id ) ) >= $sp->delay ) {
 								return true;
 							}
 						}
@@ -315,7 +315,7 @@ function pmpros_pmpro_text_filter( $text ) {
 				$series = new PMProSeries( $inseries );
 				$day    = $series->getDelayForPost( $post->ID );
 
-				$member_days = pmpro_getMemberDays( $current_user->ID );
+				$member_days = pmpros_getMemberDays( $current_user->ID );
 				$days_left   = ceil( $day - $member_days );
 				$series_date_text        = date( get_option( 'date_format' ), strtotime( "+ $days_left Days", current_time( 'timestamp' ) ) );
 
@@ -549,3 +549,15 @@ function pmpros_plugin_row_meta( $links, $file ) {
 	return $links;
 }
 add_filter( 'plugin_row_meta', 'pmpros_plugin_row_meta', 10, 2 );
+
+/**
+ * Get the number of days that the user has been a member for.
+ *
+ * @return int
+ */
+function pmpros_getMemberDays() {
+	global $current_user;
+	$member_days = pmpro_getMemberDays( $current_user->ID );
+	$member_days = apply_filters( 'pmpros_get_member_days', $member_days, $current_user->ID );
+	return $member_days;
+}
