@@ -317,7 +317,7 @@ function pmpros_pmpro_text_filter( $text ) {
 
 				$member_days = pmpro_getMemberDays( $current_user->ID );
 				$days_left   = ceil( $day - $member_days );
-				$series_date_text        = date( get_option( 'date_format' ), strtotime( "+ $days_left Days", current_time( 'timestamp' ) ) );
+				$series_date_text        = date_i18n( get_option( 'date_format' ), strtotime( "+ $days_left Days", current_time( 'timestamp' ) ) );
 
 				$series_link_text = '<a href="' . get_permalink( $inseries ) . '">' . get_the_title( $inseries ) . '</a>';
 				$text = sprintf( __( 'This content is part of the %s series. You will gain access on %s.', 'pmpro-series' ),  $series_link_text, $series_date_text );

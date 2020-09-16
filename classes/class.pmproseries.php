@@ -390,7 +390,7 @@ class PMProSeries {
 
 			foreach ( $post_list_posts as $sp ) {
 				$days_left = ceil( $sp->delay - $member_days );
-				$date      = date( get_option( 'date_format' ), strtotime( "+ $days_left Days", current_time( 'timestamp' ) ) );
+				$date      = date_i18n( get_option( 'date_format' ), strtotime( "+ $days_left Days", current_time( 'timestamp' ) ) );
 				?>
 				<li class="pmpro_series_item-li-
 				<?php
