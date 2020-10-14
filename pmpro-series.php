@@ -269,7 +269,7 @@ function pmpros_getPostSeries( $post_id = NULL ) {
 	
 	// Get series from post meta.
 	$post_series = get_post_meta( $post_id, '_post_series', true );
-	
+
 	// Make sure it's an array.
 	if ( empty( $post_series ) ) {
 		$post_series = array();
@@ -279,10 +279,20 @@ function pmpros_getPostSeries( $post_id = NULL ) {
 	
 	// Make sure the posts are published.
 	$new_post_series = array();
+	$deleted_post_series = array();
 	foreach( $post_series as $series_id ) {
-		if ( ! empty( $series_id ) && get_post_status( $series_id ) == 'publish' ) {
-			$new_post_series[] = $series_id;
+		if ( ! empty( $series_id ) ) {
+			$post_status = get_post_status( $series_id );
+			if ( 'publish' === $post_status ) {
+				$new_post_series[] = $series_id;
+			} elseif ( 'trash' === $post_status || false === $post_status ) {
+				$deleted_post_series[] = $series_id;
+			}
 		}
+	}
+
+	if ( ! empty( $deleted_post_series ) ) {
+		update_post_meta( $post_id, '_post_series', array_diff( $post_series, $deleted_post_series ) );
 	}
 
 	return $new_post_series;
