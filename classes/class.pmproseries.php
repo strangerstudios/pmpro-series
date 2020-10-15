@@ -134,6 +134,9 @@ class PMProSeries {
 	function getPosts( $force = false, $status = null ) {
 		if ( ! isset( $this->posts ) || $force ) {
 			$this->posts = get_post_meta( $this->id, '_series_posts', true );
+			if ( ! is_array( $this->posts ) ) {
+				$this->posts = array();
+			}
 		}
 
 		if ( ! empty( $status ) ) {
