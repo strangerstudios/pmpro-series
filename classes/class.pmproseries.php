@@ -209,6 +209,23 @@ class PMProSeries {
 	}
 
 	/**
+	 * [getLongestPostDelay]
+	 *
+	 * @param null|string $status of posts to consider.
+	 * @return int longest post delay.
+	 */
+	function getLongestPostDelay( $status = null ) {
+		$posts = $this->getPosts( false, $status );
+		$delay = 0;
+		foreach ( $posts as $post ) {
+			if ( ! empty( $post->delay ) && $post->delay > $delay ) {
+				$delay = $post->delay;
+			}
+		}
+		return $delay;
+	}
+
+	/**
 	 * [sortByDelay] Sort posts by delay.
 	 *
 	 * @param  [type] $a
