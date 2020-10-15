@@ -110,9 +110,11 @@ function pmpros_the_content( $content ) {
 		
 		// Display the Series if Paid Memberships Pro is active.
 		if ( !function_exists( 'pmpro_has_membership_access' ) || pmpro_has_membership_access() ) {
+			$content .= '<div id="pmpro-series-' . absint( $post->ID ) . '" class="pmpro-series-post-list">';
 			$series   = new PMProSeries( $post->ID );
 			$content .= '<p>' . sprintf( __( 'You are on day %d of your membership.', 'pmpro-series' ), intval( pmpro_getMemberDays() ) ) . '</p>';
 			$content .= $series->getPostList();
+			$content .= '</div> <!-- end pmpro-series -->';
 		}
 		
 		// Note: Let's eventually work to make this compatible if Paid Memberships Pro is not active.		
