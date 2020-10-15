@@ -127,13 +127,24 @@ class PMProSeries {
 	 * [getPosts] Get array of all posts in this series.
 	 * force = ignore cache and get data from DB.
 	 *
-	 * @param boolean
+	 * @param boolean $force update from database.
+	 * @param null|string $status of posts to return.
+	 * @return array of posts with status, if applicable. $this->posts will not be filtered by $status.
 	 */
-	function getPosts( $force = false ) {
+	function getPosts( $force = false, $status = null ) {
 		if ( ! isset( $this->posts ) || $force ) {
 			$this->posts = get_post_meta( $this->id, '_series_posts', true );
 		}
 
+		if ( ! empty( $status ) ) {
+			$posts_with_status = array();
+			foreach ($this->posts as $key => $post) {
+				if ( $status === get_post_status( $post->id ) ) {
+					$posts_with_status[] = $post;
+				}
+			}
+			return $posts_with_status;
+		}
 		return $this->posts;
 	}
 
@@ -375,15 +386,15 @@ class PMProSeries {
 	 */
 	function getPostList( $echo = false ) {
 		global $current_user;
-		$this->getPosts();
-		if ( ! empty( $this->posts ) ) {
+		$posts = $this->getPosts( false, 'publish' );
+		if ( ! empty( $posts ) ) {
 			ob_start();
 			?>
 					
 			<ul id="pmpro_series-<?php echo $this->id; ?>" class="pmpro_series_list">
 			<?php
 				$member_days = pmpro_getMemberDays( $current_user->ID );
-				$post_list_posts = $this->posts;
+				$post_list_posts = $posts;
 
 				// Filter to allow plugins to modify the posts included in the Series.
 				$post_list_posts = apply_filters('pmpro_series_post_list_posts', $post_list_posts, $this);
