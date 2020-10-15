@@ -263,7 +263,7 @@ class PMProSeries {
 		$email->subject  = sprintf( __( 'New content is available at %s', 'pmpro-series' ), get_option( 'blogname' ) );
 		$email->template = 'new_content';
 
-		$email->body .= file_get_contents( dirname( __FILE__ ) . '/email/new_content.html' );
+		$email->body .= file_get_contents( $template_path );
 
 		$email->data = array(
 			'name'       => $user->display_name,
