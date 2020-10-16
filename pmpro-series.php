@@ -3,7 +3,7 @@
  * Plugin Name: Paid Memberships Pro - Series Add On
  * Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-series-for-drip-feed-content/
  * Description: Offer serialized (drip feed) content to your PMPro members.
- * Version: .4.1
+ * Version: .5
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com
  * Text Domain: pmpro-series
@@ -110,9 +110,16 @@ function pmpros_the_content( $content ) {
 		
 		// Display the Series if Paid Memberships Pro is active.
 		if ( !function_exists( 'pmpro_has_membership_access' ) || pmpro_has_membership_access() ) {
+			$content .= '<div id="pmpro-series-' . absint( $post->ID ) . '" class="pmpro-series-post-list">';
 			$series   = new PMProSeries( $post->ID );
-			$content .= '<p>' . sprintf( __( 'You are on day %d of your membership.', 'pmpro-series' ), intval( pmpro_getMemberDays() ) ) . '</p>';
+			$member_days = intval( pmpro_getMemberDays() );
+			if ( $member_days >= $series->getLongestPostDelay( 'publish' ) ) {
+				$content .= '<p class="pmpro_series_all_posts_available_text">' . __( 'All posts in this series are now available.', 'pmpro-series' ) . '</p>';
+			} else {
+				$content .= '<p class="pmpro_series_days_into_membership_text">' . sprintf( __( 'You are on day %d of your membership.', 'pmpro-series' ), $member_days ) . '</p>';
+			}
 			$content .= $series->getPostList();
+			$content .= '</div> <!-- end pmpro-series -->';
 		}
 		
 		// Note: Let's eventually work to make this compatible if Paid Memberships Pro is not active.		
@@ -269,7 +276,7 @@ function pmpros_getPostSeries( $post_id = NULL ) {
 	
 	// Get series from post meta.
 	$post_series = get_post_meta( $post_id, '_post_series', true );
-	
+
 	// Make sure it's an array.
 	if ( empty( $post_series ) ) {
 		$post_series = array();
@@ -279,10 +286,20 @@ function pmpros_getPostSeries( $post_id = NULL ) {
 	
 	// Make sure the posts are published.
 	$new_post_series = array();
+	$deleted_post_series = array();
 	foreach( $post_series as $series_id ) {
-		if ( ! empty( $series_id ) && get_post_status( $series_id ) == 'publish' ) {
-			$new_post_series[] = $series_id;
+		if ( ! empty( $series_id ) ) {
+			$post_status = get_post_status( $series_id );
+			if ( 'publish' === $post_status ) {
+				$new_post_series[] = $series_id;
+			} elseif ( 'trash' === $post_status || false === $post_status ) {
+				$deleted_post_series[] = $series_id;
+			}
 		}
+	}
+
+	if ( ! empty( $deleted_post_series ) ) {
+		update_post_meta( $post_id, '_post_series', array_diff( $post_series, $deleted_post_series ) );
 	}
 
 	return $new_post_series;
@@ -317,7 +334,7 @@ function pmpros_pmpro_text_filter( $text ) {
 
 				$member_days = pmpro_getMemberDays( $current_user->ID );
 				$days_left   = ceil( $day - $member_days );
-				$series_date_text        = date( get_option( 'date_format' ), strtotime( "+ $days_left Days", current_time( 'timestamp' ) ) );
+				$series_date_text        = date_i18n( get_option( 'date_format' ), strtotime( "+ $days_left Days", current_time( 'timestamp' ) ) );
 
 				$series_link_text = '<a href="' . get_permalink( $inseries ) . '">' . get_the_title( $inseries ) . '</a>';
 				$text = sprintf( __( 'This content is part of the %s series. You will gain access on %s.', 'pmpro-series' ),  $series_link_text, $series_date_text );
@@ -372,11 +389,11 @@ if ( ! function_exists( 'pmpro_getMemberStartdate' ) ) {
 			global $wpdb;
 
 			if ( ! empty( $level_id ) ) {
-				$sqlQuery = "SELECT UNIX_TIMESTAMP(startdate) FROM $wpdb->pmpro_memberships_users WHERE status = 'active' AND membership_id IN(" . $wpdb->escape( $level_id ) . ") AND user_id = '" . $user_id . "' ORDER BY id LIMIT 1";
+				$sqlQuery = "SELECT UNIX_TIMESTAMP(CONVERT_TZ(startdate, '+00:00', @@global.time_zone)) FROM $wpdb->pmpro_memberships_users WHERE status = 'active' AND membership_id IN(" . $wpdb->escape( $level_id ) . ") AND user_id = '" . $user_id . "' ORDER BY id LIMIT 1";
 			} elseif( !empty( $wpdb->pmpro_memberships_users) ) {
-				$sqlQuery = "SELECT UNIX_TIMESTAMP(startdate) FROM $wpdb->pmpro_memberships_users WHERE status = 'active' AND user_id = '" . $user_id . "' ORDER BY id LIMIT 1";
+				$sqlQuery = "SELECT UNIX_TIMESTAMP(CONVERT_TZ(startdate, '+00:00', @@global.time_zone)) FROM $wpdb->pmpro_memberships_users WHERE status = 'active' AND user_id = '" . $user_id . "' ORDER BY id LIMIT 1";
 			} else {
-				$sqlQuery = "SELECT UNIX_TIMESTAMP(user_registered) FROM $wpdb->users WHERE ID = '" . esc_sql( $user_id ) . "' LIMIT 1";
+				$sqlQuery = "SELECT UNIX_TIMESTAMP(CONVERT_TZ(user_registered, '+00:00', @@global.time_zone)) FROM $wpdb->users WHERE ID = '" . esc_sql( $user_id ) . "' LIMIT 1";
 			}
 
 			$startdate = apply_filters( 'pmpro_member_startdate', $wpdb->get_var( $sqlQuery ), $user_id, $level_id );
