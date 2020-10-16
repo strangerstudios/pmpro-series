@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: series, drip feed, serial, delayed, limited, memberships
 Requires at least: 4
-Tested up to: 5.3.2
-Stable tag: .4.1
+Tested up to: 5.5
+Stable tag: .5
 
 Create "Series" which are groups of posts/pages where content is revealed to members over time. This is the "drip feed content" module for Paid Memberships Pro.
 
@@ -60,6 +60,17 @@ Data Structure
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-series/issues
 
 == Changelog ==
+= 0.5 - 2020-10-16=
+* ENHANCEMENT: Now showing a different message at the top of a series when all content is now available.
+* ENHANCEMENT: Now wrapping content of series pages in a <div> so that it can be targeted with CSS.
+* ENHANCEMENT: Added classes around text at the top of series pages so that it can be targeted with CSS.
+* ENHANCEMENT: Now using date_i18n() instead of date().
+* BUG FIX/ENHANCEMENT: Posts that have not yet been published will no longer be shown in series on frontend.
+* BUG FIX/ENHANCEMENT: Updated select2 library.
+* BUG FIX: Fixed issue where custom "new_content.html" files would not be found.
+* BUG FIX: Now updating "_post_series" postmeta when a series is deleted.
+* BUG FIX: Fixed PHP warning when sending the "new_content.html" email.
+* BUG FIX: Fixed issue where startdates may have been shifted based on SQL timezone.
 
 = .4.1 - 2020-01-09=
 * BUG FIX: Fixed issues where posts belonging to more than one series would show up multiple times in the new content email.
