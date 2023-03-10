@@ -544,8 +544,9 @@ function pmpros_plugin_action_links( $links ) {
 		$new_links = array(
 			'<a href="' . get_admin_url( null, 'edit.php?post_type=pmpro_series' ) . '">' . __( 'Settings', 'pmpro-series' ) . '</a>',
 		);
+		return array_merge( $new_links, $links );
 	}
-	return array_merge( $new_links, $links );
+	return $links;
 }
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'pmpros_plugin_action_links' );
 
