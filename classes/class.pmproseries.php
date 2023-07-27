@@ -508,7 +508,7 @@ class PMProSeries {
 		<?php if ( ! empty( $this->error ) ) { ?>
 			<div class="message error"><p><?php echo $this->error; ?></p></div>
 		<?php } ?>
-		<h3><?php _e( 'Posts in this Series', 'pmpro-series' ); ?></h3>
+		<h2><?php _e( 'Posts in this Series', 'pmpro-series' ); ?></h2>
 		<table id="pmpros_table" class="wp-list-table widefat striped">
 		<thead>
 			<th><?php _e( 'Order', 'pmpro-series' ); ?></th>
@@ -542,7 +542,7 @@ class PMProSeries {
 		?>
 		</tbody>
 		</table>
-		<h3><?php _e( 'Add/Edit Posts', 'pmpro-series' ); ?></h3>
+		<h2><?php _e( 'Add/Edit Posts', 'pmpro-series' ); ?></h2>
 		<table id="newmeta" class="wp-list-table widefat striped">
 			<thead>
 				<tr>
