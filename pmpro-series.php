@@ -112,7 +112,7 @@ function pmpros_the_content( $content ) {
 		if ( !function_exists( 'pmpro_has_membership_access' ) || pmpro_has_membership_access() ) {
 			$content .= '<div id="pmpro-series-' . absint( $post->ID ) . '" class="pmpro-series-post-list">';
 			$series   = new PMProSeries( $post->ID );
-			$member_days = intval( pmpro_getMemberDays() );
+			$member_days = intval( $series->get_member_days() );
 			if ( $member_days >= $series->getLongestPostDelay( 'publish' ) ) {
 				$content .= '<p class="pmpro_series_all_posts_available_text">' . __( 'All posts in this series are now available.', 'pmpro-series' ) . '</p>';
 			} else {
@@ -164,13 +164,13 @@ function pmpros_hasAccessToSeries( $series_id, $user_id, $return_membership_leve
  * @return [type]
  */
 function pmpros_hasAccess( $user_id, $post_id ) {
-	// is this post in a series?
+	// Is this post in a series?
 	$post_series = pmpros_getPostSeries( $post_id );
 	if ( empty( $post_series ) ) {
 		return true;        // not in a series
 	}
 	
-	// does this user have a level giving them access to everything?
+	// Does this user have a level giving them access to everything?
 	$all_access_levels = apply_filters( 'pmproap_all_access_levels', array(), $user_id, $post_id );
 	if ( ! empty( $all_access_levels )
 	&& function_exists( 'pmpro_hasMembershipLevel' )
@@ -178,39 +178,16 @@ function pmpros_hasAccess( $user_id, $post_id ) {
 		return true;    // user has one of the all access levels
 	}
 
-	// check each series
+	// Loop through all series containing this post.
 	foreach ( $post_series as $series_id ) {
-		
-		// does the user have access to any of the series pages?
-		if ( function_exists( 'pmpro_has_membership_access' ) ) {
-			$results = pmpros_hasAccessToSeries( $series_id, $user_id, true );
-			$hasaccess = $results[0];
-		} else {
-			$hasaccess = 1;	// PMPro not active. Assume access, but check MemberDays below.
-		}
-
-		if ( $hasaccess ) {
-			// has the user been around long enough for any of the delays?
-			$series_posts = get_post_meta( $series_id, '_series_posts', true );
-			if ( ! empty( $series_posts ) ) {
-				foreach ( $series_posts as $sp ) {
-					// this post we are checking is in this series
-					if ( $sp->id == $post_id ) {
-						if ( ! empty( $results ) ) {
-							// check specifically for the levels with access to this series
-							foreach ( $results[1] as $level_id ) {
-								if ( max( 0, pmpro_getMemberDays( $user_id, $level_id ) ) >= $sp->delay ) {
-									return true;    // user has access to this series and has been around longer than this post's delay
-								}
-							}
-						} else {
-							// check if they've been a user long enough
-							if ( max( 0, pmpro_getMemberDays( $user_id ) ) >= $sp->delay ) {
-								return true;
-							}
-						}
-					}
-				}
+		// Check if the user is a member of this series.
+		if ( ! function_exists( 'pmpro_has_membership_access' ) || pmpros_hasAccessToSeries( $series_id, $user_id ) ) {
+			// Check if the user has been a part of this series long enough to view this post.
+			$series = new PMProSeries( $series_id );
+			$post_delay  = $series->getDelayForPost( $post_id );
+			$member_days = intval( $series->get_member_days() );
+			if ( empty( $post_delay ) || $member_days >= $post_delay ) {
+				return true;    // user has access to this post
 			}
 		}
 	}
@@ -318,25 +295,30 @@ function pmpros_pmpro_text_filter( $text ) {
 		if ( ! pmpros_hasAccess( $current_user->ID, $post->ID ) ) {
 			// Update text. The either have to wait or sign up.
 			$post_series = pmpros_getPostSeries( $post->ID );
-
-			$inseries = false;
+			$inseries = array();
 			foreach ( $post_series as $ps ) {
 				if ( !function_exists('pmpro_has_membership_access') || pmpro_has_membership_access( $ps ) ) {
-					$inseries = $ps;
-					break;
+					$inseries[] = $ps;
 				}
 			}
 
-			if ( $inseries ) {
-				// user has one of the series levels, find out which one and tell him how many days left
-				$series = new PMProSeries( $inseries );
-				$day    = $series->getDelayForPost( $post->ID );
+			if ( ! empty( $inseries ) ) {
+				// User is a part of a series that has this post. Figure out which series will give them access soonest and tell them.
+				$days_left      = null;
+				$soonest_series = null;
+				foreach ( $inseries as $series_id ) {
+					$series = new PMProSeries( $series_id );
+					$post_delay  = $series->getDelayForPost( $post->ID );
+					$member_days = intval( $series->get_member_days() );
+					if ( empty( $soonest_series ) || $post_delay - $member_days < $days_left ) {
+						$days_left      = $post_delay - $member_days;
+						$soonest_series = $series;
+					}
+				}
 
-				$member_days = pmpro_getMemberDays( $current_user->ID );
-				$days_left   = ceil( $day - $member_days );
+				// Show the user when they will have access.
 				$series_date_text        = date_i18n( get_option( 'date_format' ), strtotime( "+ $days_left Days", current_time( 'timestamp' ) ) );
-
-				$series_link_text = '<a href="' . get_permalink( $inseries ) . '">' . get_the_title( $inseries ) . '</a>';
+				$series_link_text = '<a href="' . get_permalink( $soonest_series->id ) . '">' . get_the_title( $soonest_series->id ) . '</a>';
 				$text = sprintf( __( 'This content is part of the %s series. You will gain access on %s.', 'pmpro-series' ),  $series_link_text, $series_date_text );
 
 				$text = apply_filters( 'pmpros_days_left_message', $text, $member_days, $days_left, $current_user->ID );
