@@ -40,14 +40,14 @@ class PMProSeries {
 	 */
 	function addPost( $post_id, $delay ) {
 		if ( empty( $post_id ) || ! isset( $delay ) ) {
-			$this->error = __( 'Please enter a value for post and delay.', 'pmpro-series' );
+			$this->error = esc_html__( 'Please enter a value for post and delay.', 'pmpro-series' );
 			return false;
 		}
 
 		$post = get_post( $post_id );
 
 		if ( empty( $post->ID ) ) {
-			$this->error = __( 'A post with that id does not exist.', 'pmpro-series' );
+			$this->error = esc_html__( 'A post with that id does not exist.', 'pmpro-series' );
 			return false;
 		}
 
@@ -266,7 +266,7 @@ class PMProSeries {
 		$post_list .= "</ul>\n";
 
 		$email->email    = $user->user_email;
-		$subject         = sprintf( __( 'New content is available at %s', 'pmpro-series' ), get_option( 'blogname' ) );
+		$subject         = sprintf( esc_html__( 'New content is available at %s', 'pmpro-series' ), esc_html( get_option( 'blogname' ) ) );
 		$email->subject  = apply_filters( 'pmpros_new_content_subject', $subject, $user, $post_ids );
 		$email->template = 'new_content';
 
@@ -280,7 +280,7 @@ class PMProSeries {
 		}
 
 		$email->email    = $user->user_email;
-		$email->subject  = sprintf( __( 'New content is available at %s', 'pmpro-series' ), get_option( 'blogname' ) );
+		$email->subject  = sprintf( esc_html__( 'New content is available at %s', 'pmpro-series' ), esc_html( get_option( 'blogname' ) ) );
 		$email->template = 'new_content';
 
 		$email->body .= file_get_contents( $template_path );
@@ -293,7 +293,7 @@ class PMProSeries {
 		);
 
 		if ( ! empty( $post->post_excerpt ) ) {
-			$email->data['excerpt'] = '<p>' . __( 'An excerpt of the post is below.', 'pmpro-series' ) . '</p><p>' . $post->post_excerpt . '</p>';
+			$email->data['excerpt'] = '<p>' . esc_html__( 'An excerpt of the post is below.', 'pmpro-series' ) . '</p><p>' . esc_html( $post->post_excerpt ) . '</p>';
 		} else {
 			$email->data['excerpt'] = '';
 		}
@@ -316,19 +316,19 @@ class PMProSeries {
 		$labels = apply_filters(
 			'pmpros_series_labels',
 			array(
-				'name'               => __( 'Series', 'pmpro-series' ),
-				'singular_name'      => __( 'Series', 'pmpro-series' ),
+				'name'               => esc_html__( 'Series', 'pmpro-series' ),
+				'singular_name'      => esc_html__( 'Series', 'pmpro-series' ),
 				'slug'               => 'series',
-				'add_new'            => __( 'New Series', 'pmpro-series' ),
-				'add_new_item'       => __( 'New Series', 'pmpro-series' ),
-				'edit'               => __( 'Edit Series', 'pmpro-series' ),
-				'edit_item'          => __( 'Edit Series', 'pmpro-series' ),
-				'new_item'           => __( 'Add New', 'pmpro-series' ),
-				'view'               => __( 'View This Series', 'pmpro-series' ),
-				'view_item'          => __( 'View This Series', 'pmpro-series' ),
-				'search_items'       => __( 'Search Series', 'pmpro-series' ),
-				'not_found'          => __( 'No Series Found', 'pmpro-series' ),
-				'not_found_in_trash' => __( 'No Series Found In Trash', 'pmpro-series' ),
+				'add_new'            => esc_html__( 'New Series', 'pmpro-series' ),
+				'add_new_item'       => esc_html__( 'New Series', 'pmpro-series' ),
+				'edit'               => esc_html__( 'Edit Series', 'pmpro-series' ),
+				'edit_item'          => esc_html__( 'Edit Series', 'pmpro-series' ),
+				'new_item'           => esc_html__( 'Add New', 'pmpro-series' ),
+				'view'               => esc_html__( 'View This Series', 'pmpro-series' ),
+				'view_item'          => esc_html__( 'View This Series', 'pmpro-series' ),
+				'search_items'       => esc_html__( 'Search Series', 'pmpro-series' ),
+				'not_found'          => esc_html__( 'No Series Found', 'pmpro-series' ),
+				'not_found_in_trash' => esc_html__( 'No Series Found In Trash', 'pmpro-series' ),
 			)
 		);
 
@@ -378,10 +378,10 @@ class PMProSeries {
 	static function defineMetaBoxes() {
 		// Add "Require Membership" meta box if Paid Memberships Pro is active.
 		if ( defined( 'PMPRO_VERSION' ) ) {
-			add_meta_box( 'pmpro_page_meta', __( 'Require Membership', 'pmpro-series' ), 'pmpro_page_meta', 'pmpro_series', 'side' );
+			add_meta_box( 'pmpro_page_meta', esc_html__( 'Require Membership', 'pmpro-series' ), 'pmpro_page_meta', 'pmpro_series', 'side' );
 		}
 		// series meta box
-		add_meta_box( 'pmpro_series_meta', __( 'Manage Series', 'pmpro-series'), array( 'PMProSeries', 'seriesMetaBox' ), 'pmpro_series', 'normal' );
+		add_meta_box( 'pmpro_series_meta', esc_html__( 'Manage Series', 'pmpro-series'), array( 'PMProSeries', 'seriesMetaBox' ), 'pmpro_series', 'normal' );
 	}
 
 	/**
@@ -434,14 +434,14 @@ class PMProSeries {
 				?>
 				<li class="<?php echo esc_attr( $class ); ?>">
 				<?php if ( apply_filters( 'pmpro_series_override_delay', ( max( 0, $member_days ) >= $sp->delay ), $member_days, $sp->delay, $current_user->ID ) ) { ?>
-						<span class="pmpro_series_item-title"><a href="<?php echo get_permalink( $sp->id ); ?>"><?php echo get_the_title( $sp->id ); ?></a></span>
-						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink( $sp->id ); ?>"><?php _e( 'Available Now', 'pmpro-series' );?></a></span>
+						<span class="pmpro_series_item-title"><a href="<?php echo esc_url( get_permalink( $sp->id ) ); ?>"><?php echo esc_html( get_the_title( $sp->id ) ); ?></a></span>
+						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo esc_url( get_permalink( $sp->id ) ); ?>"><?php esc_html_e( 'Available Now', 'pmpro-series' );?></a></span>
 					<?php } else { ?>
-						<span class="pmpro_series_item-title"><?php echo get_the_title( $sp->id ); ?></span>
+						<span class="pmpro_series_item-title"><?php echo esc_html( get_the_title( $sp->id ) ); ?></span>
 						<span class="pmpro_series_item-unavailable">
 							<?php
 								/* translators: %s: series post available date */
-								printf( esc_html__( 'available on %s.', 'pmpro-series' ), $date );
+								printf( esc_html__( 'available on %s.', 'pmpro-series' ), esc_html( $date ) );
 							?>
 						</span>
 					<?php } ?>
@@ -509,13 +509,13 @@ class PMProSeries {
 		<?php if ( ! empty( $this->error ) ) { ?>
 			<div class="message error"><p><?php echo $this->error; ?></p></div>
 		<?php } ?>
-		<h3><?php _e( 'Posts in this Series', 'pmpro-series' ); ?></h3>
+		<h3><?php esc_html_e( 'Posts in this Series', 'pmpro-series' ); ?></h3>
 		<table id="pmpros_table" class="wp-list-table widefat striped">
 		<thead>
-			<th><?php _e( 'Order', 'pmpro-series' ); ?></th>
-			<th width="50%"><?php _e( 'Title', 'pmpro-series' ); ?></th>
-			<th width="20%"><?php _e( 'Delay (# of days)', 'pmpro-series' ); ?></th>
-			<th width="20%"><?php _e( 'Actions', 'pmpro-series' ); ?></th>
+			<th><?php esc_html_e( 'Order', 'pmpro-series' ); ?></th>
+			<th width="50%"><?php esc_html_e( 'Title', 'pmpro-series' ); ?></th>
+			<th width="20%"><?php esc_html_e( 'Delay (# of days)', 'pmpro-series' ); ?></th>
+			<th width="20%"><?php esc_html_e( 'Actions', 'pmpro-series' ); ?></th>
 		</thead>
 		<tbody>
 		<?php
@@ -532,8 +532,8 @@ class PMProSeries {
 					<td><?php echo get_the_title( $post->id ); ?></td>
 					<td><?php echo $post->delay; ?></td>
 					<td>
-						<a class="button button-secondary" href="javascript:pmpros_editPost('<?php echo $post->id; ?>', '<?php echo $post->delay; ?>'); void(0);"><?php _e( 'edit', 'pmpro-series' ); ?></a>
-						<a class="button button-secondary" href="javascript:pmpros_removePost('<?php echo $post->id; ?>'); void(0);"><?php _e( 'remove', 'pmpro-series' ); ?></a>
+						<a class="button button-secondary" href="javascript:pmpros_editPost('<?php echo esc_attr( $post->id ); ?>', '<?php echo esc_attr( $post->delay ); ?>'); void(0);"><?php esc_html_e( 'edit', 'pmpro-series' ); ?></a>
+						<a class="button button-secondary" href="javascript:pmpros_removePost('<?php echo esc_attr( $post->id ); ?>'); void(0);"><?php esc_html_e( 'remove', 'pmpro-series' ); ?></a>
 					</td>
 				</tr>
 				<?php
@@ -543,12 +543,12 @@ class PMProSeries {
 		?>
 		</tbody>
 		</table>
-		<h3><?php _e( 'Add/Edit Posts', 'pmpro-series' ); ?></h3>
+		<h3><?php esc_html_e( 'Add/Edit Posts', 'pmpro-series' ); ?></h3>
 		<table id="newmeta" class="wp-list-table widefat striped">
 			<thead>
 				<tr>
-					<th><?php _e( 'Post/Page', 'pmpro-series' ); ?></th>
-					<th><?php _e( 'Delay (# of days)', 'pmpro-series' ); ?></th>
+					<th><?php esc_html_e( 'Post/Page', 'pmpro-series' ); ?></th>
+					<th><?php esc_html_e( 'Delay (# of days)', 'pmpro-series' ); ?></th>
 					<th></th>
 				</tr>
 			</thead>
@@ -562,12 +562,12 @@ class PMProSeries {
 						$allposts          = $wpdb->get_results( "SELECT ID, post_title, post_status FROM $wpdb->posts WHERE post_status IN('publish', 'draft') AND post_type IN ('" . implode( "','", $pmpros_post_types ) . "') AND post_title <> '' ORDER BY post_title" );
 					foreach ( $allposts as $p ) {
 						?>
-						<option value="<?php echo $p->ID; ?>"><?php echo esc_textarea( $p->post_title ); ?> (#
+						<option value="<?php echo esc_attr( $p->ID ); ?>"><?php echo esc_textarea( $p->post_title ); ?> (#
 						<?php
-						echo $p->ID;
+						echo esc_html( $p->ID );
 
 						if ( $p->post_status == 'draft' ) {
-							echo '-DRAFT';
+							echo esc_html( '-DRAFT' );
 						}
 						?>
 							)</option>
@@ -577,7 +577,7 @@ class PMProSeries {
 					</select>
 					</td>
 					<td width="20%"><input id="pmpros_delay" name="pmpros_delay" type="text" value="" size="7" /></td>
-					<td width="20%"><a class="button button-primary" id="pmpros_save"><?php _e( 'Add to Series', 'pmpro-series' ); ?></a></td>
+					<td width="20%"><a class="button button-primary" id="pmpros_save"><?php esc_html_e( 'Add to Series', 'pmpro-series' ); ?></a></td>
 				</tr>
 			</tbody>
 		</table>
