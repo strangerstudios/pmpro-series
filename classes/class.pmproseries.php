@@ -413,7 +413,7 @@ class PMProSeries {
 					
 			<ul id="pmpro_series-<?php echo $this->id; ?>" class="pmpro_series_list">
 			<?php
-				$member_days = pmpro_getMemberDays( $current_user->ID );
+				$member_days = $this->get_member_days( $current_user->ID );
 				$post_list_posts = $posts;
 
 				// Filter to allow plugins to modify the posts included in the Series.
@@ -422,16 +422,17 @@ class PMProSeries {
 			foreach ( $post_list_posts as $sp ) {
 				$days_left = ceil( $sp->delay - $member_days );
 				$date      = date_i18n( get_option( 'date_format' ), strtotime( "+ $days_left Days", current_time( 'timestamp' ) ) );
-				?>
-				<li class="pmpro_series_item-li-
-				<?php
+
+				// Build the selectors for the series item in the list.
+				$classes = array();
 				if ( apply_filters( 'pmpro_series_override_delay', ( max( 0, $member_days ) >= $sp->delay ), $member_days, $sp->delay, $current_user->ID ) ) {
-					?>
-					available
-					<?php
+					$classes[] = 'pmpro_series_item-li-available';
 				} else {
-					?>
-					unavailable<?php } ?>">
+					$classes[] = 'pmpro_series_item-li-unavailable';
+				}
+				$class = implode( ' ', array_unique( $classes ) );
+				?>
+				<li class="<?php echo esc_attr( $class ); ?>">
 				<?php if ( apply_filters( 'pmpro_series_override_delay', ( max( 0, $member_days ) >= $sp->delay ), $member_days, $sp->delay, $current_user->ID ) ) { ?>
 						<span class="pmpro_series_item-title"><a href="<?php echo get_permalink( $sp->id ); ?>"><?php echo get_the_title( $sp->id ); ?></a></span>
 						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink( $sp->id ); ?>"><?php _e( 'Available Now', 'pmpro-series' );?></a></span>
@@ -581,5 +582,41 @@ class PMProSeries {
 			</tbody>
 		</table>
 		<?php
+	}
+
+	/**
+	 * Get the number of days that a user has been a member for this series.
+	 *
+	 * @since TBD
+	 *
+	 * @param int|null $user_id The user ID to check. Defaults to the current user.
+	 *
+	 * @return int Number of days that the user has been a member of this series.
+	 */
+	public function get_member_days( $user_id = null ) {
+		global $wpdb;
+
+		if ( empty( $user_id ) ) {
+			$user_id = get_current_user_id();
+		}
+
+		// Get the level IDs that have access to this series.
+		$series_levels = $wpdb->get_col( "SELECT membership_id FROM $wpdb->pmpro_memberships_pages WHERE page_id = '" . $this->id . "'" );
+
+		// If series is not restricted, we just need to check pmpro_getMemberDays() without passing a level.
+		if ( empty( $series_levels ) ) {
+			return pmpro_getMemberDays( $user_id );
+		}
+
+		// If series is restricted, we need to find the maximum number of days that the user has been a member of any of the restricted levels.
+		$member_days = 0;
+		foreach ( $series_levels as $level_id ) {
+			$days = pmpro_getMemberDays( $user_id, $level_id );
+			if ( $days > $member_days ) {
+				$member_days = $days;
+			}
+		}
+
+		return $member_days;
 	}
 }

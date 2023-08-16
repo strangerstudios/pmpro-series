@@ -17,6 +17,7 @@ function pmpros_check_for_new_content() {
         SELECT *
         FROM $wpdb->posts
         WHERE post_type = 'pmpro_series'
+        AND post_status = 'publish'
     ");
 
 	//store emails to send
