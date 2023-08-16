@@ -130,6 +130,24 @@ function pmpros_the_content( $content ) {
 add_filter( 'the_content', 'pmpros_the_content' );
 
 /**
+ * Adds compatibility for the Avada theme by removing our 
+ * hooks from their content
+ * 
+ * @since TBD
+ */
+function pmpros_avada_remove_content_changes_avada() {
+	remove_filter( 'the_content', 'pmpros_the_content' );
+}
+add_action( 'awb_remove_third_party_the_content_changes', 'pmpros_avada_remove_content_changes_avada', 5 );
+
+// Add the_content restriction back for Avada.
+function pmpros_avada_readd_content_changes_avada() {
+	add_filter( 'the_content', 'pmpros_the_content' );
+}
+add_action( 'awb_readd_third_party_the_content_changes', 'pmpros_avada_readd_content_changes_avada', 99 );
+
+
+/**
  * Check if a user has access to a series.
  */
 function pmpros_hasAccessToSeries( $series_id, $user_id, $return_membership_levels = false ) {
