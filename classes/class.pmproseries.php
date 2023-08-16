@@ -587,7 +587,7 @@ class PMProSeries {
 	/**
 	 * Get the number of days that a user has been a member for this series.
 	 *
-	 * @since TBD
+	 * @since 0.6
 	 *
 	 * @param int|null $user_id The user ID to check. Defaults to the current user.
 	 *

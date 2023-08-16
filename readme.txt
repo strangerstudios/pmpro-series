@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: series, drip feed, serial, delayed, limited, memberships
 Requires at least: 4
-Tested up to: 5.5
-Stable tag: .5
+Tested up to: 6.2
+Stable tag: 0.6
 
 Create "Series" which are groups of posts/pages where content is revealed to members over time. This is the "drip feed content" module for Paid Memberships Pro.
 
@@ -60,6 +60,18 @@ Data Structure
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-series/issues
 
 == Changelog ==
+= 0.6 - 2023-08-16 =
+* BUG FIX/ENHANCEMENT: Improving compatibility with PMPro Multiple Memberships Per User Add On. #92 (@dparker1005)
+* BUG FIX/ENHANCEMENT: Improving compatibility with Avada theme to prevent some content from being duplicated. #101 (@JarrydLong)
+* BUG FIX/ENHANCEMENT: Updated localization and escaping of strings. #104 (@dparker1005)
+* BUG FIX: Now only sending “new content” emails for series in “publish” status. #83 (@andrewlimaza)
+* BUG FIX: Fixed PHP8 compatibility issue with the plugin action links. #99 (@JarrydLong)
+* BUG FIX: Fixed an error on archive pages when the `$post` global is not set. #100 (@JarrydLong)
+* BUG FIX: Fixed incorrect class attributes for `<li>` items in the series list. #93 (@kimcoleman)
+* BUG FIX: Fixed issue where crons would not be cleared on deactivation. #105 (@dparker1005)
+* BUG FIX: Fixed the version of select2 that is being enqueued to match included select2 files. #103 (@dparker1005)
+* REFACTOR: Removing functions that have been merged into the core Paid Memberships Pro plugin. #91 (@dparker1005)
+
 = 0.5 - 2020-10-16=
 * ENHANCEMENT: Now showing a different message at the top of a series when all content is now available.
 * ENHANCEMENT: Now wrapping content of series pages in a <div> so that it can be targeted with CSS.

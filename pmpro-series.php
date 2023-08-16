@@ -3,7 +3,7 @@
  * Plugin Name: Paid Memberships Pro - Series Add On
  * Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-series-for-drip-feed-content/
  * Description: Offer serialized (drip feed) content to your PMPro members.
- * Version: .5
+ * Version: 0.6
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com
  * Text Domain: pmpro-series
@@ -133,7 +133,7 @@ add_filter( 'the_content', 'pmpros_the_content' );
  * Adds compatibility for the Avada theme by removing our 
  * hooks from their content
  * 
- * @since TBD
+ * @since 0.6
  */
 function pmpros_avada_remove_content_changes_avada() {
 	remove_filter( 'the_content', 'pmpros_the_content' );
