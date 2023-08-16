@@ -393,7 +393,7 @@ function pmpros_deactivation() {
 	flush_rewrite_rules();
 
 	// remove cron
-	wp_clear_scheduled_hook( current_time( 'timestamp' ), 'daily', 'pmpros_check_for_new_content' );
+	wp_clear_scheduled_hook( 'pmpros_check_for_new_content' );
 }
 register_deactivation_hook( __FILE__, 'pmpros_deactivation' );
 
