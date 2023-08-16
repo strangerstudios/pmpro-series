@@ -422,16 +422,17 @@ class PMProSeries {
 			foreach ( $post_list_posts as $sp ) {
 				$days_left = ceil( $sp->delay - $member_days );
 				$date      = date_i18n( get_option( 'date_format' ), strtotime( "+ $days_left Days", current_time( 'timestamp' ) ) );
-				?>
-				<li class="pmpro_series_item-li-
-				<?php
+
+				// Build the selectors for the series item in the list.
+				$classes = array();
 				if ( apply_filters( 'pmpro_series_override_delay', ( max( 0, $member_days ) >= $sp->delay ), $member_days, $sp->delay, $current_user->ID ) ) {
-					?>
-					available
-					<?php
+					$classes[] = 'pmpro_series_item-li-available';
 				} else {
-					?>
-					unavailable<?php } ?>">
+					$classes[] = 'pmpro_series_item-li-unavailable';
+				}
+				$class = implode( ' ', array_unique( $classes ) );
+				?>
+				<li class="<?php echo esc_attr( $class ); ?>">
 				<?php if ( apply_filters( 'pmpro_series_override_delay', ( max( 0, $member_days ) >= $sp->delay ), $member_days, $sp->delay, $current_user->ID ) ) { ?>
 						<span class="pmpro_series_item-title"><a href="<?php echo get_permalink( $sp->id ); ?>"><?php echo get_the_title( $sp->id ); ?></a></span>
 						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo get_permalink( $sp->id ); ?>"><?php _e( 'Available Now', 'pmpro-series' );?></a></span>
