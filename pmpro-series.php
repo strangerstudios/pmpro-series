@@ -58,12 +58,12 @@ function pmpros_admin_scripts( $hook ) {
 
 		$localize = array(
 			'series_id'      => $post_id,
-			'save'           => __( 'Save', 'pmpro-series' ),
-			'saving'         => __( 'Saving...', 'pmpro-series' ),
-			'saving_error_1' => __( 'Error saving series post [1]', 'pmpro-series' ),
-			'saving_error_2' => __( 'Error saving series post [2]', 'pmpro-series' ),
-			'remove_error_1' => __( 'Error removing series post [1]', 'pmpro-series' ),
-			'remove_error_2' => __( 'Error removing series post [2]', 'pmpro-series' ),
+			'save'           => esc_html__( 'Save', 'pmpro-series' ),
+			'saving'         => esc_html__( 'Saving', 'pmpro-series' ) . '...',
+			'saving_error_1' => esc_html__( 'Error saving series post', 'pmpro-series' ) . ' [1]',
+			'saving_error_2' => esc_html__( 'Error saving series post', 'pmpro-series' ) . ' [2]',
+			'remove_error_1' => esc_html__( 'Error removing series post', 'pmpro-series' ) . ' [1]',
+			'remove_error_2' => esc_html__( 'Error removing series post', 'pmpro-series' ) . ' [2]',
 		);
 
 		wp_localize_script( 'pmpros_pmpro', 'pmpro_series', $localize );
@@ -114,9 +114,9 @@ function pmpros_the_content( $content ) {
 			$series   = new PMProSeries( $post->ID );
 			$member_days = intval( $series->get_member_days() );
 			if ( $member_days >= $series->getLongestPostDelay( 'publish' ) ) {
-				$content .= '<p class="pmpro_series_all_posts_available_text">' . __( 'All posts in this series are now available.', 'pmpro-series' ) . '</p>';
+				$content .= '<p class="pmpro_series_all_posts_available_text">' . esc_html__( 'All posts in this series are now available.', 'pmpro-series' ) . '</p>';
 			} else {
-				$content .= '<p class="pmpro_series_days_into_membership_text">' . sprintf( __( 'You are on day %d of your membership.', 'pmpro-series' ), $member_days ) . '</p>';
+				$content .= '<p class="pmpro_series_days_into_membership_text">' . sprintf( esc_html__( 'You are on day %d of your membership.', 'pmpro-series' ), (int)$member_days ) . '</p>';
 			}
 			$content .= $series->getPostList();
 			$content .= '</div> <!-- end pmpro-series -->';
@@ -336,25 +336,26 @@ function pmpros_pmpro_text_filter( $text ) {
 
 				// Show the user when they will have access.
 				$series_date_text        = date_i18n( get_option( 'date_format' ), strtotime( "+ $days_left Days", current_time( 'timestamp' ) ) );
-				$series_link_text = '<a href="' . get_permalink( $soonest_series->id ) . '">' . get_the_title( $soonest_series->id ) . '</a>';
-				$text = sprintf( __( 'This content is part of the %s series. You will gain access on %s.', 'pmpro-series' ),  $series_link_text, $series_date_text );
+				$series_link_text = '<a href="' . esc_url( get_permalink( $soonest_series->id ) ) . '">' . esc_html( get_the_title( $soonest_series->id ) ) . '</a>';
+				/* translators: 1: series link, 2: date */
+				$text = sprintf( esc_html__( 'This content is part of the %1$s series. You will gain access on %2$s.', 'pmpro-series' ),  $series_link_text, esc_html( $series_date_text ) );
 
 				$text = apply_filters( 'pmpros_days_left_message', $text, $member_days, $days_left, $current_user->ID );
 			} else {
 				// user has to sign up for one of the series
 				if ( count( $post_series ) == 1 ) {
-					$series_link_text = '<a href="' . get_permalink( $post_series[0] ) . '">' . get_the_title( $post_series[0] ) . '</a>';
-					$text = sprintf( __( 'This content is part of the %s series.', 'pmpro-series' ),  $series_link_text );
+					$series_link_text = '<a href="' . esc_url( get_permalink( $post_series[0] ) ) . '">' . esc_html( get_the_title( $post_series[0] ) ) . '</a>';
+					$text = sprintf( esc_html__( 'This content is part of the %s series.', 'pmpro-series' ),  $series_link_text );
 					
 					$text = apply_filters( 'pmpros_content_access_message_single_item', $text, $post_series );
 				} else {
 					$series = array();
 					foreach ( $post_series as $series_id ) {
-						$series[] = "<a href='" . get_permalink( $series_id ) . "'>" . get_the_title( $series_id ) . '</a>';
+						$series[] = "<a href='" . esc_url( get_permalink( $series_id ) ) . "'>" . esc_html( get_the_title( $series_id ) ) . '</a>';
 					}
 					$series_list_text = implode( ', ', $series ) . '.';
 					
-					$text   = sprintf( __( 'This content is part of the following series: %s', 'pmpro-series' ), $series_list_text );
+					$text   = sprintf( esc_html__( 'This content is part of the following series: %s', 'pmpro-series' ), $series_list_text );
 					
 					$text  = apply_filters( 'pmpros_content_access_message_many_items', $text, $post_series );
 				}
@@ -423,7 +424,7 @@ function pmpros_member_links_bottom() {
 			foreach ( $series_posts as $series_post ) {
 				if ( pmpros_hasAccess( $current_user->ID, $series_post->id ) ) {
 					?>
-					<li><a href="<?php echo get_permalink( $series_post->id ); ?>" title="<?php echo get_the_title( $series_post->id ); ?>"><?php echo get_the_title( $series_post->id ); ?></a></li>
+					<li><a href="<?php echo esc_url( get_permalink( $series_post->id ) ); ?>" title="<?php echo esc_attr( get_the_title( $series_post->id ) ); ?>"><?php echo esc_html( get_the_title( $series_post->id ) ); ?></a></li>
 					<?php
 				}
 			}
@@ -441,8 +442,8 @@ add_action( 'pmpro_member_links_bottom', 'pmpros_member_links_bottom' );
 function pmpros_email_templates( $templates ) {
 	// Add the new content template.
 	$templates['new_content'] = array(
-		'subject'     => __( 'New content is available at !!sitename!!', 'pmpro-series' ),
-		'description' => __( 'New Series Content Notification', 'pmpro-series' ),
+		'subject'     => esc_html__( 'New content is available at !!sitename!!', 'pmpro-series' ),
+		'description' => esc_html__( 'New Series Content Notification', 'pmpro-series' ),
 		'body'        => file_get_contents( dirname( __FILE__ ) . '/email/new_content.html' ),
 	);
 	return $templates;
@@ -473,7 +474,7 @@ add_filter( 'pmpro_email_custom_template_path', 'pmpros_add_email_template', 10,
 function pmpros_plugin_action_links( $links ) {
 	if ( current_user_can( 'manage_options' ) ) {
 		$new_links = array(
-			'<a href="' . get_admin_url( null, 'edit.php?post_type=pmpro_series' ) . '">' . __( 'Settings', 'pmpro-series' ) . '</a>',
+			'<a href="' . esc_url( get_admin_url( null, 'edit.php?post_type=pmpro_series' ) ) . '">' . esc_html__( 'Settings', 'pmpro-series' ) . '</a>',
 		);
 		return array_merge( $new_links, $links );
 	}
