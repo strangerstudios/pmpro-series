@@ -106,7 +106,7 @@ add_action( 'init', 'pmpros_ajax' );
 function pmpros_the_content( $content ) {
 	global $post;
 
-	if ( $post->post_type == 'pmpro_series' ) {
+	if ( ! empty( $post ) && $post->post_type == 'pmpro_series' ) {
 		
 		// Display the Series if Paid Memberships Pro is active.
 		if ( !function_exists( 'pmpro_has_membership_access' ) || pmpro_has_membership_access() ) {
