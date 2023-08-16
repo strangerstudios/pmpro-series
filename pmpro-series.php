@@ -105,6 +105,7 @@ add_action( 'init', 'pmpros_ajax' );
  */
 function pmpros_the_content( $content ) {
 	global $post;
+
 	if ( ! empty( $post ) && $post->post_type == 'pmpro_series' ) {
 		
 		// Display the Series if Paid Memberships Pro is active.
@@ -117,10 +118,11 @@ function pmpros_the_content( $content ) {
 			} else {
 				$content .= '<p class="pmpro_series_days_into_membership_text">' . sprintf( __( 'You are on day %d of your membership.', 'pmpro-series' ), $member_days ) . '</p>';
 			}
-			
-			// Note: Let's eventually work to make this compatible if Paid Memberships Pro is not active.		
+			$content .= $series->getPostList();
+			$content .= '</div> <!-- end pmpro-series -->';
 		}
-
+		
+		// Note: Let's eventually work to make this compatible if Paid Memberships Pro is not active.		
 	}
 	
 	return $content;
