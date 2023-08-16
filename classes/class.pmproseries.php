@@ -608,10 +608,10 @@ class PMProSeries {
 		}
 
 		// If series is restricted, we need to find the maximum number of days that the user has been a member of any of the restricted levels.
-		$member_days = null;
+		$member_days = 0;
 		foreach ( $series_levels as $level_id ) {
 			$days = pmpro_getMemberDays( $user_id, $level_id );
-			if ( null === $member_days || $days > $member_days ) {
+			if ( $days > $member_days ) {
 				$member_days = $days;
 			}
 		}
