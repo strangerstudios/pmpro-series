@@ -203,7 +203,7 @@ function pmpros_hasAccess( $user_id, $post_id ) {
 			// Check if the user has been a part of this series long enough to view this post.
 			$series = new PMProSeries( $series_id );
 			$post_delay  = $series->getDelayForPost( $post_id );
-			$member_days = intval( $series->get_member_days() );
+			$member_days = intval( $series->get_member_days( $user_id ) );
 			if ( empty( $post_delay ) || $member_days >= $post_delay ) {
 				return true;    // user has access to this post
 			}
