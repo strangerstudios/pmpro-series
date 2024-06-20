@@ -1,9 +1,9 @@
 === Paid Memberships Pro - Series Add On ===
 Contributors: strangerstudios
 Tags: series, drip feed, serial, delayed, limited, memberships
-Requires at least: 4
-Tested up to: 6.2
-Stable tag: 0.6
+Requires at least: 5
+Tested up to: 6.5
+Stable tag: 0.6.1
 
 Create "Series" which are groups of posts/pages where content is revealed to members over time. This is the "drip feed content" module for Paid Memberships Pro.
 
@@ -60,6 +60,9 @@ Data Structure
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-series/issues
 
 == Changelog ==
+= 0.6.1 -2024-06-20 =
+* BUG FIX: Fix an issue where the new content emails would not send to customers when content becomes available. (@dparker1005,@JarrydLong)
+
 = 0.6 - 2023-08-16 =
 * BUG FIX/ENHANCEMENT: Improving compatibility with PMPro Multiple Memberships Per User Add On. #92 (@dparker1005)
 * BUG FIX/ENHANCEMENT: Improving compatibility with Avada theme to prevent some content from being duplicated. #101 (@JarrydLong)
