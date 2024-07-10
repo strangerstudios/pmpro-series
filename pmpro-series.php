@@ -301,13 +301,49 @@ function pmpros_getPostSeries( $post_id = NULL ) {
 }
 
 /**
+ * Filter the header message for the no access message.
+ *
+ * @since TBD
+ *
+ * @param string $header The header message for the no access message.
+ * @return string The filtered header message for the no access message.
+ */
+function pmpros_no_access_message_header( $header ) {
+	global $current_user, $post;
+
+	// We are running PMPro v3.1+, so make sure that deprecated filters don't run later.
+	remove_filter( 'pmpro_non_member_text_filter', 'pmpros_pmpro_text_filter' );
+	remove_filter( 'pmpro_not_logged_in_text_filter', 'pmpros_pmpro_text_filter' );
+
+	// Check if the post is locked in a series.
+	if ( ! empty( $current_user ) && ! empty( $post ) && ! pmpros_hasAccess( $current_user->ID, $post->ID ) ) {
+		// Check if the user has access to any series containing this post.
+		$post_series = pmpros_getPostSeries( $post->ID );
+		$inseries = array();
+		foreach ( $post_series as $ps ) {
+			if ( !function_exists('pmpro_has_membership_access') || pmpro_has_membership_access( $ps ) ) {
+				$inseries[] = $ps;
+			}
+		}
+		if ( ! empty( $inseries ) ) {
+			$header = __( 'Waiting For Access', 'pmpro-series' );
+		} else {
+			$header = __( 'Membership Required', 'pmpro-series' );
+		}
+	}
+
+	return $header;
+}
+add_filter( 'pmpro_no_access_message_header', 'pmpros_no_access_message_header' ); // PMPro v3.1+.
+
+/**
  * [pmpros_pmpro_text_filter] Filter the message for users without access.
  *
  * @param  string $text
  * @return string
  */
 function pmpros_pmpro_text_filter( $text ) {
-	global $wpdb, $current_user, $post;
+	global $current_user, $post;
 
 	if ( ! empty( $current_user ) && ! empty( $post ) ) {
 		if ( ! pmpros_hasAccess( $current_user->ID, $post->ID ) ) {
@@ -338,14 +374,14 @@ function pmpros_pmpro_text_filter( $text ) {
 				$series_date_text        = date_i18n( get_option( 'date_format' ), strtotime( "+ $days_left Days", current_time( 'timestamp' ) ) );
 				$series_link_text = '<a href="' . esc_url( get_permalink( $soonest_series->id ) ) . '">' . esc_html( get_the_title( $soonest_series->id ) ) . '</a>';
 				/* translators: 1: series link, 2: date */
-				$text = sprintf( esc_html__( 'This content is part of the %1$s series. You will gain access on %2$s.', 'pmpro-series' ),  $series_link_text, esc_html( $series_date_text ) );
+				$text = '<p>' . sprintf( esc_html__( 'This content is part of the %1$s series. You will gain access on %2$s.', 'pmpro-series' ),  $series_link_text, esc_html( $series_date_text ) ) . '</p>';
 
 				$text = apply_filters( 'pmpros_days_left_message', $text, $member_days, $days_left, $current_user->ID );
 			} else {
 				// user has to sign up for one of the series
 				if ( count( $post_series ) == 1 ) {
 					$series_link_text = '<a href="' . esc_url( get_permalink( $post_series[0] ) ) . '">' . esc_html( get_the_title( $post_series[0] ) ) . '</a>';
-					$text = sprintf( esc_html__( 'This content is part of the %s series.', 'pmpro-series' ),  $series_link_text );
+					$text = '<p>' . sprintf( esc_html__( 'This content is part of the %s series.', 'pmpro-series' ),  $series_link_text ) . '</p>';
 					
 					$text = apply_filters( 'pmpros_content_access_message_single_item', $text, $post_series );
 				} else {
@@ -355,7 +391,7 @@ function pmpros_pmpro_text_filter( $text ) {
 					}
 					$series_list_text = implode( ', ', $series ) . '.';
 					
-					$text   = sprintf( esc_html__( 'This content is part of the following series: %s', 'pmpro-series' ), $series_list_text );
+					$text   = '<p>' . sprintf( esc_html__( 'This content is part of the following series: %s', 'pmpro-series' ), $series_list_text ) . '</p>';
 					
 					$text  = apply_filters( 'pmpros_content_access_message_many_items', $text, $post_series );
 				}
@@ -365,8 +401,9 @@ function pmpros_pmpro_text_filter( $text ) {
 
 	return $text;
 }
-add_filter( 'pmpro_non_member_text_filter', 'pmpros_pmpro_text_filter' );
-add_filter( 'pmpro_not_logged_in_text_filter', 'pmpros_pmpro_text_filter' );
+add_filter( 'pmpro_no_access_message_body', 'pmpros_pmpro_text_filter' ); // PMPro v3.1+.
+add_filter( 'pmpro_non_member_text_filter', 'pmpros_pmpro_text_filter' ); // Pre-PMPro v3.1.
+add_filter( 'pmpro_not_logged_in_text_filter', 'pmpros_pmpro_text_filter' ); // Pre-PMPro v3.1.
 
 /*
 	We need to flush rewrite rules on activation/etc for the CPTs.
