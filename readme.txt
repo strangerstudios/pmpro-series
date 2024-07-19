@@ -4,6 +4,8 @@ Tags: series, drip feed, serial, delayed, limited, memberships
 Requires at least: 5.2
 Tested up to: 6.6
 Stable tag: 0.6.1
+License: GPLv3
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Drip feed content to your members over the course of their membership. Serializes content by # of days post-registration.
 
