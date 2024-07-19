@@ -3,6 +3,27 @@
 class PMProSeries {
 
 	/**
+	 * Post object associated with the series
+	 *
+	 * @var object $post
+	 */
+	public $post;
+
+	/**
+	 * ID of the series
+	 *
+	 * @var int $id
+	 */
+	public $id;
+
+	/**
+	 * Array of posts in the series
+	 *
+	 * @var array $posts
+	 */
+	public $posts;
+
+	/**
 	 * [__construct] Class constructor.
 	 *
 	 * @param integer $id
