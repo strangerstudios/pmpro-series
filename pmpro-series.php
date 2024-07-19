@@ -416,6 +416,9 @@ function pmpros_member_links_bottom() {
 		return;
 	}
 
+	// Build our list of series posts to show.
+	$series_posts_list = array();
+
 	foreach ( $all_series as $s ) {
 		$series       = new PMProSeries( $s->ID );
 		$series_posts = $series->getPosts();
@@ -423,12 +426,27 @@ function pmpros_member_links_bottom() {
 		if ( ! empty( $series_posts ) ) {
 			foreach ( $series_posts as $series_post ) {
 				if ( pmpros_hasAccess( $current_user->ID, $series_post->id ) ) {
-					?>
-					<li><a href="<?php echo esc_url( get_permalink( $series_post->id ) ); ?>" title="<?php echo esc_attr( get_the_title( $series_post->id ) ); ?>"><?php echo esc_html( get_the_title( $series_post->id ) ); ?></a></li>
-					<?php
+					$series_posts_list[$series_post->id] = array(
+						'title' => get_the_title( $series_post->id ),
+						'permalink' => get_permalink( $series_post->id ),
+					);
 				}
 			}
 		}
+	}
+
+	if ( empty( $series_posts_list ) ) {
+		return;
+	}
+
+	// Remove duplicate array keys.
+	$series_posts_list = array_values( $series_posts_list );
+
+	// Show the list.
+	foreach ( $series_posts_list as $series_post ) {
+		?>
+		<li class="<?php esc_attr( pmpro_get_element_class( 'pmpro_list_item' ) ); ?>"><a href="<?php echo esc_url( $series_post['permalink'] ); ?>" title="<?php echo esc_attr( $series_post['title'] ); ?>"><?php echo esc_html( $series_post['title'] ); ?></a></li>
+		<?php
 	}
 }
 add_action( 'pmpro_member_links_bottom', 'pmpros_member_links_bottom' );
