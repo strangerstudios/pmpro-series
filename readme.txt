@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: series, drip feed, serial, delayed, limited, memberships
 Requires at least: 5.2
 Tested up to: 6.6
-Stable tag: 0.6.1
+Stable tag: 0.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -62,6 +62,10 @@ Data Structure
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-series/issues
 
 == Changelog ==
+= 0.7 - 2024-07-19 =
+* ENHANCEMENT: Updated the frontend UI for compatibility with PMPro v3.1. #108, #109 (@dparker1005, @kimcoleman)
+* BUG FIX: Fixed some PHP 8.2+ warnings. #109 (@kimcoleman)
+
 = 0.6.1 -2024-06-20 =
 * BUG FIX: Fix an issue where the new content emails would not send to customers when content becomes available. (@dparker1005,@JarrydLong)
 
