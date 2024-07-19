@@ -1,14 +1,6 @@
 <?php
 
 class PMProSeries {
-
-	/**
-	 * Post object associated with the series
-	 *
-	 * @var object $post
-	 */
-	public $post;
-
 	/**
 	 * ID of the series
 	 *
@@ -17,11 +9,27 @@ class PMProSeries {
 	public $id;
 
 	/**
+	 * Post object associated with the series
+	 *
+	 * @var object $post
+	 */
+	private $post;
+
+	
+
+	/**
 	 * Array of posts in the series
 	 *
 	 * @var array $posts
 	 */
-	public $posts;
+	private $posts;
+
+	/**
+	 * Error message
+	 *
+	 * @var string $error
+	 */
+	private $error;
 
 	/**
 	 * [__construct] Class constructor.
