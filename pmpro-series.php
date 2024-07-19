@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Paid Memberships Pro - Series Add On
+ * Plugin Name: Paid Memberships Pro - Series
  * Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-series-for-drip-feed-content/
- * Description: Offer serialized (drip feed) content to your PMPro members.
+ * Description: Drip feed content to your members over the course of their membership. Serializes content by # of days post-registration.
  * Version: 0.6.1
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com
@@ -110,18 +110,34 @@ function pmpros_the_content( $content ) {
 		
 		// Display the Series if Paid Memberships Pro is active.
 		if ( !function_exists( 'pmpro_has_membership_access' ) || pmpro_has_membership_access() ) {
-			$content .= '<div id="pmpro-series-' . absint( $post->ID ) . '" class="pmpro-series-post-list">';
+			ob_start();
 			$series   = new PMProSeries( $post->ID );
 			$member_days = intval( $series->get_member_days() );
-			if ( $member_days >= $series->getLongestPostDelay( 'publish' ) ) {
-				$content .= '<p class="pmpro_series_all_posts_available_text">' . esc_html__( 'All posts in this series are now available.', 'pmpro-series' ) . '</p>';
-			} else {
-				$content .= '<p class="pmpro_series_days_into_membership_text">' . sprintf( esc_html__( 'You are on day %d of your membership.', 'pmpro-series' ), (int)$member_days ) . '</p>';
-			}
-			$content .= $series->getPostList();
-			$content .= '</div> <!-- end pmpro-series -->';
+			?>
+			<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro' ) ); ?>">
+				<div id="pmpro-series-<?php echo esc_attr( absint( $post->ID ) ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card pmpro-series-post-list', 'pmpro-series-post-list' ) ); ?>">
+					<h2 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_title pmpro_font-large' ) ); ?>"><?php esc_html_e( 'Content in This Series', 'pmpro-series' ); ?></h2>
+					<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_content' ) ); ?>">
+						<?php
+							if ( $member_days >= $series->getLongestPostDelay( 'publish' ) ) {
+								?>
+								<p class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_series_all_posts_available_text' ) ); ?>"><?php esc_html_e( 'All posts in this series are now available.', 'pmpro-series' ); ?></p>
+								<?php
+							} else {
+								?>
+								<p class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_series_days_into_membership_text' ) ); ?>"><?php echo sprintf( esc_html__( 'You are on day %d of your membership.', 'pmpro-series' ), esc_html( (int) $member_days ) ); ?></p>
+								<?php
+							}
+						?>
+						<?php echo $series->getPostList(); ?>
+					</div> <!-- end pmpro_card_content -->
+				</div> <!-- end pmpro_card -->
+			</div> <!-- end pmpro -->
+			<?php
 		}
-		
+		$content = ob_get_contents();
+		ob_end_clean();
+
 		// Note: Let's eventually work to make this compatible if Paid Memberships Pro is not active.		
 	}
 	
@@ -453,6 +469,9 @@ function pmpros_member_links_bottom() {
 		return;
 	}
 
+	// Build our list of series posts to show.
+	$series_posts_list = array();
+
 	foreach ( $all_series as $s ) {
 		$series       = new PMProSeries( $s->ID );
 		$series_posts = $series->getPosts();
@@ -460,12 +479,27 @@ function pmpros_member_links_bottom() {
 		if ( ! empty( $series_posts ) ) {
 			foreach ( $series_posts as $series_post ) {
 				if ( pmpros_hasAccess( $current_user->ID, $series_post->id ) ) {
-					?>
-					<li><a href="<?php echo esc_url( get_permalink( $series_post->id ) ); ?>" title="<?php echo esc_attr( get_the_title( $series_post->id ) ); ?>"><?php echo esc_html( get_the_title( $series_post->id ) ); ?></a></li>
-					<?php
+					$series_posts_list[$series_post->id] = array(
+						'title' => get_the_title( $series_post->id ),
+						'permalink' => get_permalink( $series_post->id ),
+					);
 				}
 			}
 		}
+	}
+
+	if ( empty( $series_posts_list ) ) {
+		return;
+	}
+
+	// Remove duplicate array keys.
+	$series_posts_list = array_values( $series_posts_list );
+
+	// Show the list.
+	foreach ( $series_posts_list as $series_post ) {
+		?>
+		<li class="<?php esc_attr( pmpro_get_element_class( 'pmpro_list_item' ) ); ?>"><a href="<?php echo esc_url( $series_post['permalink'] ); ?>" title="<?php echo esc_attr( $series_post['title'] ); ?>"><?php echo esc_html( $series_post['title'] ); ?></a></li>
+		<?php
 	}
 }
 add_action( 'pmpro_member_links_bottom', 'pmpros_member_links_bottom' );
