@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Paid Memberships Pro - Series Add On
+ * Plugin Name: Paid Memberships Pro - Series
  * Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-series-for-drip-feed-content/
- * Description: Offer serialized (drip feed) content to your PMPro members.
+ * Description:Drip feed content to your members over the course of their membership. Serializes content by # of days post-registration.
  * Version: 0.6.1
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com

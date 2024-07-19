@@ -1,11 +1,11 @@
-=== Paid Memberships Pro - Series Add On ===
+=== Paid Memberships Pro - Series ===
 Contributors: strangerstudios
 Tags: series, drip feed, serial, delayed, limited, memberships
-Requires at least: 5
-Tested up to: 6.5
+Requires at least: 5.2
+Tested up to: 6.6
 Stable tag: 0.6.1
 
-Create "Series" which are groups of posts/pages where content is revealed to members over time. This is the "drip feed content" module for Paid Memberships Pro.
+Drip feed content to your members over the course of their membership. Serializes content by # of days post-registration.
 
 == Description ==
 This plugin currently requires Paid Memberships Pro.
