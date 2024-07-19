@@ -431,8 +431,7 @@ class PMProSeries {
 		if ( ! empty( $posts ) ) {
 			ob_start();
 			?>
-					
-			<ul id="pmpro_series-<?php echo $this->id; ?>" class="pmpro_series_list">
+			<ul id="pmpro_series-<?php echo $this->id; ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_list pmpro_list-plain pmpro_series_list', 'pmpro_series_list' ) ); ?>">
 			<?php
 				$member_days = $this->get_member_days( $current_user->ID );
 				$post_list_posts = $posts;
@@ -446,6 +445,7 @@ class PMProSeries {
 
 				// Build the selectors for the series item in the list.
 				$classes = array();
+				$classes[] = 'pmpro_list_item';
 				if ( apply_filters( 'pmpro_series_override_delay', ( max( 0, $member_days ) >= $sp->delay ), $member_days, $sp->delay, $current_user->ID ) ) {
 					$classes[] = 'pmpro_series_item-li-available';
 				} else {
@@ -453,16 +453,16 @@ class PMProSeries {
 				}
 				$class = implode( ' ', array_unique( $classes ) );
 				?>
-				<li class="<?php echo esc_attr( $class ); ?>">
+				<li class="<?php echo esc_attr( pmpro_get_element_class( $class ) ); ?>">
 				<?php if ( apply_filters( 'pmpro_series_override_delay', ( max( 0, $member_days ) >= $sp->delay ), $member_days, $sp->delay, $current_user->ID ) ) { ?>
-						<span class="pmpro_series_item-title"><a href="<?php echo esc_url( get_permalink( $sp->id ) ); ?>"><?php echo esc_html( get_the_title( $sp->id ) ); ?></a></span>
-						<span class="pmpro_series_item-available"><a class="pmpro_btn pmpro_btn-primary" href="<?php echo esc_url( get_permalink( $sp->id ) ); ?>"><?php esc_html_e( 'Available Now', 'pmpro-series' );?></a></span>
+						<span class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_series_item-title' ) ); ?>"><a href="<?php echo esc_url( get_permalink( $sp->id ) ); ?>"><?php echo esc_html( get_the_title( $sp->id ) ); ?></a></span>
+						<span class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_series_item-available' ) ); ?>"><a class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_btn' ) ); ?>" href="<?php echo esc_url( get_permalink( $sp->id ) ); ?>"><?php esc_html_e( 'Available Now', 'pmpro-series' );?></a></span>
 					<?php } else { ?>
-						<span class="pmpro_series_item-title"><?php echo esc_html( get_the_title( $sp->id ) ); ?></span>
-						<span class="pmpro_series_item-unavailable">
+						<span class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_series_item-title' ) ); ?>"><?php echo esc_html( get_the_title( $sp->id ) ); ?></span>
+						<span class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_series_item-unavailable pmpro_font-small' ) ); ?>">
 							<?php
 								/* translators: %s: series post available date */
-								printf( esc_html__( 'available on %s.', 'pmpro-series' ), esc_html( $date ) );
+								printf( esc_html__( 'available on %s', 'pmpro-series' ), esc_html( $date ) );
 							?>
 						</span>
 					<?php } ?>

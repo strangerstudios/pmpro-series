@@ -110,18 +110,34 @@ function pmpros_the_content( $content ) {
 		
 		// Display the Series if Paid Memberships Pro is active.
 		if ( !function_exists( 'pmpro_has_membership_access' ) || pmpro_has_membership_access() ) {
-			$content .= '<div id="pmpro-series-' . absint( $post->ID ) . '" class="pmpro-series-post-list">';
+			ob_start();
 			$series   = new PMProSeries( $post->ID );
 			$member_days = intval( $series->get_member_days() );
-			if ( $member_days >= $series->getLongestPostDelay( 'publish' ) ) {
-				$content .= '<p class="pmpro_series_all_posts_available_text">' . esc_html__( 'All posts in this series are now available.', 'pmpro-series' ) . '</p>';
-			} else {
-				$content .= '<p class="pmpro_series_days_into_membership_text">' . sprintf( esc_html__( 'You are on day %d of your membership.', 'pmpro-series' ), (int)$member_days ) . '</p>';
-			}
-			$content .= $series->getPostList();
-			$content .= '</div> <!-- end pmpro-series -->';
+			?>
+			<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro' ) ); ?>">
+				<div id="pmpro-series-<?php echo esc_attr( absint( $post->ID ) ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card pmpro-series-post-list', 'pmpro-series-post-list' ) ); ?>">
+					<h2 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_title pmpro_font-large' ) ); ?>"><?php esc_html_e( 'Content in This Series', 'pmpro-series' ); ?></h2>
+					<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_content' ) ); ?>">
+						<?php
+							if ( $member_days >= $series->getLongestPostDelay( 'publish' ) ) {
+								?>
+								<p class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_series_all_posts_available_text' ) ); ?>"><?php esc_html_e( 'All posts in this series are now available.', 'pmpro-series' ); ?></p>
+								<?php
+							} else {
+								?>
+								<p class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_series_days_into_membership_text' ) ); ?>"><?php echo sprintf( esc_html__( 'You are on day %d of your membership.', 'pmpro-series' ), esc_html( (int) $member_days ) ); ?></p>
+								<?php
+							}
+						?>
+						<?php echo $series->getPostList(); ?>
+					</div> <!-- end pmpro_card_content -->
+				</div> <!-- end pmpro_card -->
+			</div> <!-- end pmpro -->
+			<?php
 		}
-		
+		$content = ob_get_contents();
+		ob_end_clean();
+
 		// Note: Let's eventually work to make this compatible if Paid Memberships Pro is not active.		
 	}
 	
