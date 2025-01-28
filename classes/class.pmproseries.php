@@ -305,7 +305,7 @@ class PMProSeries {
 		} elseif ( file_exists( get_template_directory() . '/paid-memberships-pro/series/new_content.html' ) ) {
 			$template_path = get_template_directory() . '/paid-memberships-pro/series/new_content.html';
 		} else {
-			$template_path = plugins_url( 'email/new_content.html', dirname( __FILE__ ) );
+			$template_path = dirname( __DIR__ ) . '/email/new_content.html';
 		}
 
 		$email->email    = $user->user_email;
