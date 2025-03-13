@@ -516,6 +516,7 @@ function pmpros_email_templates( $templates ) {
 		'subject'     => esc_html__( 'New content is available at !!sitename!!', 'pmpro-series' ),
 		'description' => esc_html__( 'New Series Content Notification', 'pmpro-series' ),
 		'body'        => file_get_contents( dirname( __FILE__ ) . '/email/new_content.html' ),
+		'help_text'   => esc_html__( 'This email is sent to users when new content is available in a series.', 'pmpro-series' ),
 	);
 	return $templates;
 }
