@@ -3,7 +3,7 @@
  * Plugin Name: Paid Memberships Pro - Series
  * Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-series-for-drip-feed-content/
  * Description: Drip feed content to your members over the course of their membership. Serializes content by # of days post-registration.
- * Version: 0.7
+ * Version: 1.0
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com
  * Text Domain: pmpro-series
@@ -319,7 +319,7 @@ function pmpros_getPostSeries( $post_id = NULL ) {
 /**
  * Filter the header message for the no access message.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param string $header The header message for the no access message.
  * @return string The filtered header message for the no access message.
@@ -507,7 +507,7 @@ add_action( 'pmpro_member_links_bottom', 'pmpros_member_links_bottom' );
 /**
  * Set up the email templates for the plugin.
  *
- * @since TBD
+ * @since 1.0
  */
 function pmpros_load_email_templates() {
 	if ( class_exists( 'PMPro_Email_Template' ) ) {
@@ -540,7 +540,7 @@ function pmpros_email_templates( $templates ) {
 /**
  * Get the default body for the new content email.
  *
- * @since TBD
+ * @since 1.0
  *
  * @return string
  */
@@ -557,7 +557,7 @@ function pmpros_get_new_content_email_body() {
 /**
  * [pmpros_add_email_template]
  *
- * @deprecated TBD
+ * @deprecated 1.0
  *
  * @param  [type] $templates
  * @param  [type] $page_name
@@ -567,7 +567,7 @@ function pmpros_get_new_content_email_body() {
  * @return [type]
  */
 function pmpros_add_email_template( $templates, $page_name, $type = 'emails', $where = 'local', $ext = 'html' ) {
-	_deprecated_function( 'pmpros_add_email_template', 'TBD' );
+	_deprecated_function( 'pmpros_add_email_template', '1.0' );
 	$templates[] = dirname( __FILE__ ) . '/email/new_content.html';
 	return $templates;
 }

@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: series, drip feed, serial, delayed, limited, memberships
 Requires at least: 5.2
-Tested up to: 6.6
-Stable tag: 0.7
+Tested up to: 6.8
+Stable tag: 1.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -62,6 +62,13 @@ Data Structure
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-series/issues
 
 == Changelog ==
+= 1.0 - 2025-07-17 =
+* SECURITY: Improved escaping of output throughout the plugin. #117 (@dparker1005)
+* ENHANCEMENT: Now integrating with the abstract PMPro_Email_Template class when running PMPro v3.4+. #116 (@dparker1005)
+* BUG FIX/ENHANCEMENT: Added missing "help" text when editing the "new content" email template. #113 (@MaximilianoRicoTabo)
+* BUG FIX: Fixed a conflict with third-party code that renders the series page inside of an output buffer. #110 (@dwanjuki)
+* DEPRECATED: Removed support for custom .html email template files. The Email Template editor should now be used. #116 (@dparker1005)
+
 = 0.7 - 2024-07-19 =
 * ENHANCEMENT: Updated the frontend UI for compatibility with PMPro v3.1. #108, #109 (@dparker1005, @kimcoleman)
 * BUG FIX: Fixed some PHP 8.2+ warnings. #109 (@kimcoleman)
