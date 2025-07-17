@@ -110,7 +110,7 @@ class PMPro_Email_Template_New_Content extends PMPro_Email_Template {
 		// Build the post list.
 		$post_list = "<ul>\n";
 		foreach ( $this->post_ids as $post_id ) {
-			$post_list .= '<li><a href="' . get_permalink( $post_id ) . '">' . get_the_title( $post_id ) . '</a></li>' . "\n";
+			$post_list .= '<li><a href="' . esc_url( get_permalink( $post_id ) ) . '">' . esc_html( get_the_title( $post_id ) ) . '</a></li>' . "\n";
 		}
 		$post_list .= "</ul>\n";
 
