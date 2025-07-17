@@ -129,7 +129,7 @@ function pmpros_the_content( $content ) {
 								<?php
 							}
 						?>
-						<?php echo $series->getPostList(); ?>
+						<?php echo wp_kses_post( $series->getPostList() ); ?>
 					</div> <!-- end pmpro_card_content -->
 				</div> <!-- end pmpro_card -->
 			</div> <!-- end pmpro -->

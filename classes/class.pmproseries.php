@@ -423,7 +423,7 @@ class PMProSeries {
 		if ( ! empty( $posts ) ) {
 			ob_start();
 			?>
-			<ul id="pmpro_series-<?php echo $this->id; ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_list pmpro_list-plain pmpro_series_list', 'pmpro_series_list' ) ); ?>">
+			<ul id="pmpro_series-<?php echo intval( $this->id ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_list pmpro_list-plain pmpro_series_list', 'pmpro_series_list' ) ); ?>">
 			<?php
 				$member_days = $this->get_member_days( $current_user->ID );
 				$post_list_posts = $posts;
@@ -471,7 +471,7 @@ class PMProSeries {
 			$temp_content = apply_filters( 'pmpro_series_get_post_list', $temp_content, $this );
 
 			if ( $echo ) {
-				echo $temp_content;
+				echo wp_kses_post( $temp_content );
 			}
 
 			return $temp_content;
@@ -520,7 +520,7 @@ class PMProSeries {
 				
 			
 		<?php if ( ! empty( $this->error ) ) { ?>
-			<div class="message error"><p><?php echo $this->error; ?></p></div>
+			<div class="message error"><p><?php echo esc_html( $this->error ); ?></p></div>
 		<?php } ?>
 		<h3><?php esc_html_e( 'Posts in this Series', 'pmpro-series' ); ?></h3>
 		<table id="pmpros_table" class="wp-list-table widefat striped">
@@ -541,9 +541,9 @@ class PMProSeries {
 			foreach ( $this->posts as $post ) {
 				?>
 				<tr>
-					<td><?php echo $count; ?>.</td>
-					<td><?php echo get_the_title( $post->id ); ?></td>
-					<td><?php echo $post->delay; ?></td>
+					<td><?php echo esc_html( $count ); ?>.</td>
+					<td><?php echo esc_html( get_the_title( $post->id ) ); ?></td>
+					<td><?php echo esc_html( $post->delay ); ?></td>
 					<td>
 						<a class="button button-secondary" href="javascript:pmpros_editPost('<?php echo esc_attr( $post->id ); ?>', '<?php echo esc_attr( $post->delay ); ?>'); void(0);"><?php esc_html_e( 'edit', 'pmpro-series' ); ?></a>
 						<a class="button button-secondary" href="javascript:pmpros_removePost('<?php echo esc_attr( $post->id ); ?>'); void(0);"><?php esc_html_e( 'remove', 'pmpro-series' ); ?></a>
