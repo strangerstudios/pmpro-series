@@ -1,6 +1,6 @@
 ---
 name: "🐛 Bug Report"
-about: Report a bug if something isn't working as expected in Paid Memberships Pro.
+about: Report a bug if something isn't working as expected in Paid Memberships Pro - Series Drip-Feed Content.
 title: ''
 labels: 'bug'
 assignees: ''
@@ -25,7 +25,7 @@ A clear and concise description of what you expected to happen.
 
 **Isolating the problem (mark completed items with an [x]):**
 - [ ] I have deactivated other plugins and confirmed this bug occurs when only Paid Memberships Pro plugin is active.
-- [ ] This bug happens with a default WordPress theme active, or [Memberlite](https://wordpress.org/themes/memberlite/).
+- [ ] This bug happens with a default WordPress theme active, or [Memberlite](https://www.paidmembershipspro.com/themes/memberlite/).
 - [ ] I can reproduce this bug consistently using the steps above.
 
 **WordPress Environment**
