@@ -279,6 +279,13 @@ class PMProSeries {
 		 * @return [type]
 		 */
 	function sendEmail( $post_ids, $user_id ) {
+		if ( class_exists( 'PMPro_Email_Template_New_Content' ) ) {
+			// PMPro v3.4+. Use the new email template class.
+			$email_template = new PMPro_Email_Template_New_Content( $post_ids, $user_id );
+			return $email_template->send();
+		}
+
+		// PMPro v3.3 and earlier. Use the legacy email class.
 		if ( ! class_exists( 'PMProEmail' ) ) {
 			return;
 		}
@@ -290,42 +297,18 @@ class PMProSeries {
 		// build list of posts
 		$post_list = "<ul>\n";
 		foreach ( $post_ids as $post_id ) {
-			$post_list .= '<li><a href="' . get_permalink( $post_id ) . '">' . get_the_title( $post_id ) . '</a></li>' . "\n";
+			$post_list .= '<li><a href="' . esc_url( get_permalink( $post_id ) ) . '">' . esc_html( get_the_title( $post_id ) ) . '</a></li>' . "\n";
 		}
 		$post_list .= "</ul>\n";
 
 		$email->email    = $user->user_email;
-		$subject         = sprintf( esc_html__( 'New content is available at %s', 'pmpro-series' ), esc_html( get_option( 'blogname' ) ) );
-		$email->subject  = apply_filters( 'pmpros_new_content_subject', $subject, $user, $post_ids );
 		$email->template = 'new_content';
-
-		// check for custom email template
-		if ( file_exists( get_stylesheet_directory() . '/paid-memberships-pro/series/new_content.html' ) ) {
-			$template_path = get_stylesheet_directory() . '/paid-memberships-pro/series/new_content.html';
-		} elseif ( file_exists( get_template_directory() . '/paid-memberships-pro/series/new_content.html' ) ) {
-			$template_path = get_template_directory() . '/paid-memberships-pro/series/new_content.html';
-		} else {
-			$template_path = plugins_url( 'email/new_content.html', dirname( __FILE__ ) );
-		}
-
-		$email->email    = $user->user_email;
-		$email->subject  = sprintf( esc_html__( 'New content is available at %s', 'pmpro-series' ), esc_html( get_option( 'blogname' ) ) );
-		$email->template = 'new_content';
-
-		$email->body .= file_get_contents( $template_path );
-
 		$email->data = array(
 			'name'       => $user->display_name,
 			'sitename'   => get_option( 'blogname' ),
 			'post_list'  => $post_list,
 			'login_link' => wp_login_url(),
 		);
-
-		if ( ! empty( $post->post_excerpt ) ) {
-			$email->data['excerpt'] = '<p>' . esc_html__( 'An excerpt of the post is below.', 'pmpro-series' ) . '</p><p>' . esc_html( $post->post_excerpt ) . '</p>';
-		} else {
-			$email->data['excerpt'] = '';
-		}
 
 		$email->sendEmail();
 	}

@@ -505,6 +505,22 @@ function pmpros_member_links_bottom() {
 add_action( 'pmpro_member_links_bottom', 'pmpros_member_links_bottom' );
 
 /**
+ * Set up the email templates for the plugin.
+ *
+ * @since TBD
+ */
+function pmpros_load_email_templates() {
+	if ( class_exists( 'PMPro_Email_Template' ) ) {
+		// PMPro v3.4+. Load the email template classes.
+		require_once( dirname( __FILE__ ) . '/classes/email-templates/class-pmpro-email-template-new-content.php' );
+	} else {
+		// Legacy hook to add email templates.
+		add_filter( 'pmproet_templates', 'pmpros_email_templates' );
+	}
+}
+add_action( 'init', 'pmpros_load_email_templates', 8 ); // Priority 8 to ensure the pmproet_templates hook is added before PMPro loads email templates.
+
+/**
  * [pmpros_email_templates] Integrate with Email Templates Admin Editor
  *
  * @param  [type] $templates
@@ -515,15 +531,33 @@ function pmpros_email_templates( $templates ) {
 	$templates['new_content'] = array(
 		'subject'     => esc_html__( 'New content is available at !!sitename!!', 'pmpro-series' ),
 		'description' => esc_html__( 'New Series Content Notification', 'pmpro-series' ),
-		'body'        => file_get_contents( dirname( __FILE__ ) . '/email/new_content.html' ),
+		'body'        => pmpros_get_new_content_email_body(),
 		'help_text'   => esc_html__( 'This email is sent to users when new content is available in a series.', 'pmpro-series' ),
 	);
 	return $templates;
 }
-add_filter( 'pmproet_templates', 'pmpros_email_templates', 10, 1 );
+
+/**
+ * Get the default body for the new content email.
+ *
+ * @since TBD
+ *
+ * @return string
+ */
+function pmpros_get_new_content_email_body() {
+	ob_start(); ?>
+<p><?php esc_html_e( 'New content is available at !!sitename!!.', 'pmpro-series' ); ?></p>
+
+!!post_list!!<?php
+	$body = ob_get_contents();
+	ob_end_clean();
+	return $body;
+}
 
 /**
  * [pmpros_add_email_template]
+ *
+ * @deprecated TBD
  *
  * @param  [type] $templates
  * @param  [type] $page_name
@@ -533,10 +567,10 @@ add_filter( 'pmproet_templates', 'pmpros_email_templates', 10, 1 );
  * @return [type]
  */
 function pmpros_add_email_template( $templates, $page_name, $type = 'emails', $where = 'local', $ext = 'html' ) {
+	_deprecated_function( 'pmpros_add_email_template', 'TBD' );
 	$templates[] = dirname( __FILE__ ) . '/email/new_content.html';
 	return $templates;
 }
-add_filter( 'pmpro_email_custom_template_path', 'pmpros_add_email_template', 10, 5 );
 
 /**
  * [pmpros_plugin_action_links] Function to add links to the plugin action links
