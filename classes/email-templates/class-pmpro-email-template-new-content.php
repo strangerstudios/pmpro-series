@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class PMPro_Email_Template_New_Content extends PMPro_Email_Template {
 
