@@ -281,7 +281,8 @@ class PMProSeries {
 	function sendEmail( $post_ids, $user_id ) {
 		if ( class_exists( 'PMPro_Email_Template_New_Content' ) ) {
 			// PMPro v3.4+. Use the new email template class.
-			$email_template = new PMPro_Email_Template_New_Content( $post_ids, $user_id );
+			$user = get_user_by( 'id', $user_id );
+			$email_template = new PMPro_Email_Template_New_Content( $post_ids, $user );
 			return $email_template->send();
 		}
 
