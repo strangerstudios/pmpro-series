@@ -69,7 +69,11 @@ class PMPro_Email_Template_New_Content extends PMPro_Email_Template {
 	 * @return string The default subject for the email.
 	 */
 	public static function get_default_subject() {
-		return esc_html__( 'New content is available at !!sitename!!', 'pmpro-series' );
+		if ( ! class_exists( 'PMPro_Liquid_Renderer' ) ) {
+			// Running a version of PMPro before liquid email rendering was available.
+			return esc_html__( 'New content is available at !!sitename!!', 'pmpro-series' );
+		}
+		return esc_html__( 'New content is available at {{ sitename }}', 'pmpro-series' );
 	}
 
 	/**
@@ -80,7 +84,17 @@ class PMPro_Email_Template_New_Content extends PMPro_Email_Template {
 	 * @return string The default body content for the email.
 	 */
 	public static function get_default_body() {
-		return pmpros_get_new_content_email_body();
+		if ( ! class_exists( 'PMPro_Liquid_Renderer' ) ) {
+			// Running a version of PMPro before liquid email rendering was available.
+			return pmpros_get_new_content_email_body();
+		}
+		ob_start(); ?>
+<p><?php esc_html_e( 'New content is available at {{ sitename }}.', 'pmpro-series' ); ?></p>
+
+{{ post_list }}<?php
+		$body = ob_get_contents();
+		ob_end_clean();
+		return $body;
 	}
 
 	/**
@@ -91,11 +105,20 @@ class PMPro_Email_Template_New_Content extends PMPro_Email_Template {
 	 * @return array The email template variables for the email (key => value pairs).
 	 */
 	public static function get_email_template_variables_with_description() {
+		if ( ! class_exists( 'PMPro_Liquid_Renderer' ) ) {
+			// Running a version of PMPro before liquid email rendering was available.
+			return array(
+				'!!display_name!!' => esc_html__( 'The display name of the user who will receive the email.', 'pmpro-series' ),
+				'!!user_login!!' => esc_html__( 'The login name of the user who will receive the email.', 'pmpro-series' ),
+				'!!user_email!!' => esc_html__( 'The email address of the user who will receive the email.', 'pmpro-series' ),
+				'!!post_list!!' => esc_html__( 'A list of the new content posts, formatted as an HTML unordered list.', 'pmpro-series' ),
+			);
+		}
 		return array(
-			'!!display_name!!' => esc_html__( 'The display name of the user who will receive the email.', 'pmpro-series' ),
-			'!!user_login!!' => esc_html__( 'The login name of the user who will receive the email.', 'pmpro-series' ),
-			'!!user_email!!' => esc_html__( 'The email address of the user who will receive the email.', 'pmpro-series' ),
-			'!!post_list!!' => esc_html__( 'A list of the new content posts, formatted as an HTML unordered list.', 'pmpro-series' ),
+			'{{ display_name }}' => esc_html__( 'The display name of the user who will receive the email.', 'pmpro-series' ),
+			'{{ user_login }}' => esc_html__( 'The login name of the user who will receive the email.', 'pmpro-series' ),
+			'{{ user_email }}' => esc_html__( 'The email address of the user who will receive the email.', 'pmpro-series' ),
+			'{{ post_list }}' => esc_html__( 'A list of the new content posts, formatted as an HTML unordered list.', 'pmpro-series' ),
 		);
 	}
 
