@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: series, drip feed, serial, delayed, limited, memberships
 Requires at least: 5.2
-Tested up to: 6.8
-Stable tag: 1.0
+Tested up to: 6.9
+Stable tag: 1.0.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -62,6 +62,9 @@ Data Structure
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-series/issues
 
 == Changelog ==
+= 1.0.1 - 2026-05-05 =
+* ENHANCEMENT: Updated the New Content email template to use liquid syntax (`{{ }}`) when running PMPro v3.7 or higher. The legacy `!!` syntax continues to be used on older versions of PMPro. #122 (@dparker1005)
+
 = 1.0 - 2025-07-17 =
 * SECURITY: Improved escaping of output throughout the plugin. #117 (@dparker1005)
 * ENHANCEMENT: Now integrating with the abstract PMPro_Email_Template class when running PMPro v3.4+. #116 (@dparker1005)
