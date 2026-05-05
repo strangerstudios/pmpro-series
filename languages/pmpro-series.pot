@@ -1,15 +1,15 @@
-# Copyright (C) 2025 Paid Memberships Pro
+# Copyright (C) 2026 Paid Memberships Pro
 # This file is distributed under the same license as the Paid Memberships Pro - Series plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Series 1.0\n"
+"Project-Id-Version: Paid Memberships Pro - Series 1.0.1\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-07-17T17:31:10+00:00\n"
+"POT-Creation-Date: 2026-05-05T13:31:47+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-series\n"
@@ -152,24 +152,36 @@ msgstr ""
 msgid "This email is sent to users when new content is available in a series."
 msgstr ""
 
-#: classes/email-templates/class-pmpro-email-template-new-content.php:72
+#: classes/email-templates/class-pmpro-email-template-new-content.php:74
 #: pmpro-series.php:532
 msgid "New content is available at !!sitename!!"
 msgstr ""
 
-#: classes/email-templates/class-pmpro-email-template-new-content.php:95
+#: classes/email-templates/class-pmpro-email-template-new-content.php:76
+msgid "New content is available at {{ sitename }}"
+msgstr ""
+
+#: classes/email-templates/class-pmpro-email-template-new-content.php:92
+msgid "New content is available at {{ sitename }}."
+msgstr ""
+
+#: classes/email-templates/class-pmpro-email-template-new-content.php:111
+#: classes/email-templates/class-pmpro-email-template-new-content.php:118
 msgid "The display name of the user who will receive the email."
 msgstr ""
 
-#: classes/email-templates/class-pmpro-email-template-new-content.php:96
+#: classes/email-templates/class-pmpro-email-template-new-content.php:112
+#: classes/email-templates/class-pmpro-email-template-new-content.php:119
 msgid "The login name of the user who will receive the email."
 msgstr ""
 
-#: classes/email-templates/class-pmpro-email-template-new-content.php:97
+#: classes/email-templates/class-pmpro-email-template-new-content.php:113
+#: classes/email-templates/class-pmpro-email-template-new-content.php:120
 msgid "The email address of the user who will receive the email."
 msgstr ""
 
-#: classes/email-templates/class-pmpro-email-template-new-content.php:98
+#: classes/email-templates/class-pmpro-email-template-new-content.php:114
+#: classes/email-templates/class-pmpro-email-template-new-content.php:121
 msgid "A list of the new content posts, formatted as an HTML unordered list."
 msgstr ""
 
