@@ -10,6 +10,10 @@
  * Domain Path: /languages
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /*
 	Includes
 */
@@ -50,8 +54,8 @@ function pmpros_admin_scripts( $hook ) {
 		wp_enqueue_style( 'pmpros-admin', plugins_url( 'css/pmpro-series-admin.css', __FILE__ ) );
 		wp_register_script( 'pmpros_pmpro', plugins_url( 'js/pmpro-series.js', __FILE__ ), array( 'jquery' ), null, true );
 
-		if ( ! empty( $_GET['post'] ) ) {
-			$post_id = intval( $_GET['post'] );
+		if ( ! empty( $_GET['post'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only, used to localize the series ID for the edit screen.
+			$post_id = intval( $_GET['post'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only, used to localize the series ID for the edit screen.
 		} else {
 			$post_id = '';
 		}
@@ -88,7 +92,7 @@ add_action( 'init', array( 'PMProSeries', 'checkForMetaBoxes' ), 20 );
 */
 function pmpros_ajax() {
 	if ( isset( $_REQUEST['pmpros_add_post'] ) ) {
-		$series_id = $_REQUEST['pmpros_series'];
+		$series_id = isset( $_REQUEST['pmpros_series'] ) ? intval( $_REQUEST['pmpros_series'] ) : 0;
 		$series    = new PMProSeries( $series_id );
 		$series->getPostListForMetaBox();
 		exit;
@@ -457,7 +461,7 @@ function pmpros_member_links_bottom() {
 	global $wpdb, $current_user;
 
 	// get all series
-	$all_series = $wpdb->get_results(
+	$all_series = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Static query with no user input.
 		"
         SELECT *
         FROM $wpdb->posts

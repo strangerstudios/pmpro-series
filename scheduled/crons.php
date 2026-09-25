@@ -1,4 +1,9 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /* Check for new content, email user if it exists. */
 add_action("pmpros_check_for_new_content", "pmpros_check_for_new_content");
 function pmpros_check_for_new_content() {
@@ -6,6 +11,7 @@ function pmpros_check_for_new_content() {
     global $wpdb;
 
     //get all members
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Static query on a PMPro custom table with no user input.
     $users = $wpdb->get_results("
         SELECT *
         FROM $wpdb->pmpro_memberships_users
@@ -13,6 +19,7 @@ function pmpros_check_for_new_content() {
 	");
 
     //get all series
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Static query with no user input.
     $series = $wpdb->get_results("
         SELECT *
         FROM $wpdb->posts
