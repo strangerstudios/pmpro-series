@@ -92,7 +92,7 @@ function pmpros_ajax() {
 		$series_id = isset( $_REQUEST['pmpros_series'] ) ? intval( $_REQUEST['pmpros_series'] ) : 0;
 
 		// Require a valid nonce and permission to edit this series.
-		if ( ! current_user_can( 'edit_post', $series_id ) || ! check_ajax_referer( 'pmpros_update_series', 'pmpros_nonce', false ) ) {
+		if ( 'pmpro_series' !== get_post_type( $series_id ) || ! current_user_can( 'edit_post', $series_id ) || ! check_ajax_referer( 'pmpros_update_series', 'pmpros_nonce', false ) ) {
 			echo 'error';
 			exit;
 		}

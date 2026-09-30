@@ -508,7 +508,11 @@ class PMProSeries {
 
 		// adding a post
 		if ( ! empty( $pmpros_post ) ) {
-			$this->addPost( $pmpros_post, $delay );
+			if ( current_user_can( 'edit_post', $pmpros_post ) ) {
+				$this->addPost( $pmpros_post, $delay );
+			} else {
+				$this->error = esc_html__( 'You do not have permission to add that post to a series.', 'pmpro-series' );
+			}
 		}
 
 		// removing a post
