@@ -13,7 +13,7 @@ function pmpros_removePost(post_id) {
 		type:'GET',
 		timeout:2000,
 		dataType: 'html',
-		data: "pmpros_add_post=1&pmpros_series=" + seriesid + "&pmpros_remove="+post_id,
+		data: "pmpros_add_post=1&pmpros_series=" + seriesid + "&pmpros_remove="+post_id + "&pmpros_nonce=" + encodeURIComponent( pmpro_series.nonce ),
 		error: function(xml){
 			alert('Error removing series post [1]');
 			//enable save button
@@ -38,7 +38,7 @@ function pmpros_updatePost() {
 		url: ajaxurl,
 		type: 'GET',
 		dataType: 'html',
-		data: "pmpros_add_post=1&pmpros_series=" + seriesid + "&pmpros_post=" + jQuery('#pmpros_post').val() + '&pmpros_delay=' + jQuery('#pmpros_delay').val(),
+		data: "pmpros_add_post=1&pmpros_series=" + seriesid + "&pmpros_post=" + jQuery('#pmpros_post').val() + '&pmpros_delay=' + jQuery('#pmpros_delay').val() + '&pmpros_nonce=' + encodeURIComponent( pmpro_series.nonce ),
 		error: function(xml){
 			alert('Error saving series post [1]');
 			//enable save button
