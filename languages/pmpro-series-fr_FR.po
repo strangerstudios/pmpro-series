@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Paid Memberships Pro - Series plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Series 1.0.1\n"
+"Project-Id-Version: Paid Memberships Pro - Series 1.0.2\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-05T13:31:49+00:00\n"
+"POT-Creation-Date: 2026-09-30T16:17:21+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-series\n"
@@ -17,12 +17,14 @@ msgstr ""
 #: classes/class.pmproseries.php:30
 #: classes/class.pmproseries.php:43
 #: classes/class.pmproseries.php:72
+#: classes/class.pmproseries.php:76
 msgid "Please enter a value for post and delay."
 msgstr "Entrez une valeur pour l'article et le délai."
 
 #: classes/class.pmproseries.php:38
 #: classes/class.pmproseries.php:50
 #: classes/class.pmproseries.php:79
+#: classes/class.pmproseries.php:83
 msgid "A post with that id does not exist."
 msgstr "Cet ID ne correspond à aucun article existant."
 
@@ -47,6 +49,8 @@ msgstr "Ci-dessous un extrait de l'article."
 #: classes/class.pmproseries.php:349
 #: classes/class.pmproseries.php:332
 #: classes/class.pmproseries.php:333
+#: classes/class.pmproseries.php:336
+#: classes/class.pmproseries.php:337
 msgid "Series"
 msgstr "Séries"
 
@@ -62,6 +66,8 @@ msgstr "Serie"
 #: classes/class.pmproseries.php:352
 #: classes/class.pmproseries.php:335
 #: classes/class.pmproseries.php:336
+#: classes/class.pmproseries.php:339
+#: classes/class.pmproseries.php:340
 msgid "New Series"
 msgstr "Nouvelle série"
 
@@ -73,6 +79,8 @@ msgstr "Nouvelle série"
 #: classes/class.pmproseries.php:354
 #: classes/class.pmproseries.php:337
 #: classes/class.pmproseries.php:338
+#: classes/class.pmproseries.php:341
+#: classes/class.pmproseries.php:342
 msgid "Edit Series"
 msgstr "Modifier la série"
 
@@ -80,6 +88,7 @@ msgstr "Modifier la série"
 #: classes/class.pmproseries.php:326
 #: classes/class.pmproseries.php:355
 #: classes/class.pmproseries.php:339
+#: classes/class.pmproseries.php:343
 msgid "Add New"
 msgstr "Ajouter une série"
 
@@ -91,6 +100,8 @@ msgstr "Ajouter une série"
 #: classes/class.pmproseries.php:357
 #: classes/class.pmproseries.php:340
 #: classes/class.pmproseries.php:341
+#: classes/class.pmproseries.php:344
+#: classes/class.pmproseries.php:345
 msgid "View This Series"
 msgstr "Voir cette série"
 
@@ -98,6 +109,7 @@ msgstr "Voir cette série"
 #: classes/class.pmproseries.php:329
 #: classes/class.pmproseries.php:358
 #: classes/class.pmproseries.php:342
+#: classes/class.pmproseries.php:346
 msgid "Search Series"
 msgstr "Rechercher les séries"
 
@@ -105,6 +117,7 @@ msgstr "Rechercher les séries"
 #: classes/class.pmproseries.php:330
 #: classes/class.pmproseries.php:359
 #: classes/class.pmproseries.php:343
+#: classes/class.pmproseries.php:347
 msgid "No Series Found"
 msgstr "Aucune série trouvée"
 
@@ -112,6 +125,7 @@ msgstr "Aucune série trouvée"
 #: classes/class.pmproseries.php:331
 #: classes/class.pmproseries.php:360
 #: classes/class.pmproseries.php:344
+#: classes/class.pmproseries.php:348
 msgid "No Series Found In Trash"
 msgstr "Aucune série trouvée dans la corbeille"
 
@@ -119,6 +133,7 @@ msgstr "Aucune série trouvée dans la corbeille"
 #: classes/class.pmproseries.php:381
 #: classes/class.pmproseries.php:410
 #: classes/class.pmproseries.php:394
+#: classes/class.pmproseries.php:398
 msgid "Require Membership"
 msgstr "Nécessite un abonnement"
 
@@ -126,6 +141,7 @@ msgstr "Nécessite un abonnement"
 #: classes/class.pmproseries.php:512
 #: classes/class.pmproseries.php:541
 #: classes/class.pmproseries.php:525
+#: classes/class.pmproseries.php:536
 msgid "Posts in this Series"
 msgstr "Articles de cette série"
 
@@ -133,6 +149,7 @@ msgstr "Articles de cette série"
 #: classes/class.pmproseries.php:438
 #: classes/class.pmproseries.php:467
 #: classes/class.pmproseries.php:451
+#: classes/class.pmproseries.php:455
 msgid "Available Now"
 msgstr "Disponible"
 
@@ -144,6 +161,7 @@ msgstr "Disponible le jour %s"
 #: classes/class.pmproseries.php:515
 #: classes/class.pmproseries.php:544
 #: classes/class.pmproseries.php:528
+#: classes/class.pmproseries.php:539
 msgid "Order"
 msgstr "Ordre"
 
@@ -151,6 +169,7 @@ msgstr "Ordre"
 #: classes/class.pmproseries.php:516
 #: classes/class.pmproseries.php:545
 #: classes/class.pmproseries.php:529
+#: classes/class.pmproseries.php:540
 msgid "Title"
 msgstr "Titre"
 
@@ -162,6 +181,8 @@ msgstr "Titre"
 #: classes/class.pmproseries.php:580
 #: classes/class.pmproseries.php:530
 #: classes/class.pmproseries.php:564
+#: classes/class.pmproseries.php:541
+#: classes/class.pmproseries.php:575
 msgid "Delay (# of days)"
 msgstr "Délai (nombre de jours)"
 
@@ -181,6 +202,7 @@ msgstr "Ajouter/modifier des articles"
 #: classes/class.pmproseries.php:550
 #: classes/class.pmproseries.php:579
 #: classes/class.pmproseries.php:563
+#: classes/class.pmproseries.php:574
 msgid "Post/Page"
 msgstr "Articles/pages"
 
@@ -188,12 +210,14 @@ msgstr "Articles/pages"
 #: classes/class.pmproseries.php:580
 #: classes/class.pmproseries.php:609
 #: classes/class.pmproseries.php:593
+#: classes/class.pmproseries.php:605
 msgid "Add to Series"
 msgstr "Ajouter à la série"
 
 #: pmpro-series.php:117
 #: pmpro-series.php:119
 #: pmpro-series.php:128
+#: pmpro-series.php:140
 #, php-format
 msgid "You are on day %d of your membership."
 msgstr "Vous êtes au jour #%d de votre abonnement."
@@ -205,6 +229,7 @@ msgstr "Ce contenu fait partie de la série %s. Vous y aurez accès au jour #%s 
 #: pmpro-series.php:232
 #: pmpro-series.php:348
 #: pmpro-series.php:400
+#: pmpro-series.php:412
 #, php-format
 msgid "This content is part of the %s series."
 msgstr "Ce contenu fait partie de la séries %s."
@@ -245,6 +270,7 @@ msgstr "http://www.strangerstudios.com"
 #~ msgstr "Erreur lors de l'enregistrement [1]"
 
 #: pmpro-series.php:61
+#: pmpro-series.php:66
 #~ msgid "Save"
 #~ msgstr "Sauvegarder"
 
@@ -280,6 +306,7 @@ msgstr ""
 #: classes/class.pmproseries.php:384
 #: classes/class.pmproseries.php:413
 #: classes/class.pmproseries.php:397
+#: classes/class.pmproseries.php:401
 msgid "Manage Series"
 msgstr ""
 
@@ -291,55 +318,67 @@ msgstr ""
 #: classes/class.pmproseries.php:518
 #: classes/class.pmproseries.php:547
 #: classes/class.pmproseries.php:531
+#: classes/class.pmproseries.php:542
 msgid "Actions"
 msgstr ""
 
 #: classes/class.pmproseries.php:535
 #: classes/class.pmproseries.php:564
 #: classes/class.pmproseries.php:548
+#: classes/class.pmproseries.php:559
 msgid "edit"
 msgstr ""
 
 #: classes/class.pmproseries.php:536
 #: classes/class.pmproseries.php:565
 #: classes/class.pmproseries.php:549
+#: classes/class.pmproseries.php:560
 msgid "remove"
 msgstr ""
 
 #: classes/class.pmproseries.php:546
 #: classes/class.pmproseries.php:575
 #: classes/class.pmproseries.php:559
+#: classes/class.pmproseries.php:570
 msgid "Add/Edit Posts"
 msgstr ""
 
 #: pmpro-series.php:62
+#: pmpro-series.php:67
 msgid "Saving"
 msgstr ""
 
 #: pmpro-series.php:63
 #: pmpro-series.php:64
+#: pmpro-series.php:68
+#: pmpro-series.php:69
 msgid "Error saving series post"
 msgstr ""
 
 #: pmpro-series.php:65
 #: pmpro-series.php:66
+#: pmpro-series.php:70
+#: pmpro-series.php:71
 msgid "Error removing series post"
 msgstr ""
 
 #: pmpro-series.php:117
 #: pmpro-series.php:124
+#: pmpro-series.php:136
 msgid "All posts in this series are now available."
 msgstr ""
 
 #. translators: 1: series link, 2: date
 #: pmpro-series.php:341
 #: pmpro-series.php:393
+#: pmpro-series.php:405
 #, php-format
 msgid "This content is part of the %1$s series. You will gain access on %2$s."
 msgstr ""
 
 #: pmpro-series.php:358
 #: pmpro-series.php:410
+#: pmpro-series.php:422
 #, php-format
 msgid "This content is part of the following series: %s"
 msgstr ""
@@ -349,6 +388,8 @@ msgstr ""
 #: classes/email-templates/class-pmpro-email-template-new-content.php:72
 #: pmpro-series.php:532
 #: classes/email-templates/class-pmpro-email-template-new-content.php:74
+#: classes/email-templates/class-pmpro-email-template-new-content.php:78
+#: pmpro-series.php:544
 msgid "New content is available at !!sitename!!"
 msgstr ""
 
@@ -356,36 +397,43 @@ msgstr ""
 #: pmpro-series.php:517
 #: classes/email-templates/class-pmpro-email-template-new-content.php:50
 #: pmpro-series.php:533
+#: classes/email-templates/class-pmpro-email-template-new-content.php:54
+#: pmpro-series.php:545
 msgid "New Series Content Notification"
 msgstr ""
 
 #: pmpro-series.php:477
 #: pmpro-series.php:548
 #: pmpro-series.php:583
+#: pmpro-series.php:595
 msgid "Settings"
 msgstr ""
 
 #: pmpro-series.php:494
 #: pmpro-series.php:565
 #: pmpro-series.php:600
+#: pmpro-series.php:612
 msgid "View Documentation"
 msgstr ""
 
 #: pmpro-series.php:494
 #: pmpro-series.php:565
 #: pmpro-series.php:600
+#: pmpro-series.php:612
 msgid "Docs"
 msgstr ""
 
 #: pmpro-series.php:495
 #: pmpro-series.php:566
 #: pmpro-series.php:601
+#: pmpro-series.php:613
 msgid "Visit Customer Support Forum"
 msgstr ""
 
 #: pmpro-series.php:495
 #: pmpro-series.php:566
 #: pmpro-series.php:601
+#: pmpro-series.php:613
 msgid "Support"
 msgstr ""
 
@@ -402,59 +450,80 @@ msgstr ""
 #. translators: %s: series post available date
 #: classes/class.pmproseries.php:473
 #: classes/class.pmproseries.php:457
+#: classes/class.pmproseries.php:461
 #, php-format
 msgid "available on %s"
 msgstr ""
 
 #: pmpro-series.php:119
+#: pmpro-series.php:131
 msgid "Content in This Series"
 msgstr ""
 
 #: pmpro-series.php:345
+#: pmpro-series.php:357
 msgid "Waiting For Access"
 msgstr ""
 
 #: pmpro-series.php:347
+#: pmpro-series.php:359
 msgid "Membership Required"
 msgstr ""
 
 #: classes/email-templates/class-pmpro-email-template-new-content.php:61
 #: pmpro-series.php:535
+#: classes/email-templates/class-pmpro-email-template-new-content.php:65
+#: pmpro-series.php:547
 msgid "This email is sent to users when new content is available in a series."
 msgstr ""
 
 #: classes/email-templates/class-pmpro-email-template-new-content.php:95
 #: classes/email-templates/class-pmpro-email-template-new-content.php:111
 #: classes/email-templates/class-pmpro-email-template-new-content.php:118
+#: classes/email-templates/class-pmpro-email-template-new-content.php:115
+#: classes/email-templates/class-pmpro-email-template-new-content.php:122
 msgid "The display name of the user who will receive the email."
 msgstr ""
 
 #: classes/email-templates/class-pmpro-email-template-new-content.php:96
 #: classes/email-templates/class-pmpro-email-template-new-content.php:112
 #: classes/email-templates/class-pmpro-email-template-new-content.php:119
+#: classes/email-templates/class-pmpro-email-template-new-content.php:116
+#: classes/email-templates/class-pmpro-email-template-new-content.php:123
 msgid "The login name of the user who will receive the email."
 msgstr ""
 
 #: classes/email-templates/class-pmpro-email-template-new-content.php:97
 #: classes/email-templates/class-pmpro-email-template-new-content.php:113
 #: classes/email-templates/class-pmpro-email-template-new-content.php:120
+#: classes/email-templates/class-pmpro-email-template-new-content.php:117
+#: classes/email-templates/class-pmpro-email-template-new-content.php:124
 msgid "The email address of the user who will receive the email."
 msgstr ""
 
 #: classes/email-templates/class-pmpro-email-template-new-content.php:98
 #: classes/email-templates/class-pmpro-email-template-new-content.php:114
 #: classes/email-templates/class-pmpro-email-template-new-content.php:121
+#: classes/email-templates/class-pmpro-email-template-new-content.php:118
+#: classes/email-templates/class-pmpro-email-template-new-content.php:125
 msgid "A list of the new content posts, formatted as an HTML unordered list."
 msgstr ""
 
 #: pmpro-series.php:549
+#: pmpro-series.php:561
 msgid "New content is available at !!sitename!!."
 msgstr ""
 
 #: classes/email-templates/class-pmpro-email-template-new-content.php:76
+#: classes/email-templates/class-pmpro-email-template-new-content.php:80
 msgid "New content is available at {{ sitename }}"
 msgstr ""
 
 #: classes/email-templates/class-pmpro-email-template-new-content.php:92
+#: classes/email-templates/class-pmpro-email-template-new-content.php:96
 msgid "New content is available at {{ sitename }}."
+msgstr ""
+
+#: classes/class.pmproseries.php:518
+msgid "You do not have permission to add that post to a series."
 msgstr ""
