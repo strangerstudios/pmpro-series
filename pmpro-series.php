@@ -58,6 +58,7 @@ function pmpros_admin_scripts( $hook ) {
 
 		$localize = array(
 			'series_id'      => $post_id,
+			'nonce'          => wp_create_nonce( 'pmpros_update_series' ),
 			'save'           => esc_html__( 'Save', 'pmpro-series' ),
 			'saving'         => esc_html__( 'Saving', 'pmpro-series' ) . '...',
 			'saving_error_1' => esc_html__( 'Error saving series post', 'pmpro-series' ) . ' [1]',
@@ -88,7 +89,14 @@ add_action( 'init', array( 'PMProSeries', 'checkForMetaBoxes' ), 20 );
 */
 function pmpros_ajax() {
 	if ( isset( $_REQUEST['pmpros_add_post'] ) ) {
-		$series_id = $_REQUEST['pmpros_series'];
+		$series_id = isset( $_REQUEST['pmpros_series'] ) ? intval( $_REQUEST['pmpros_series'] ) : 0;
+
+		// Require a valid nonce and permission to edit this series.
+		if ( ! current_user_can( 'edit_post', $series_id ) || ! check_ajax_referer( 'pmpros_update_series', 'pmpros_nonce', false ) ) {
+			echo 'error';
+			exit;
+		}
+
 		$series    = new PMProSeries( $series_id );
 		$series->getPostListForMetaBox();
 		exit;

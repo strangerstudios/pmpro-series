@@ -488,19 +488,22 @@ class PMProSeries {
 	function getPostListForMetaBox() {
 		global $wpdb;
 
-		// boot out people without permissions
-		if ( ! current_user_can( 'edit_posts' ) ) {
+		// boot out people who can't edit this series
+		if ( ! current_user_can( 'edit_post', $this->id ) ) {
 			return false;
 		}
 
-		if ( isset( $_REQUEST['pmpros_post'] ) ) {
-			$pmpros_post = intval( $_REQUEST['pmpros_post'] );
-		}
-		if ( isset( $_REQUEST['pmpros_delay'] ) ) {
-			$delay = intval( $_REQUEST['pmpros_delay'] );
-		}
-		if ( isset( $_REQUEST['pmpros_remove'] ) ) {
-			$remove = intval( $_REQUEST['pmpros_remove'] );
+		// Only add or remove posts when the request has a valid nonce.
+		if ( check_ajax_referer( 'pmpros_update_series', 'pmpros_nonce', false ) ) {
+			if ( isset( $_REQUEST['pmpros_post'] ) ) {
+				$pmpros_post = intval( $_REQUEST['pmpros_post'] );
+			}
+			if ( isset( $_REQUEST['pmpros_delay'] ) ) {
+				$delay = intval( $_REQUEST['pmpros_delay'] );
+			}
+			if ( isset( $_REQUEST['pmpros_remove'] ) ) {
+				$remove = intval( $_REQUEST['pmpros_remove'] );
+			}
 		}
 
 		// adding a post
