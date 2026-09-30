@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class PMProSeries {
 	/**
 	 * ID of the series
@@ -579,7 +583,8 @@ class PMProSeries {
 						<option value=""></option>
 					<?php
 						$pmpros_post_types = apply_filters( 'pmpros_post_types', array( 'post', 'page' ) );
-						$allposts          = $wpdb->get_results( "SELECT ID, post_title, post_status FROM $wpdb->posts WHERE post_status IN('publish', 'draft') AND post_type IN ('" . implode( "','", $pmpros_post_types ) . "') AND post_title <> '' ORDER BY post_title" );
+						$pmpros_post_types = array_map( 'esc_sql', $pmpros_post_types );
+						$allposts          = $wpdb->get_results( "SELECT ID, post_title, post_status FROM $wpdb->posts WHERE post_status IN('publish', 'draft') AND post_type IN ('" . implode( "','", $pmpros_post_types ) . "') AND post_title <> '' ORDER BY post_title" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Each post type is escaped with esc_sql() and quoted in the IN list.
 					foreach ( $allposts as $p ) {
 						?>
 						<option value="<?php echo esc_attr( $p->ID ); ?>"><?php echo esc_textarea( $p->post_title ); ?> (#
@@ -621,7 +626,7 @@ class PMProSeries {
 		}
 
 		// Get the level IDs that have access to this series.
-		$series_levels = $wpdb->get_col( "SELECT membership_id FROM $wpdb->pmpro_memberships_pages WHERE page_id = '" . $this->id . "'" );
+		$series_levels = $wpdb->get_col( $wpdb->prepare( "SELECT membership_id FROM $wpdb->pmpro_memberships_pages WHERE page_id = %d", $this->id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- PMPro custom table.
 
 		// If series is not restricted, we just need to check pmpro_getMemberDays() without passing a level.
 		if ( empty( $series_levels ) ) {
