@@ -141,6 +141,19 @@ class PMPro_Email_Template_New_Content extends PMPro_Email_Template {
 		}
 		$post_list .= "</ul>\n";
 
+		/**
+		 * Filter the list of posts included in the New Series Content email.
+		 *
+		 * The filtered value is inserted into the email as-is, so callbacks must escape their own output.
+		 *
+		 * @since TBD
+		 *
+		 * @param string  $post_list The HTML list of posts.
+		 * @param int[]   $post_ids  The IDs of the posts being sent.
+		 * @param WP_User $user      The user who will receive the email.
+		 */
+		$post_list = apply_filters( 'pmpro_series_new_content_email_post_list', $post_list, $this->post_ids, $this->user );
+
 		// Prepare the email template variables.
 		$email_template_variables = array(
 			'display_name' => $this->user->display_name,
