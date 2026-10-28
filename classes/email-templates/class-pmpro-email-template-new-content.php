@@ -66,6 +66,17 @@ class PMPro_Email_Template_New_Content extends PMPro_Email_Template {
 	}
 
 	/**
+	 * Get the email category so that members can opt out of this email.
+	 *
+	 * @since TBD
+	 *
+	 * @return string The email category slug.
+	 */
+	public static function get_email_category() {
+		return 'series_new_content';
+	}
+
+	/**
 	 * Get the default subject for the email.
 	 *
 	 * @since 1.0
@@ -208,3 +219,20 @@ function pmpros_email_template_new_content( $email_templates ) {
 	return $email_templates;
 }
 add_filter( 'pmpro_email_templates', 'pmpros_email_template_new_content' );
+
+/**
+ * Register the email category for new series content emails.
+ *
+ * @since TBD
+ *
+ * @param array $email_categories Email categories (slug => array( 'label' => string, 'description' => string )).
+ * @return array The modified email categories array.
+ */
+function pmpros_email_categories( $email_categories ) {
+	$email_categories['series_new_content'] = array(
+		'label'       => __( 'New series content', 'pmpro-series' ),
+		'description' => __( 'Emails when new content in a series becomes available to you.', 'pmpro-series' ),
+	);
+	return $email_categories;
+}
+add_filter( 'pmpro_email_categories', 'pmpros_email_categories' );
