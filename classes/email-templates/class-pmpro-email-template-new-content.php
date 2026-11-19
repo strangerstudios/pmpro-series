@@ -145,6 +145,7 @@ class PMPro_Email_Template_New_Content extends PMPro_Email_Template {
 		 * Filter the list of posts included in the New Series Content email.
 		 *
 		 * The filtered value is inserted into the email as-is, so callbacks must escape their own output.
+		 * This filter also runs for admin test emails, which pass the site's most recent posts of any type and the current user.
 		 *
 		 * @since TBD
 		 *
