@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Paid Memberships Pro - Series plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Series 1.0.2\n"
+"Project-Id-Version: Paid Memberships Pro - Series 1.0.3\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-30T16:17:20+00:00\n"
+"POT-Creation-Date: 2026-11-19T15:05:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-series\n"
@@ -47,102 +47,102 @@ msgstr ""
 msgid "A post with that id does not exist."
 msgstr ""
 
-#: classes/class.pmproseries.php:336
-#: classes/class.pmproseries.php:337
+#: classes/class.pmproseries.php:339
+#: classes/class.pmproseries.php:340
 msgid "Series"
 msgstr ""
 
-#: classes/class.pmproseries.php:339
-#: classes/class.pmproseries.php:340
-msgid "New Series"
-msgstr ""
-
-#: classes/class.pmproseries.php:341
 #: classes/class.pmproseries.php:342
-msgid "Edit Series"
-msgstr ""
-
 #: classes/class.pmproseries.php:343
-msgid "Add New"
+msgid "New Series"
 msgstr ""
 
 #: classes/class.pmproseries.php:344
 #: classes/class.pmproseries.php:345
-msgid "View This Series"
+msgid "Edit Series"
 msgstr ""
 
 #: classes/class.pmproseries.php:346
-msgid "Search Series"
+msgid "Add New"
 msgstr ""
 
 #: classes/class.pmproseries.php:347
+#: classes/class.pmproseries.php:348
+msgid "View This Series"
+msgstr ""
+
+#: classes/class.pmproseries.php:349
+msgid "Search Series"
+msgstr ""
+
+#: classes/class.pmproseries.php:350
 msgid "No Series Found"
 msgstr ""
 
-#: classes/class.pmproseries.php:348
+#: classes/class.pmproseries.php:351
 msgid "No Series Found In Trash"
 msgstr ""
 
-#: classes/class.pmproseries.php:398
+#: classes/class.pmproseries.php:401
 msgid "Require Membership"
 msgstr ""
 
-#: classes/class.pmproseries.php:401
+#: classes/class.pmproseries.php:404
 msgid "Manage Series"
 msgstr ""
 
-#: classes/class.pmproseries.php:455
+#: classes/class.pmproseries.php:458
 msgid "Available Now"
 msgstr ""
 
 #. translators: %s: series post available date
-#: classes/class.pmproseries.php:461
+#: classes/class.pmproseries.php:464
 #, php-format
 msgid "available on %s"
 msgstr ""
 
-#: classes/class.pmproseries.php:518
+#: classes/class.pmproseries.php:521
 msgid "You do not have permission to add that post to a series."
 msgstr ""
 
-#: classes/class.pmproseries.php:536
+#: classes/class.pmproseries.php:539
 msgid "Posts in this Series"
 msgstr ""
 
-#: classes/class.pmproseries.php:539
+#: classes/class.pmproseries.php:542
 msgid "Order"
 msgstr ""
 
-#: classes/class.pmproseries.php:540
+#: classes/class.pmproseries.php:543
 msgid "Title"
 msgstr ""
 
-#: classes/class.pmproseries.php:541
-#: classes/class.pmproseries.php:575
+#: classes/class.pmproseries.php:544
+#: classes/class.pmproseries.php:578
 msgid "Delay (# of days)"
 msgstr ""
 
-#: classes/class.pmproseries.php:542
+#: classes/class.pmproseries.php:545
 msgid "Actions"
 msgstr ""
 
-#: classes/class.pmproseries.php:559
+#: classes/class.pmproseries.php:562
 msgid "edit"
 msgstr ""
 
-#: classes/class.pmproseries.php:560
+#: classes/class.pmproseries.php:563
 msgid "remove"
 msgstr ""
 
-#: classes/class.pmproseries.php:570
+#: classes/class.pmproseries.php:573
 msgid "Add/Edit Posts"
 msgstr ""
 
-#: classes/class.pmproseries.php:574
+#: classes/class.pmproseries.php:577
 msgid "Post/Page"
 msgstr ""
 
-#: classes/class.pmproseries.php:605
+#: classes/class.pmproseries.php:608
 msgid "Add to Series"
 msgstr ""
 
