@@ -147,7 +147,7 @@ class PMPro_Email_Template_New_Content extends PMPro_Email_Template {
 		 * The filtered value is inserted into the email as-is, so callbacks must escape their own output.
 		 * This filter also runs for admin test emails, which pass the site's most recent posts of any type and the current user.
 		 *
-		 * @since TBD
+		 * @since 1.0.3
 		 *
 		 * @param string  $post_list The HTML list of posts.
 		 * @param int[]   $post_ids  The IDs of the posts being sent.

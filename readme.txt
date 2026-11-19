@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: series, drip feed, serial, delayed, limited, memberships
 Requires at least: 5.2
 Tested up to: 7.1
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -62,6 +62,9 @@ Data Structure
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-series/issues
 
 == Changelog ==
+= 1.0.3 - 2026-11-19 =
+* ENHANCEMENT: Added the `pmpro_series_new_content_email_post_list` filter to customize the list of posts in the New Series Content email. #125 (@dparker1005)
+
 = 1.0.2 - 2026-09-30 =
 * SECURITY: Adding or removing series posts now requires a valid nonce and permission to edit that series. Adding a post also requires permission to edit that post. #124 (@dparker1005)
 * SECURITY: Improved sanitization and escaping throughout the plugin to resolve Plugin Check security findings. #123 (@dparker1005)
