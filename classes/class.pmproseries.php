@@ -306,6 +306,9 @@ class PMProSeries {
 		}
 		$post_list .= "</ul>\n";
 
+		/** This filter is documented in classes/email-templates/class-pmpro-email-template-new-content.php */
+		$post_list = apply_filters( 'pmpro_series_new_content_email_post_list', $post_list, $post_ids, $user );
+
 		$email->email    = $user->user_email;
 		$email->template = 'new_content';
 		$email->data = array(
