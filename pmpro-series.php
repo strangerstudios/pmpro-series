@@ -146,7 +146,7 @@ function pmpros_the_content( $content ) {
 				</div> <!-- end pmpro_card -->
 			</div> <!-- end pmpro -->
 			<?php
-			$content = ob_get_contents();
+			$content .= ob_get_contents();
 			ob_end_clean();
 		}
 
