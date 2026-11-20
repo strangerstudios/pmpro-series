@@ -474,6 +474,7 @@ function pmpros_member_links_bottom() {
         SELECT *
         FROM $wpdb->posts
         WHERE post_type = 'pmpro_series'
+        AND post_status = 'publish'
     "
 	);
 
@@ -486,7 +487,7 @@ function pmpros_member_links_bottom() {
 
 	foreach ( $all_series as $s ) {
 		$series       = new PMProSeries( $s->ID );
-		$series_posts = $series->getPosts();
+		$series_posts = $series->getPosts( false, 'publish' );
 
 		if ( ! empty( $series_posts ) ) {
 			foreach ( $series_posts as $series_post ) {
