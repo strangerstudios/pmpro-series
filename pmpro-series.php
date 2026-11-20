@@ -510,7 +510,7 @@ function pmpros_member_links_bottom() {
 	// Show the list.
 	foreach ( $series_posts_list as $series_post ) {
 		?>
-		<li class="<?php esc_attr( pmpro_get_element_class( 'pmpro_list_item' ) ); ?>"><a href="<?php echo esc_url( $series_post['permalink'] ); ?>" title="<?php echo esc_attr( $series_post['title'] ); ?>"><?php echo esc_html( $series_post['title'] ); ?></a></li>
+		<li class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_list_item' ) ); ?>"><a href="<?php echo esc_url( $series_post['permalink'] ); ?>" title="<?php echo esc_attr( $series_post['title'] ); ?>"><?php echo esc_html( $series_post['title'] ); ?></a></li>
 		<?php
 	}
 }
