@@ -33,7 +33,7 @@ function pmpros_check_for_new_content() {
     //search through series looking for emails to send
 	foreach($series as $s) {
         $series = new PMProSeries($s->ID);
-        $series_posts = $series->getPosts();
+        $series_posts = $series->getPosts( false, 'publish' );
 				
 		if(empty($series_posts))
 			continue;
