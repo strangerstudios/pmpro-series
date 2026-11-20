@@ -386,15 +386,17 @@ function pmpros_pmpro_text_filter( $text ) {
 
 			if ( ! empty( $inseries ) ) {
 				// User is a part of a series that has this post. Figure out which series will give them access soonest and tell them.
-				$days_left      = null;
-				$soonest_series = null;
+				$days_left           = null;
+				$soonest_series      = null;
+				$soonest_member_days = null;
 				foreach ( $inseries as $series_id ) {
 					$series = new PMProSeries( $series_id );
 					$post_delay  = $series->getDelayForPost( $post->ID );
 					$member_days = intval( $series->get_member_days() );
 					if ( empty( $soonest_series ) || $post_delay - $member_days < $days_left ) {
-						$days_left      = $post_delay - $member_days;
-						$soonest_series = $series;
+						$days_left           = $post_delay - $member_days;
+						$soonest_series      = $series;
+						$soonest_member_days = $member_days;
 					}
 				}
 
@@ -404,7 +406,7 @@ function pmpros_pmpro_text_filter( $text ) {
 				/* translators: 1: series link, 2: date */
 				$text = '<p>' . sprintf( esc_html__( 'This content is part of the %1$s series. You will gain access on %2$s.', 'pmpro-series' ),  $series_link_text, esc_html( $series_date_text ) ) . '</p>';
 
-				$text = apply_filters( 'pmpros_days_left_message', $text, $member_days, $days_left, $current_user->ID );
+				$text = apply_filters( 'pmpros_days_left_message', $text, $soonest_member_days, $days_left, $current_user->ID );
 			} else {
 				// user has to sign up for one of the series
 				if ( count( $post_series ) == 1 ) {
